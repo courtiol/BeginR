@@ -1,0 +1,1052 @@
+%\VignetteIndexEntry{Introduction}
+%\VignetteEngine{R.rsp::tex}
+
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[UKenglish]{babel}
+\usepackage{verbatim}%for comment environment
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+
+\def\R{{\Large \bf R}}
+\def\S{{\Large \bf S}}
+\def\r{{\bf R}}
+\def\s{{\bf S}}
+
+\title{Getting starting with \r}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\date[June 2018]{\small June 2018}%
+
+\begin{document}
+\setlength{\topsep}{1pt}%space between input and output
+<<echo = FALSE, message = FALSE>>=
+  options(width = 60)
+library(knitr)
+opts_chunk$set("size" = "scriptsize")
+@
+
+\maketitle
+
+\begin{frame}{Who am I?}
+\begin{itemize}
+\item evolutionary biologist / statistician
+\item studies in France (Montpellier), postdoc in the UK (Sheffield)
+\item senior researcher at Leibniz IZW / Lecturer at Freie University
+\item experience with \R:
+  \begin{itemize}
+  \item 2003: starting to study \r \ (still ongoing)
+  \item 2008: starting to use \r \ most days
+  \item 2010: starting to teach \r
+  \item 2016: starting to develop \r \ packages
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Getting started with \R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents
+\end{frame}
+
+\section{What is \r?}
+
+\begin{frame}{Getting started with \R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+
+\begin{frame}{What is \R?}
+\justifying
+\R \ is a programming language and software environment for statistical computing \& graphics.
+\vfill
+Key points about \R:
+\begin{itemize}
+\item free \underline{for all}
+\item open source (explore: \url{https://github.com/wch/r-source})
+\pause
+\item polyvalent:
+  \begin{itemize}
+  \item from laptop to most advanced supercomputers
+  \item local or remote
+  \item Windows, MacOS, linux or many other Unix-based systems
+  \end{itemize}
+\pause
+\item rich (\Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages just on CRAN)
+\item cutting edge (check updates for today: \url{http://dirk.eddelbuettel.com/cranberries/cran/updated/})
+\pause
+\item used by millions
+\item \r \ is the best software environment for statistical computing, but it is far from perfect!
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Is \R \ good for you?}
+\begin{columns}
+\column[t]{0.4\linewidth}
+\begin{block}{Good for:}
+\begin{itemize}
+  \item data manipulation
+  \item plots, including GIS
+  \item analysing big (incl. seq.), medium and small data
+  \item simulating data
+\end{itemize}
+\end{block}
+\column[t]{0.4\linewidth}
+\begin{block}{Not optimal for:}
+\begin{itemize}
+  \item beginners
+  \item data entry
+  \item formal algebra
+\end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Who uses \R?}
+\begin{center}
+\includegraphics[height=0.7\textheight]{../figures/rexer2015.png}
+\end{center}
+Rexer Analytics\\
+{\small [1220 analytic professionals from 72 countries participated in this survey]}
+\end{frame}
+
+
+\begin{frame}{What else?}
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/rexer2015details.png}
+\end{center}
+\vfill
+Rexer Analytics
+\end{frame}
+
+
+\begin{frame}{A short history of \R}
+\begin{itemize}
+\item early 1980s: \s \ version 1: genesis of an interactive statistical system (Becker \& Chambers at Bell Labs)
+\item mid 1980s: \s \ version 2: portable version (thanks to UNIX)
+\item 1988: \s \ version 3 (\s3): object-based, C-based (very much like R)
+\item 1991: \s3 includes a large statistical modeling toolbox
+\item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
+\item 29/02/2000: \r \ version 1.0.0 (R core)
+\end{itemize}
+
+\vfill
+
+Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
+\end{frame}
+
+\begin{comment}
+
+\begin{frame}{Why is R the right choice for you?}
+\justifying
+{\Large \bf R} is a {\bf free open source} programming language and software environment for statistical computing \& graphics.
+\vfill
+R includes {\bf long-established parametric and non-parametric tests}, forefront methods in regression, classification \& clustering, and much more.
+\vfill
+\begin{itemize}
+\item {\bf numerous functions are included} within the core installation of R
+\item {\bf \Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages are available on \url{cran.r-project.org}}
+\item {\bf $\sim$ 1500 packages} aimed at bioinformatic on \url{bioconductor.org}
+\end{itemize}
+\vfill
+The user can run workflows stored in one or several script file(s), which allows for {\bf reproducible research \& easy communication}.
+\end{frame}
+
+
+
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents
+\end{frame}
+
+\section{Installing R}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Setting internet up and downloading software}
+  \begin{enumerate}
+  \item set the internet proxy: 192.168.2.2:3128
+  \item check that you do get internet access
+  \item install R: \url{https://cran.r-project.org/}
+  \item install RStudio: \url{https://www.rstudio.com/products/rstudio/download/}
+  \item open RStudio
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{RStudio}
+\begin{center}
+\includegraphics[width=\textheight]{../figures/RStudio.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Installing a package to check proxy settings in R-Studio}
+<<eval=FALSE>>=
+install.packages("coin") # dialog box may be behind!
+@
+If it does not work follow one of the following options and try again!
+\begin{itemize}
+\item option 1:
+<<>>=
+options(repos = c(CRAN = "http://cran.r-project.org"))
+@
+\item option 2: (for MAC users)
+<<>>=
+Sys.setenv(http_proxy = "http://192.168.2.2:3128")
+@
+\item option 3:
+<<>>=
+paste(R.home(), "etc", "Renviron.site", sep = "/") # or "\" for windows
+@
+edit this file by adding:
+
+\url{http_proxy=http://192.168.2.2:3128/}
+
+\url{https_proxy=http://192.168.2.2:3128/}
+\end{itemize}
+\end{frame}
+
+\section{Basics}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[containsverbatim]{1+1}
+<<>>=
+1 + 1
+2 + 3
+how.many.is.one.plus.one <- 1 + 1 # storing the result
+@
+<<>>=
+how.many.is.one.plus.one # displaying the result
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Common mistakes}
+<<tidy=F, size="small">>=
+how.many.is.one.plus.one
+how.many.is.one.plus.two
+How.many.is.one.plus.one
+how.many.is.one.plusone
+1 +
+how.many.is.one.plus.one <- 1 + 1
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Functions}
+%\def\Routsize{\smaller[8]} for sweavel
+<<eval=F>>=
+citation()  # function showing how to cite R
+@
+<<eval=T,echo=F, size="tiny">>=
+citation()
+@
+<<eval=F,tidy=F>>=
+?citation() # getting help for this function
+@
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Functions}
+<<eval=F, echo=T>>=
+mean()
+@
+<<eval=F, tidy=F>>=
+?mean()
+@
+\begin{scriptsize}
+\begin{verbatim}
+Usage:
+     mean(x, ...)
+     ## Default S3 method:
+     mean(x, trim = 0, na.rm = FALSE, ...)
+
+Arguments:
+       x: An R object.  Currently there are methods for numeric/logical
+          vectors and date, date-time and time interval objects, and
+          for data frames all of whose columns have a method.  Complex
+          vectors are allowed for ‘trim = 0’, only.
+    trim: the fraction (0 to 0.5) of observations to be trimmed from
+          each end of ‘x’ before the mean is computed.  Values of trim
+          outside that range are taken as the nearest endpoint.
+   na.rm: a logical value indicating whether ‘NA’ values should be
+          stripped before the computation proceeds.
+[...]
+\end{verbatim}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Functions}
+<<eval=T>>=
+mean(x = c(1, 5, 3, 4))
+vector.of.numbers <- c(1, 5, 3, 4)
+mean(x = vector.of.numbers)
+mean(vector.of.numbers)
+mean(y = vector.of.numbers)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Challenge \#1}
+<<>>=
+new.vector <- c(vector.of.numbers, 6, NA, 2)
+new.vector
+@
+\vfill
+\begin{large}
+\begin{center}
+Try to compute the mean of  \texttt{new.vector} using \texttt{mean()}!
+\end{center}
+\end{large}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Key principles of the R language}
+\begin{itemize}
+\item Everything that exists in R is an object
+\item Everything that happens in R is a function call
+\end{itemize}
+
+\begin{flushright}
+John M. Chambers
+\end{flushright}
+
+\vspace{1em}
+This is true even for things that do not look like it at first glance:
+<<>>=
+class(`+`)  # same for `?`...
+`+`(1, 1)
+@
+\end{frame}
+
+\section{Organising data}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[containsverbatim]{Vectors}
+Vectors allow the organisation of entities (e.g. numbers, characters\dots) along one dimension which can be indexed!
+\vfill
+<<>>=
+height.girls <- c(178, 175, 159, 164, 183, 192)
+height.boys  <- c(181, 189, 174, 177)
+@
+
+<<>>=
+height.girls[2]
+height.boys[3]
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Vectors}
+Vectors can be combined:
+\vspace{1em}
+
+<<>>=
+height <- c(height.girls, height.boys)
+height
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Vectors}
+They can be indexed logically (i.e. indexed by anything leading to a vector of booleans):
+\vfill
+<<>>=
+height > 179
+@
+<<>>=
+height[height > 179]
+height[!(height == min(height))]
+height[height != min(height)]
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Vectors}
+They work with other things than numbers:
+<<tidy=F>>=
+sex <- c("girl","girl","girl","girl","girl", "girl",
+         "boy","boy","boy","boy")
+sex <- factor(sex)
+sex
+@
+
+<<>>=
+# Or
+sex <- factor(c(rep("girl", times = 6),
+                rep("boy",  times = 4)))
+# Or
+sex <- factor(c(rep("girl", times = length(height.girls)),
+                rep("boy",  times = length(height.boys))))
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Vectors}
+Many functions can take a vector as an input:
+\begin{columns}
+\column[t]{0.5\linewidth}
+<<>>=
+unique(sex)
+length(sex)
+table(sex)
+@
+\column[t]{0.5\linewidth}
+<<>>=
+min(height)
+max(height)  # try range()
+mean(height)  # try median()
+var(height) # try sd()
+@
+\end{columns}
+<<>>=
+summary(height)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+Data frames allow the organisation of entities as a matrix-like structure whose columns have the same length:
+\vspace{1em}
+<<>>=
+dataframe.ht <- data.frame(Height = height, Sex = sex)
+head(dataframe.ht)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+It is good practice to always check their structure:
+\vspace{1em}
+<<>>=
+str(dataframe.ht)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+You access the columns by means of the extractor \texttt{\$}
+\vspace{1em}
+<<>>=
+height
+rm(list = c("height", "sex")) # removing original vectors
+height
+dataframe.ht$Height #Or: with(data = dataframe.ht, Height)
+@
+\vfill
+\begin{center}
+\textcolor{purple}{$\Rightarrow$ What is the average height?}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+Some functions can take a data frame as an input:
+\vfill
+<<>>=
+summary(dataframe.ht)
+@
+\vfill
+Note: this will be the case of a lot of functions performing statistical tests!
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+How to compute the average height per sex?
+\vfill
+\begin{itemize}
+\item simple
+<<>>=
+mean(dataframe.ht$Height[dataframe.ht$Sex == "boy"])
+@
+\item more elegant
+<<>>=
+tapply(X = dataframe.ht$Height, INDEX = dataframe.ht$Sex,
+       FUN = mean)
+# Or: with(data = dataframe.ht, tapply(X = Height,
+#   INDEX = Sex, FUN = mean))
+@
+\end{itemize}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+They can also be indexed:
+\vspace{1em}
+<<>>=
+dataframe.ht[1, ]
+dataframe.ht[, 1]  # Or: dataframe.ht[, "Sex"]
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Data frames}
+They can be edited:
+\vspace{1em}
+<<>>=
+dataframe.ht[1, 1]
+dataframe.ht[1, 1] <- 171.3
+dataframe.ht[1, 1]
+dataframe.ht$linenumber <- 1:nrow(dataframe.ht)  # add column
+ncol(dataframe.ht) # try dim()
+dataframe.ht$linenumber <- NULL  # remove column
+ncol(dataframe.ht)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Lists}
+Lists allow the organisation of any set of entities into a single R object:
+\vspace{1em}
+<<>>=
+list.ht <- list(girls = height.girls, boys = height.boys)
+list.ht
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Lists}
+Lists can also be indexed and their elements extracted:
+\vspace{1em}
+<<>>=
+list.ht$girls
+list.ht["boys"]  # still a list
+list.ht[["boys"]]  # vector
+list.ht[[2]][3]
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Lists}
+Some functions can take a list as an input:
+\vspace{1em}
+<<>>=
+lapply(list.ht, FUN = mean)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Summary}
+\begin{columns}
+\column[t]{0.3\linewidth}
+<<>>=
+dataframe.ht
+@
+\column[t]{0.3\linewidth}
+<<>>=
+list.ht
+@
+\end{columns}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Summary}
+  \begin{itemize}
+  \item \texttt{data.frame}
+  \vfill
+  \begin{itemize}
+    \item All columns have same length
+    \item Each column can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
+  \end{itemize}
+  \vfill
+  \item \texttt{list}
+  \vfill
+  \begin{itemize}
+    \item Each element can have its own length
+    \item Each element can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
+  \end{itemize}
+  \vfill
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}[containsverbatim]{Summary}
+% \begin{columns}
+% \column[t]{0.5\linewidth}
+% <<>>=
+% class(dataframe.ht)
+% class(list.ht)
+% @
+% \column[t]{0.5\linewidth}
+% <<>>=
+% # vectors:
+% class(height.girls)
+% class(list.ht$girls)
+% class(dataframe.ht$Sex)
+% @
+% \end{columns}
+% \end{frame}
+
+\section{Importing/exporting data}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[containsverbatim]{Working directory}
+<<>>=
+getwd()  # to change, use setwd()
+dir() # listing all files in the working directory
+dir(pattern = "*.csv")
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Exporting and importing data in R}
+<<tidy=F>>=
+write.csv(dataframe.ht,
+    file = "my.first.R.dataframe.csv", row.names = FALSE)
+
+rm(list = ls())  # deleting everything in R
+
+dataframe.ht <- read.csv("my.first.R.dataframe.csv")
+@
+\begin{center}
+\begin{minipage}{0.8\linewidth}
+\begin{block}{}
+\begin{center}
+R cannot read/write \*.xls files out of the box\\
+Packages can do that but it is safer to use \*.csv files\\
+Excel can read and write \*.csv files!\\
+\end{center}
+\end{block}
+\end{minipage}
+\end{center}
+\vfill
+\end{frame}
+
+\begin{frame}{Challenge \#2}
+\begin{large}
+\begin{center}
+Create a dataframe using your favorite spreadsheet software\\ and import it in R!
+\end{center}
+\end{large}
+\end{frame}
+
+\section{Plotting}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[containsverbatim]{Foreplay}
+First, let's create a new column \texttt{Age} in our set \texttt{dataframe.ht}:
+\vfill
+<<tidy=F>>=
+dataframe.ht$Age <- c(28, 25, 33, 34, 28, 36, 31, 28, 27, 27)
+head(dataframe.ht)
+@
+\begin{center}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Scatter plot}
+<<fig1_plot, fig.width=4, fig.height=4,include=F>>=
+color.sex <- ifelse(test = dataframe.ht$Sex == "girl", yes = "pink", no = "blue")
+plot(Height ~ Age, data = dataframe.ht, col = color.sex)
+@
+<<tidy=F, eval=F>>=
+color.sex <- ifelse(test = dataframe.ht$Sex == "girl",
+                    yes = "pink", no = "blue")
+
+plot(Height ~ Age, data = dataframe.ht, col = color.sex)
+@
+\vspace{-1.5cm}
+\begin{center}
+\includegraphics[width=0.55\linewidth]{./figure/fig1_plot-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Scatter plot}
+<<eval=F, tidy=F>>=
+?plot.default
+?par # to set graphical parameters
+@
+<<echo=FALSE>>=
+options(width = 50)
+@
+<<fig2_plot, fig.width=4, fig.height=4,include=F>>=
+plot(Height ~ Age, data = dataframe.ht, col=color.sex,
+    pch=3, xlab="Age", ylab="Height [cm]",
+    cex=3, cex.lab=1.2, cex.axis=0.5,
+    las=2, col.axis="blue")
+@
+<<tidy=F, eval=F>>=
+plot(Height ~ Age, data = dataframe.ht, col = color.sex,
+    pch = 3, xlab = "Age", ylab = "Height [cm]",
+    cex = 3, cex.lab = 1.2, cex.axis = 0.5,
+    las = 2, col.axis = "blue")
+@
+\vspace{-0.8cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/fig2_plot-1.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{Decorating plots}
+Drawing lines (h = horizontal, v = vertical, or ``intercept, slope''):
+<<tidy=F, eval=F>>=
+?abline
+?text
+@
+<<fig3_plot, fig.width=4, fig.height=4,include=F>>=
+plot(Height ~ Age, data = dataframe.ht, col=color.sex)
+abline(v=30, lty="dashed", col="red")
+abline(h=175, lty="dotted")
+@
+<<tidy=F, eval=F>>=
+plot(Height ~ Age, data = dataframe.ht, col=color.sex)
+abline(v = 30, lty = "dashed", col = "red") #lty = line type
+abline(h = 175, lty = "dotted")
+@
+\vspace{-0.8cm}
+\begin{center}
+\includegraphics[width=0.45\linewidth]{./figure/fig3_plot-1.pdf}
+\end{center}
+\end{frame}
+
+
+% Steph 4
+\begin{frame}[containsverbatim]{Decorating plots}
+Drawing arrows and adding text:
+<<eval=F, tidy=F>>=
+?arrows
+?text
+@
+<<fig4_plot, fig.width=4, fig.height=4,include=F>>=
+plot(Height ~ Age, data = dataframe.ht, col = color.sex,
+     pch=16, cex=3, ylim=c(150, 200))
+max.value <- max(x=dataframe.ht$Height)
+where.max <- dataframe.ht$Age[which.max(x=dataframe.ht$Height)]
+arrows(x0=where.max, y0=max.value - 18,
+       x1=where.max,  y1 = max.value, col="black", lwd=3) #lwd=line width
+text(x=where.max, y=max.value - 20, labels="Max")
+options(width=100)
+@
+<<tidy=F, eval=F, size="scriptsize">>=
+plot(Height ~ Age, data = dataframe.ht, col = color.sex,
+     pch = 16, cex = 3, ylim = c(150, 200))
+max.value <- max(x = dataframe.ht$Height)
+where.max <- dataframe.ht$Age[which.max(x = dataframe.ht$Height)]
+arrows(x0 = where.max, y0 = max.value - 18,
+       x1 = where.max,  y1 = max.value, col = "black", lwd = 3) #lwd = line width
+text(x = where.max, y = max.value - 20, labels = "Max")
+@
+\vspace{-0.9cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/fig4_plot-1.pdf}
+\end{center}
+\end{frame}
+
+% Steph 5a
+\begin{frame}[containsverbatim]{Box plots and histograms}
+<<fig5_plot, fig.width=8, fig.height=4,include=F>>=
+par(mfrow = c(1, 2))
+boxplot(Height ~ Sex, data = dataframe.ht)
+hist(dataframe.ht$Height)
+@
+<<tidy=F, eval=F>>=
+par(mfrow = c(1, 2))
+boxplot(Height ~ Sex, data = dataframe.ht)
+hist(dataframe.ht$Height)
+@
+\begin{center}
+\includegraphics[width=0.75\linewidth]{./figure/fig5_plot-1.pdf}
+\end{center}
+\end{frame}
+
+
+% Steph 6
+\begin{frame}[containsverbatim]{Histograms}
+<<eval=F, tidy=F>>=
+?hist
+@
+<<tidy=F, eval=F, size="scriptsize">>=
+par(mfrow = c(1, 4))
+hist(dataframe.ht$Height, breaks = max)
+hist(dataframe.ht$Height, breaks = 3)
+hist(dataframe.ht$Height, breaks = 5)
+hist(dataframe.ht$Height, breaks = seq(from = 150, to = 200, by = 10),
+     freq = FALSE, col = "lightgrey")
+@
+
+<<fig6_plot, fig.width=12, fig.height=4, include=F>>=
+par(mfrow = c(1, 4))
+hist(dataframe.ht$Height, breaks = max)
+hist(dataframe.ht$Height, breaks = 3)
+hist(dataframe.ht$Height, breaks = 5)
+hist(dataframe.ht$Height, breaks = seq(from = 150, to = 200, by = 10),
+     freq = FALSE, col = "lightgrey")
+@
+\begin{center}
+\includegraphics[width=0.9\linewidth]{./figure/fig6_plot-1.pdf} % AC THIS LOOKS SHITTY
+\end{center}
+\end{frame}
+
+% Steph 6a
+\begin{frame}[containsverbatim]{Histograms}
+<<echo=F>>=
+options(width=80)
+@
+<<tidy=F, fig.keep='none', size="scriptsize">>=
+my.h <- hist(dataframe.ht$Height)
+my.h
+@
+\end{frame}
+
+
+% Steph 7
+\begin{frame}[containsverbatim]{Bar charts}
+<<tidy=F, size="scriptsize", fig.keep='none'>>=
+mybp <- table(dataframe.ht$Height)
+mybp
+par(mfrow = c(1, 1), las = 2)
+barplot(mybp)
+@
+<<fig7_plot, fig.width=4, fig.height=4,include=F>>=
+par(mfrow = c(1, 1), las = 2)
+barplot(mybp)
+@
+\vspace{-0.8cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/fig7_plot-1.pdf} %AC - AGAIN, FIGURE TO Large
+\end{center}
+\end{frame}
+
+%Steph 9
+\begin{frame}[containsverbatim]{Margins and multiple figures}
+Dividing the graphics device: \texttt{mfrow} = multiframe rowwise, \texttt{mar} = margins (dashed \textcolor{blue}{blue}), \texttt{oma} = outer margins (\textcolor{green}{green})
+<<fig9_plot, fig.width=8, fig.height=4,include=F>>=
+par(mfrow = c(1, 2), mar = c(4, 4, 1, 1),
+    oma = c(1.5, 2, 1, 1))
+plot(dataframe.ht$Height, col = color.sex, pch = 16, cex = 3)
+boxplot(Height ~ Sex, data = dataframe.ht)
+#box('plot', col='red')
+box('figure', col = 'blue', lty = "dashed")
+box('outer', col = 'green', lwd = 5)
+@
+<<tidy=F, eval=F>>=
+par(mfrow = c(1, 2), mar = c(4, 4, 1, 1),
+    oma = c(1.5, 2, 1, 1))
+plot(dataframe.ht$Height, col = color.sex, pch = 16, cex = 3)
+boxplot(Height ~ Sex, data = dataframe.ht)
+@
+\begin{center}
+\includegraphics[width=0.7\linewidth]{./figure/fig9_plot-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Exporting figures}
+<<tidy=F, eval=F>>=
+?pdf ?postscript
+?bmp ?jpeg ?png ?tiff
+@
+<<tidy=F, eval=T>>=
+pdf(file = "my_plot.pdf", width = 14, height = 7)
+par(mfrow = c(1, 2), mar = c(4, 4, 1, 1),
+    oma = c(1.5, 2, 1, 1))
+plot(dataframe.ht$Height, col = color.sex, pch = 16, cex = 3)
+boxplot(Height ~ Sex, data = dataframe.ht)
+dev.off() # close the pdf
+getwd() # to check where the file is
+@
+\end{frame}
+
+
+%Steph 10
+\begin{frame}[containsverbatim]{R code for graphs and examples}
+1. Check graph example codes in the help function, e.g.
+<<tidy=F, eval=F>>=
+example(hist)
+@
+2. Scroll the web
+
+(e.g. \url{http://www.r-graph-gallery.com/all-graphs/})
+\vfill
+\begin{center}
+\includegraphics[width=\linewidth]{../figures/graph.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Some of my home-made R graphics}
+\begin{center}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot5}
+  \hspace{0.1cm}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot9}
+  \hspace{0.1cm}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot8}
+\end{center}
+\end{frame}
+
+
+\section{Programming}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[containsverbatim]{Usual programming commands exist in R}
+<<>>=
+for (i in 1:4) {
+  print(x = i)
+  if (i == 2) print(x = "found 2!")
+}
+@
+<<tidy=F, eval=F>>=
+?"for"
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{You can write your own functions!}
+<<>>=
+OddRatio <- function(a, b) {
+  odd.a <- a/(1 - a)
+  odd.b <- b/(1 - b)
+  return(odd.a/odd.b)
+}
+@
+
+<<>>=
+OddRatio(0.1, 0.01)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{How to get the code behind a function?}
+Usually, by simply typing its name (without brackets). But that is not always sufficient\dots
+<<size="scriptsize">>==
+lm
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{How to get the code behind a function?}
+R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>==
+residuals
+@
+
+\texttt{residuals()} is a \emph{generic} function which rely on class specific methods:
+\vspace{1em}
+
+<<size="scriptsize">>==
+methods(residuals)
+@
+The methods with a \texttt{*} are not exported from their package namespace.
+\end{frame}
+
+\begin{frame}[containsverbatim]{How to get the code behind a function?}
+Getting the code for exported R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>==
+residuals.lm
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{How to get the code behind a function?}
+Getting the code for non-exported R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>=
+residuals.nls
+@
+
+<<size="scriptsize">>=
+getAnywhere("residuals.nls") # or getS3method("residuals", "nls")
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]{Challenge \#3}
+\begin{large}
+\begin{center}
+What is the code behind \textit{t.test()}?
+\end{center}
+\end{large}
+\end{frame}
+
+\begin{frame}[containsverbatim]{How to get the code behind a function?}
+Some functions -- the interfaces -- call functions that are written in other languages. The source code of these latter functions is not directly visible (spotted as \texttt{.C()}, \texttt{.Fortran()}, \texttt{.Call()}, \texttt{.Primitive()}, \texttt{.Internal()}, \texttt{.External()}).
+\vspace{1em}
+<<size="scriptsize">>=
+dnorm
+@
+\vspace{1em}
+In these cases, the easiest is to use the read-only mirror for R (\url{https://github.com/wch/r-source}) or the relevant package on Github!
+(here, the answer lies in r-source/src/nmath/dnorm.c)
+\end{frame}
+
+\begin{frame}[containsverbatim]{Numerical issues common to most programming languages}
+<<size="scriptsize">>=
+print(seq(0, 1, 0.1), digits = 22)
+@
+\vfill
+<<>>=
+x <- 0.7 - 0.4 - 0.3
+print(x, digits = 22)
+x == 0
+@
+\vfill
+NB: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+\end{frame}
+
+\begin{frame}[containsverbatim]{Numerical issues common to most programming languages}
+<<eval=T>>=
+??"equality"
+@
+\begin{scriptsize}
+\begin{verbatim}
+Help files with alias or concept or title matching ‘equality’ using
+fuzzy matching:
+
+
+FactoMineR::prefpls     Scatter plot and additional variables with
+                        quality of representation contour lines
+base::all.equal         Test if Two Objects are (Nearly) Equal
+base::identical         Test Objects for Exact Equality
+datasets::airquality    New York Air Quality Measurements
+\end{verbatim}
+\end{scriptsize}
+<<>>=
+?all.equal
+all.equal(target = 0, current = x)
+@
+\end{frame}
+
+% \begin{frame}[containsverbatim]{R is a programming language\dots with usual limits}
+% J.M Muller's Serie: $u_0=2$; $u_1=-4$; $u_{n+1} = 111 - \frac{1130}{u_n} + \frac{3000}{u_n*u_{n-1}}$
+% <<size="scriptsize">>=
+% u <- c(2, -4)
+% new.u <- function(u) 111 -1130/u[length(u)] + 3000/(u[length(u)]*u[length(u)-1])
+% for(i in 1:40) u <- c(u, new.u(u))
+% @
+% <<figMuller, fig.width=6, fig.height=6, include=F>>=
+% par(las=1)
+% plot(u, type="b", ylim=c(-10,110))
+% abline(h=6, col=2, lty=2, lwd=2)
+% legend("topleft", bty="n", lwd=2, col=2, lty=2, legend=c("Exact limit"))
+% @
+% \begin{center}
+% \includegraphics[height=0.7\textheight]{./figure/figMuller-1.pdf}
+% \end{center}
+% \end{frame}
+
+
+\section{Learning about R}
+\begin{frame}{Getting started with R}
+  \setcounter{tocdepth}{1}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{How to learn R on your own?}
+R:
+\begin{itemize}
+\item
+<<tidy=F, eval=F>>=
+RSiteSearch("keyword(s)")
+@
+\end{itemize}
+Internet:
+\begin{itemize}
+\item \url{http://www.r-project.org/}  (Manuals in many languages for free)
+\item \url{http://www.r-bloggers.com/} (Blog!)
+\end{itemize}
+Books:
+\begin{center}
+\includegraphics[height=3cm]{../figures/bookBecksi}
+\includegraphics[height=3cm]{../figures/Rbook2}
+\includegraphics[height=3cm]{../figures/book}
+\includegraphics[height=3cm]{../figures/Rbook}
+\end{center}
+\end{frame}
+
+\end{comment}
+
+\end{document}
