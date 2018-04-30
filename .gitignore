@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+.DS_Store
 vignettes/**/*.snm
 vignettes/**/*.synctex.gz
 vignettes/**/*.tex
