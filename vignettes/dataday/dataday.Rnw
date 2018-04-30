@@ -8,7 +8,7 @@
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
 
-\title{Using data in R test 2}
+\title{Using data in R}
 \author[Alexandre Courtiol]{Alexandre Courtiol}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \date[June 2018]{\small June 2018}%
@@ -24,52 +24,66 @@ library(dplyr)
 
 \maketitle
 
-
-\begin{frame}[containsverbatim]{Changing the order of levels of a factor}
-<<echo = FALSE>>=
-my_factor1 <- factor(c("A", "A", "B", "B", "C"))
-my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
-@
-
-\begin{columns}
-\column{0.2\linewidth}
-\begin{center}
-You have:
-<<>>=
-my_factor1
-@
-\end{center}
-
-\column{0.2\linewidth}
-\begin{center}
-You want:
-<<>>=
-my_factor2
-@
-\end{center}
-\end{columns}
-
-\begin{columns}
-\column{0.5\linewidth}
-
-\begin{center}
-You do:
-<<>>=
-## Using base:
-my_factor2 <- factor(my_factor1, levels(my_factor1)[c(3, 2, 1)])
-my_factor2
-@
-
-\end{center}
-\end{columns}
-\vfill
-
-Note:
-
-the order of levels influences the output of linear models and plotting functions (e.g. order in the legend of a ggplot) \dots
+\begin{frame}{Table of contents}
+\tableofcontents
 \end{frame}
 
-\begin{frame}[containsverbatim]{Changing the levels of a factor}
+\section{Vector}
+
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+\subsection{Factor}
+
+\begin{frame}[fragile]{Changing the order of levels of a factor}
+  <<echo = FALSE>>=
+  my_factor1 <- factor(c("A", "A", "B", "B", "C"))
+  my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
+  @
+
+  \begin{columns} % create columns
+    \column{0.2\linewidth}
+    \begin{center}
+    You have:
+    <<>>=
+    my_factor1
+    @
+    \end{center}
+
+    \column{0.2\linewidth}
+    \begin{center}
+    You want:
+    <<>>=
+    my_factor2
+    @
+    \end{center}
+  \end{columns}
+
+\pause
+
+  \begin{columns}
+    \column{0.5\linewidth}
+
+    \begin{center}
+    You do:
+    <<>>=
+    ## Using base:
+    my_factor2 <- factor(my_factor1, levels(my_factor1)[c(3, 2, 1)])
+    my_factor2
+    @
+    \end{center}
+  \end{columns}
+  \vfill
+
+\pause
+
+  Note:
+  the order of levels influences the output of linear models and plotting functions (e.g. order in the legend of a ggplot) \dots
+\end{frame}
+
+
+\begin{frame}[fragile]{Changing the levels of a factor}
 <<echo = FALSE>>=
 my_factor1 <- factor(c("A", "A", "B", "B", "C"))
 my_factor2 <- factor(c("A", "A", "A", "A", "D"))
@@ -113,6 +127,12 @@ my_factor2
 @
 \end{center}
 \end{columns}
+
+\end{frame}
+
+\section{Data frame}
+
+\begin{frame}{test}
 
 \end{frame}
 
