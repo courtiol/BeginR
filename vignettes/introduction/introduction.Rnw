@@ -130,13 +130,21 @@ Rexer Analytics
 \item 1988: \s \ version 3 (\s3): object-based, C-based (very much like R)
 \item 1991: \s3 includes a large statistical modeling toolbox
 \item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
-\item 29/02/2000: \r \ version 1.0.0 (R core)
 \end{itemize}
 
 \vfill
 
 Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
+
+\vfill
+
+\begin{itemize}
+\item 23/04/1997: birth of The Comprehensive R Archive Network (CRAN) (version of R are archieved)
+\item 05/12/1997: \r version 0.6 is part of GNU project (control version system starts)
+\item 29/02/2000: \r \ version 1.0.0 (judged stable enough for production use by the R Development Core Team.)
+\end{itemize}
 \end{frame}
+
 
 \begin{comment}
 
