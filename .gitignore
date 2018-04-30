@@ -1,3 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
+vignettes/**/*.snm
+vignettes/**/*.synctex.gz
+vignettes/**/*.tex
+vignettes/**/*.toc
+vignettes/**/*.log
+vignettes/**/*.nav
