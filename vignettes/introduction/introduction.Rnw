@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 \usepackage{verbatim}%for comment environment
+\usepackage{pdfpages} %for importing specific pages from pdf
 \usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
@@ -21,43 +22,54 @@
 
 \begin{document}
 \setlength{\topsep}{1pt}%space between input and output
-<<echo = FALSE, message = FALSE>>=
+<<knitr options, echo = FALSE, message = FALSE>>=
   options(width = 60)
 library(knitr)
 opts_chunk$set("size" = "scriptsize")
 @
 
+\AtBeginSection[]{
+     \begin{frame}
+     \frametitle{Getting started with \R}
+     \setcounter{tocdepth}{1}
+     \tableofcontents[currentsection]
+     \end{frame}
+}
+
+\AtBeginSubsection[]{
+     \begin{frame}
+     \frametitle{Getting started with \R}
+     \setcounter{tocdepth}{2}
+     \tableofcontents[currentsubsection]
+     \end{frame}
+}
+
 \maketitle
+
 
 \begin{frame}{Who am I?}
 \begin{itemize}
 \item evolutionary biologist / statistician
 \item studies in France (Montpellier), postdoc in the UK (Sheffield)
-\item senior researcher at Leibniz IZW / Lecturer at Freie University
+\item researcher at Leibniz IZW / lecturer at Freie University
 \item experience with \R:
   \begin{itemize}
-  \item 2003: starting to study \r \ (still ongoing)
-  \item 2008: starting to use \r \ most days
-  \item 2010: starting to teach \r
-  \item 2016: starting to develop \r \ packages
+  \item 2003 --: study \r \ (still ongoing)
+  \item 2008 --: use \r \ most days
+  \item 2010 --: teach \r
+  \item 2016 --: develop \r \ packages
   \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Getting started with \R}
-  \setcounter{tocdepth}{1}
-  \tableofcontents
-\end{frame}
 
 \section{What is \r?}
 
-\begin{frame}{Getting started with \R}
-  \setcounter{tocdepth}{1}
-  \tableofcontents[currentsection]
-\end{frame}
+
+\subsection{\r \ in brief}
 
 
-\begin{frame}{What is \R?}
+\begin{frame}{\r \ in brief}
 \justifying
 \R \ is a programming language and software environment for statistical computing \& graphics.
 \vfill
@@ -73,13 +85,48 @@ Key points about \R:
   \item Windows, MacOS, linux or many other Unix-based systems
   \end{itemize}
 \pause
-\item rich (\Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages just on CRAN)
+\item rich (tons of \r \ packages out there)
 \item cutting edge (check updates for today: \url{http://dirk.eddelbuettel.com/cranberries/cran/updated/})
 \pause
 \item used by millions
 \item \r \ is the best software environment for statistical computing, but it is far from perfect!
 \end{itemize}
 \end{frame}
+
+
+
+\subsection{The history and pre-history of \r}
+
+
+\begin{frame}{A short history of \S/\R}
+\S \ (\url{http://ect.bell-labs.com/sl/S/})
+\begin{itemize}
+\item 1976-1980: version 1: interactive statistical system, Fortran based (Becker, Chambers, \& al. at Bell Labs)
+%Bells Labs is now owned by NOKIA
+\item 1980-1988: version 2: portable version (thanks to Unix) %unix was conceived one floor upstair at Bell Labs, C and C++ are also coming from Bells Labs (New Jersey)
+\item 1988: version 3 (\s3): ``everything is an object" paradigm, C-based (very much like R)
+\item 1991: a large statistical modeling toolbox is added to \s3
+\item 1993: \s+ exclusive license (to StatSci, later MathSoft, later SolutionMetrics)
+\item 1998: version 4 (\s4): advanced object-oriented features
+\item 2012: \s+ becomes TIBCO Enterprise Runtime for R (TERR)
+\end{itemize}
+\vfill
+
+\pause
+%Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
+%developper of S try to keep it non commercial as much they could!
+
+\R \ (\url{https://www.r-project.org/about.html})
+\begin{itemize}
+\item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
+\item 23/04/1997: first version of \r \ archieved on The Comprehensive R Archive Network (CRAN) %and creation of CRAN
+\item 05/12/1997: \r \ version 0.6 is part of GNU project (``freedom to share, freedom to change")
+\item 29/02/2000: \r \ version 1.0 (judged stable enough for production use by the R Development Core Team)
+\end{itemize}
+\end{frame}
+
+
+\subsection{Why using \r?}
 
 
 \begin{frame}{Is \R \ good for you?}
@@ -89,10 +136,11 @@ Key points about \R:
 \begin{itemize}
   \item data manipulation
   \item plots, including GIS
-  \item analysing big (incl. seq.), medium and small data
-  \item simulating data
+  \item analysing small, medium and big data
+  \item programming around data
 \end{itemize}
 \end{block}
+\pause
 \column[t]{0.4\linewidth}
 \begin{block}{Not optimal for:}
 \begin{itemize}
@@ -103,6 +151,9 @@ Key points about \R:
 \end{block}
 \end{columns}
 \end{frame}
+
+
+\subsection{Who uses \r?}
 
 
 \begin{frame}{Who uses \R?}
@@ -123,26 +174,440 @@ Rexer Analytics
 \end{frame}
 
 
-\begin{frame}{A short history of \R}
+{
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages={6,7}]{../figures/Rexer2017.pdf}
+}
+
+
+\begin{frame}{Rich companies rely on \R \ too!}
+Some examples from a blog post (\url{http://blog.revolutionanalytics.com/2014/05/companies-using-r-in-2014.html})
+\vfill
+\begin{small}
 \begin{itemize}
-\item early 1980s: \s \ version 1: genesis of an interactive statistical system (Becker \& Chambers at Bell Labs)
-\item mid 1980s: \s \ version 2: portable version (thanks to UNIX)
-\item 1988: \s \ version 3 (\s3): object-based, C-based (very much like R)
-\item 1991: \s3 includes a large statistical modeling toolbox
-\item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
+\item Facebook (data analysis, big-data visualization, user behaviour analysis)
+\item Google (advertising effectiveness, economic forecasting, and big-data statistical modeling)
+\item Twitter (data visualization and semantic clustering)
+\item The City of Chicago (food poisoning monitoring)
+\item The New York Times (interactive features such as the Dialect Quiz and the Election Forecast)
+\item Microsoft (Xbox matchmaking)
+\item The Human Rights Data Analysis Group (counts of casualties in war zones)
+\item ANZ Bank (credit risk analysis)
+\item The FDA (regulatory drug approvals process)
+\item Monsanto (statistical analysis in plant breeding, fertility mapping and yield forecasting)
+\item Lloyds of London (risk analysis and catastrophe modeling)
+\item RealClimate.org (climate change analysis)
+\item NOAA (flood warnings)
+\end{itemize}
+\end{small}
+\end{frame}
+
+
+\section{First steps in \r}
+
+
+\subsection{Installing \r}
+
+
+\begin{frame}{Installation steps}
+  \begin{enumerate}
+  %\item set the internet proxy: 192.168.2.2:3128
+  \item check that you do get internet access
+  \item install \r: \url{https://cran.r-project.org/}
+  \item install RStudio: \url{https://www.rstudio.com/products/rstudio/download/}
+  \item open RStudio
+  \end{enumerate}
+\vfill
+Note: we will use RStudio but you don't have to (RStudio is free but \underline{not for all}).
+\end{frame}
+
+
+\begin{frame}{RStudio}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{../figures/RStudio.png}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Better default setting for RStudio}
+\begin{center}
+\includegraphics[height=0.9\textheight]{../figures/RStudio_settings.png}
+\end{center}
+\end{frame}
+
+\subsection{Arithmetic}
+
+
+\begin{frame}[fragile]{Basic arithmetic}
+Try in the following in the ``Console" pannel:
+<<arithmetic>>=
+1 + 1
+1 - 1
+2 * pi
+3 / 2
+10 %% 3
+5^2
+5^2 + 1
+5^(2+1)
+5^(2 + 1)
+@
+\vfill
+Conclusion: you may never need a hand calculator anymore!
+\end{frame}
+
+
+\subsection{Script}
+
+
+\begin{frame}<1>[label = goodpractice]{Good practice}
+\begin{enumerate}
+\item<1-> only use the ``Console" pannel to mess around
+\item<1-> write a script and comment it properly
+\item<1-> make sure your script always work
+\item<2-> store each result as an object with a useful name
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{The concept of an \R \ script}
+All instructions must be written as a computer script!
+\begin{itemize}
+\item it is just a text file (no need for R to read it, it never gets corrupted)
+\item the script must be saved at a known location
+\item all non-\r \ instruction must be preceeded by \#
+\end{itemize}
+
+\vfill
+Why bother?
+\begin{itemize}
+\item transparent \& reproducible
+\item easy to share \& modify
+\end{itemize}
+\end{frame}
+
+
+\againframe<2>{goodpractice}
+
+
+\subsection{Objects}
+
+
+\begin{frame}[fragile]{Creating objects}
+Objects are being assigned using the ``arrow" operator:
+<<one plus one>>=
+one.plus.one <- 1 + 1 # storing the result
+@
+
+\vfill
+
+Objects are being used through their name (that is the whole point):
+
+<<display one plus one>>=
+one.plus.one # displaying the result
+one.plus.one.plus.one <- one.plus.one + 1
+one.plus.one.plus.one
+@
+
+\vfill
+
+Tip:
+<<one times two>>=
+(one.times.two <- 1 * 2) # storing and displaying the result
+@
+\vfill
+Note 1: avoid spaces \& weird characters in object names to avoid troubles.
+
+Note 2: names are case sensitive.
+\end{frame}
+
+
+\begin{frame}[fragile]{Common mistakes}
+The huge majority of beginners problems are typos:
+<<mistakes, tidy=F>>=
+one.plus.one
+one.plus.two
+one.plusone
+1 +
+one.plus.one <- 1 + 1
+@
+\end{frame}
+
+
+\begin{frame}{The concept of an \R \ object}
+What is an object?
+\begin{itemize}
+\item everything in \r \ is an object (more on that later)
+\item objects have names
+\item objects allow astraction
+\item objects belongs to classes for which specific methods exist (and can be created)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Note for geeks who know other computer languages}
+\r \ objects are (by default) not mutable (there is copy on demand):
+<<not mutable>>=
+a <- 1
+b <- a
+b <- b + 1
+b
+a
+@
+\end{frame}
+
+
+\subsection{Functions}
+
+
+\begin{frame}[fragile]{Functions}
+<<citation, eval=FALSE>>=
+citation()  # function showing how to cite R
+@
+<<citation run, eval=TRUE, echo=FALSE, size="tiny">>=
+citation()
+@
+<<help citation, eval=FALSE, tidy=FALSE>>=
+help(citation) # getting help for this function
+?citation() # same but shorter (syntactic sugar)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]{Functions}
+<<mean, eval=F, echo=T>>=
+mean()
+@
+<<help mean, eval=F, tidy=F>>=
+?mean()
+@
+\begin{scriptsize}
+\begin{verbatim}
+Usage:
+     mean(x, ...)
+     ## Default S3 method:
+     mean(x, trim = 0, na.rm = FALSE, ...)
+
+Arguments:
+       x: An R object.  Currently there are methods for numeric/logical
+          vectors and date, date-time and time interval objects, and
+          for data frames all of whose columns have a method.  Complex
+          vectors are allowed for ‘trim = 0’, only.
+    trim: the fraction (0 to 0.5) of observations to be trimmed from
+          each end of ‘x’ before the mean is computed.  Values of trim
+          outside that range are taken as the nearest endpoint.
+   na.rm: a logical value indicating whether ‘NA’ values should be
+          stripped before the computation proceeds.
+[...]
+\end{verbatim}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Syntax for functions}
+Basic syntax:
+<<example function>>=
+sign(x = -5)
+sign(-5) # dangerous: avoid!
+sign(y = -5)
+@
+
+\vfill
+
+Equal signs and arrows are not the same:
+<<equal vs arrows>>=
+sign(y <- -5) # dangerous: avoid!
+y
+sign(x = y <- -5) # same as above
+@
+\end{frame}
+
+
+\begin{frame}[fragile]{Syntax for functions}
+Not puting the parentheses shows the definition of the function:
+<<function def>>=
+sign
+@
+
+\vfill
+
+All functions need parentheses and exceptions correspond to syntactic sugar:
+<<syntactic sugar>>=
+1 + 1
+`+`(1, 1)
+a <- 1
+a
+`<-`(a, 1)
+a
+@
+\end{frame}
+
+
+\begin{frame}[fragile]{Finding functions}
+To find the name of the function you are look for, you may try:
+<<finding function, eval = FALSE>>=
+??"linear model"
+@
+
+or
+
+<<finding function 2, eval = FALSE>>=
+help.search(pattern = "linear model", package = "stats")  # if you know where to look for
+@
+\end{frame}
+
+
+\subsection{Packages}
+
+
+\begin{frame}[fragile]{The concept of an \R \ package}
+
+Packages extend \r \ functionalities:
+\begin{itemize}
+\item for most users; e.g. \verb+ggplot2+
+\item for specific users; e.g. \verb+IsoriX+
+\item for developpers; eg. \verb+Rcpp+
 \end{itemize}
 
 \vfill
 
-Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
+Key facts about packages:
+\begin{itemize}
+\item a package is a folder (often compressed) containing \r \ functions, data \& documentation
+\item a library is an installed package
+\item there are tons of packages out there:
+\begin{itemize}
+\item \Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages are available on \url{cran.r-project.org}
+\item $\sim$ 1500 packages aimed at bioinformatic on \url{bioconductor.org}
+\item many more on \url{github.com}
+\item many more shared between users in other ways
+\end{itemize}
+\end{itemize}
 
 \vfill
 
+Note: packages can be used to create research compendia!
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Installing a package}
+
+Simple situation: the package is available as binary for your system on CRAN
+<<install package, eval=FALSE>>=
+install.packages("dpylr")
+@
+
+\vfill
+
+In general, the installation procedure depends on:
 \begin{itemize}
-\item 23/04/1997: birth of The Comprehensive R Archive Network (CRAN) (version of R are archieved)
-\item 05/12/1997: \r version 0.6 is part of GNU project (control version system starts)
-\item 29/02/2000: \r \ version 1.0.0 (judged stable enough for production use by the R Development Core Team.)
+\item where the package is being hosted (local, CRAN, bioconductor, GitHub, other)
+\item if the package contains sources in another language that have been compiled or not (yes, no)
 \end{itemize}
+
+\vfill
+
+In order to be able to install packages that require compilation (and thus have access to more or newer version of packages), you need to install:
+
+\begin{itemize}
+\item Rtools if you use Windows (\url{https://cran.r-project.org/bin/windows/Rtools/})
+\item Xcode if you use macOS (\url{https://developer.apple.com/xcode/})
+\item nothing if you use Linux or other Unix-based system
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Installing the package for this course}
+The package is not on CRAN as I want to be able to update it instantaneously and have potentially large files.
+
+I host the package here: \url{https://github.com/courtiol/BeginR}
+
+You should install it as follows:
+<<install BeginR, eval = FALSE>>=
+install.packages("drat")
+drat::addRepo("courtiol")
+install.packages("BeginR")
+@
+\end{frame}
+
+
+\begin{frame}[fragile]{Loading a package}
+Loading a package makes the exported function of the package and its data (if lazy-loaded) available to the user.
+
+Example:
+
+<<library BeginR>>=
+library(BeginR)
+@
+\end{frame}
+
+
+\subsection{Housekeeping}
+
+
+\begin{frame}[fragile]{Updating \R \ packages}
+Some things to know:
+\begin{itemize}
+\item \r \ packages evovle quickly
+\item young \r \ packages can be very buggy
+\item packages are not reviewed
+\end{itemize}
+\vfill
+Good practice:
+\begin{itemize}
+\item update your \r \ packages daily
+\end{itemize}
+<<update, eval = FALSE>>=
+update.packages(ask = FALSE)
+@
+\begin{itemize}
+\item check what is being changed if you heavily rely on a recent package
+\item contact the maintainer when you spot bugs (but write minimal reproductive examples!)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Updating \R}
+Some things to know:
+\begin{itemize}
+\item \r \ has many bugs (like all other software)
+\item \r \ bugs are reported, discussed and solved in the open (unlike most other software): \url{https://bugs.r-project.org/bugzilla3/}
+\item each new version of \r \ is in general more efficient, richer, and less buggy
+\end{itemize}
+
+\vfill
+
+What to do?
+\begin{itemize}
+\item check for \r \ new versions on CRAN
+\item check for what has changed if you fancy (\url{https://cran.r-project.org/index.html})
+\item install the new version of \r \ (unless it is not a minor update that you don't need)
+\item re-install all your packages
+\end{itemize}
+
+\vfill
+Note 1: some packages can help to do this: \verb+InstallR+ on Windows and \verb+UpdateR+ on macOS
+
+Note 2: also update Rstudio for full compatibility with \r.
+\end{frame}
+
+\subsection{Learning \r \ on your own}
+
+\begin{frame}{Useful resources}
+\begin{itemize}
+\item the help files and official documentation (boring but thorough \url{https://cran.r-project.org/manuals.html})
+\item a nice blog: \url{http://www.r-bloggers.com/}
+\item 2 \r \ local meetup groups: \url{https://www.meetup.com/Berlin-R-Users-Group/} \& \url{https://www.meetup.com/rladies-berlin/}
+\end{itemize}
+\vfill
+Books:
+\begin{center}
+\includegraphics[height=3cm]{../figures/bookBecksi}
+\includegraphics[height=3cm]{../figures/Chambers_book1}
+\includegraphics[height=3cm]{../figures/book}
+\includegraphics[height=3cm]{../figures/Rbook2}
+\includegraphics[height=3cm]{../figures/Rbook}
+\end{center}
 \end{frame}
 
 
@@ -161,35 +626,6 @@ R includes {\bf long-established parametric and non-parametric tests}, forefront
 \end{itemize}
 \vfill
 The user can run workflows stored in one or several script file(s), which allows for {\bf reproducible research \& easy communication}.
-\end{frame}
-
-
-
-\begin{frame}{Getting started with R}
-  \setcounter{tocdepth}{1}
-  \tableofcontents
-\end{frame}
-
-\section{Installing R}
-\begin{frame}{Getting started with R}
-  \setcounter{tocdepth}{1}
-  \tableofcontents[currentsection]
-\end{frame}
-
-\begin{frame}{Setting internet up and downloading software}
-  \begin{enumerate}
-  \item set the internet proxy: 192.168.2.2:3128
-  \item check that you do get internet access
-  \item install R: \url{https://cran.r-project.org/}
-  \item install RStudio: \url{https://www.rstudio.com/products/rstudio/download/}
-  \item open RStudio
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}{RStudio}
-\begin{center}
-\includegraphics[width=\textheight]{../figures/RStudio.png}
-\end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Installing a package to check proxy settings in R-Studio}
@@ -223,72 +659,6 @@ edit this file by adding:
   \setcounter{tocdepth}{1}
   \tableofcontents[currentsection]
 \end{frame}
-
-\begin{frame}[containsverbatim]{1+1}
-<<>>=
-1 + 1
-2 + 3
-how.many.is.one.plus.one <- 1 + 1 # storing the result
-@
-<<>>=
-how.many.is.one.plus.one # displaying the result
-@
-\end{frame}
-
-\begin{frame}[containsverbatim]{Common mistakes}
-<<tidy=F, size="small">>=
-how.many.is.one.plus.one
-how.many.is.one.plus.two
-How.many.is.one.plus.one
-how.many.is.one.plusone
-1 +
-how.many.is.one.plus.one <- 1 + 1
-@
-\end{frame}
-
-\begin{frame}[containsverbatim]{Functions}
-%\def\Routsize{\smaller[8]} for sweavel
-<<eval=F>>=
-citation()  # function showing how to cite R
-@
-<<eval=T,echo=F, size="tiny">>=
-citation()
-@
-<<eval=F,tidy=F>>=
-?citation() # getting help for this function
-@
-\end{frame}
-
-
-\begin{frame}[containsverbatim]{Functions}
-<<eval=F, echo=T>>=
-mean()
-@
-<<eval=F, tidy=F>>=
-?mean()
-@
-\begin{scriptsize}
-\begin{verbatim}
-Usage:
-     mean(x, ...)
-     ## Default S3 method:
-     mean(x, trim = 0, na.rm = FALSE, ...)
-
-Arguments:
-       x: An R object.  Currently there are methods for numeric/logical
-          vectors and date, date-time and time interval objects, and
-          for data frames all of whose columns have a method.  Complex
-          vectors are allowed for ‘trim = 0’, only.
-    trim: the fraction (0 to 0.5) of observations to be trimmed from
-          each end of ‘x’ before the mean is computed.  Values of trim
-          outside that range are taken as the nearest endpoint.
-   na.rm: a logical value indicating whether ‘NA’ values should be
-          stripped before the computation proceeds.
-[...]
-\end{verbatim}
-\end{scriptsize}
-\end{frame}
-
 
 \begin{frame}[containsverbatim]{Functions}
 <<eval=T>>=
