@@ -533,7 +533,7 @@ install.packages("BeginR")
 
 
 \begin{frame}[fragile]{Loading a package}
-Loading a package makes the exported function of the package and its data (if lazy-loaded) available to the user.
+Loading a package makes the exported functions of the package and its data (if lazy-loaded) available to the user.
 
 Example:
 
@@ -611,7 +611,7 @@ Books:
 \end{frame}
 
 
-\begin{comment}
+%\begin{comment}
 
 \begin{frame}{Why is R the right choice for you?}
 \justifying
@@ -1425,6 +1425,6 @@ Books:
 \end{center}
 \end{frame}
 
-\end{comment}
+%\end{comment}
 
 \end{document}
