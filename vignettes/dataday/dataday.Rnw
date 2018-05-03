@@ -29,8 +29,9 @@ library(dplyr)
 \tableofcontents
 \end{frame}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin section vector
 \section{Vector}
 \begin{frame}{Table of contents}
 \tableofcontents[currentsection]
@@ -212,16 +213,287 @@ my_factor2
 \end{columns}
 
 \end{frame}
-%begin section dataframe
-\section{Data frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% begin section dataframe
+\section{Data frames}
+\subsection{what is a data frame}
+\begin{frame}[fragile]{Data frames}
+\begin{center}
+Data frames allow the organisation of entities as a matrix-like structure whose columns have the same length:
+\end{center}
+\vfill
+<<create Data frame>>=
 
-\begin{frame}{Data frame}
+dataframe.ht <- data.frame(Height = height, Sex = sex)
+dataframe.ht
+
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames}
+\begin{center}
+It is good practice to always check their structure:
+\end{center}
+<<str data frame, echo = T>>=
+str(dataframe.ht)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames}
+\begin{center}
+You access the columns by means of the extractor  \texttt{\$}
+\vspace{1em}
+\end{center}
+<<access column df>>=
+height
+rm(list = c("height", "sex")) # removing original vectors
+height
+dataframe.ht$Height #Or: with(data = dataframe.ht, Height)
+@
+\vfill
+\begin{center}
+\textcolor{purple}{$\Rightarrow$ What is the average height?}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[containsverbatim]{Data frames}
+Some functions can take a data frame as an input:
+\vfill
+<<summary df>>=
+summary(dataframe.ht)
+@
+\vfill
+Note: this will be the case of a lot of functions performing statistical tests!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+\begin{frame}[containsverbatim]{Data frames}
+How to compute the average height per sex?
+\vfill
+\begin{itemize}
+\item simple
+<<mean col df>>=
+mean(dataframe.ht$Height[dataframe.ht$Sex == "boy"])
+@
+\item more elegant
+<<mean col df2>>=
+tapply(X = dataframe.ht$Height, INDEX = dataframe.ht$Sex,
+       FUN = mean)
+# Or: with(data = dataframe.ht, tapply(X = Height,
+#   INDEX = Sex, FUN = mean))
+@
+\item even more elegant but dangerous
+<<mean col df3>>=
+library(dplyr)
+dataframe.ht %>% group_by(Sex) %>% summarize(mean = mean(Height))  ## be aware of the rounding
+@
+
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+\begin{frame}[containsverbatim]{Data frames}
+They can also be indexed:
+\vspace{1em}
+<<index df>>=
+dataframe.ht[1, ]
+dataframe.ht[, 1]  # Or: dataframe.ht[, "Sex"]
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[containsverbatim]{Data frames}
+They can be edited:
+\vspace{1em}
+<<edit df>>=
+dataframe.ht[1, 1]
+dataframe.ht[1, 1] <- 171.3
+dataframe.ht[1, 1]
+dataframe.ht$linenumber <- 1:nrow(dataframe.ht)  # add column
+ncol(dataframe.ht) # try dim()
+dataframe.ht$linenumber <- NULL  # remove column
+ncol(dataframe.ht)
+@
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[containsverbatim]{Data frames}
+They can be edited: dpylr way
+
+\vspace{1em}
+add column with mutate()
+<<edit df dplyr>>=
+dataframe.ht <- dataframe.ht %>% mutate(linenumber = 1:nrow(dataframe.ht))
+head(dataframe.ht, n= 3)
+@
+\vspace{1em}
+select columns with select()
+<<select dplyr>>=
+dataframe.ht.sex <- dataframe.ht %>% select(Sex)
+head(dataframe.ht.sex, n= 3)
+@
+\vspace{1em}
+select rows with filter()
+<<filter dplyr>>=
+datafrane.ht.female <- dataframe.ht %>% filter(Sex == "girl")
+head(datafrane.ht.female, n= 3)
+
+@
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{playing with data frames}
+\begin{frame}[fragile]{reshaping data frame}
+ << reshaping data frame, echo = FALSE>>=
+library(dplyr)
+library(tidyr)
+  my_df1 <- dataframe.ht %>%
+    mutate(age1 = Height -100, age2 = Height -25, age3 = Height -10) %>%
+    rename(age4 = Height)
+
+  my_df2 <- my_df1 %>% gather("Age", "Height", -Sex) %>% arrange(Age)
+
+  @
+
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+you have wide data:
+ << reshaping df1, echo = T>>=
+  head(my_df1)
+
+  @
+\end{center}
+
+\column{0.3\linewidth}
+\begin{center}
+you want long data:
+ << reshaping df2, echo = T>>=
+  head(my_df2)
+
+  @
+\end{center}
+\end{columns}
+
+\vfill
+\pause
+
+\begin{columns}
+\column{0.5\linewidth}
+\begin{center}
+you do:
+ << reshaping solution, echo = T>>=
+ my_df2 <- my_df1 %>% gather("Age", "Height", -Sex) %>% arrange(Age)
+  @
+
+\end{center}
+\end{columns}
+\begin{center}
+\pause
+\vfill
+\textcolor{purple}{one row = one observation, one column = one variable}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{joining data frame}
+
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{extanding data frame}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{cheating data frame}
+\begin{center}
+plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/cheatsheets/}
+% \includegraphics[width=0.9\linewidth]{../figures/data-transformation.pdf}
+\end{center}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin section list
 \section{List}
-\begin{frame}{List}
+\begin{frame}[containsverbatim]{Lists}
+Lists allow the organisation of any set of entities into a single R object:
+\vspace{1em}
+<<>>=
+list.ht <- list(girls = height.girls, boys = height.boys)
+list.ht
+@
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[containsverbatim]{Lists}
+Lists can also be indexed and their elements extracted:
+\vspace{1em}
+<<>>=
+list.ht$girls
+list.ht["boys"]  # still a list
+list.ht[["boys"]]  # vector
+list.ht[[2]][3]
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[containsverbatim]{Lists}
+Some functions can take a list as an input:
+\vspace{1em}
+<<>>=
+lapply(list.ht, FUN = mean)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[containsverbatim]{Summary}
+\begin{columns}
+\column[t]{0.3\linewidth}
+<<>>=
+dataframe.ht
+@
+\column[t]{0.3\linewidth}
+<<>>=
+list.ht
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[containsverbatim]{Summary}
+  \begin{itemize}
+  \item \texttt{data.frame}
+  \vfill
+  \begin{itemize}
+    \item All columns have same length
+    \item Each column can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
+  \end{itemize}
+  \vfill
+  \item \texttt{list}
+  \vfill
+  \begin{itemize}
+    \item Each element can have its own length
+    \item Each element can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
+  \end{itemize}
+  \vfill
+  \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
