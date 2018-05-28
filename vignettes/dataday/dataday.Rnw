@@ -95,6 +95,58 @@ height[height != min(height)]
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{type of vectors}
+  \begin{itemize}
+  \item character
+
+  <<vector character, echo = T>>=
+x <- c("bla", "1", "sf", "xx3")
+summary(x)
+@
+  \item factor
+  <<vector factor, echo = T>>=
+x <- as.factor(c("bla", "1", "sf", "xx3"))
+str(x)
+@
+
+  \item logical
+  <<vector logical, echo = T>>=
+x <- c(TRUE, FALSE, T, F)
+is.logical(x)
+@
+
+  \item Dates
+  <<vector dates, echo = T>>=
+x <- c(as.Date("1999-01-12"), lubridate::ymd("1999-03-12"))
+str(x)
+@
+
+  \end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{cool stuff with dates}
+  \begin{itemize}
+  \item Dates object
+  <<Date objects, echo = T>>=
+x
+@
+\item compute differences
+  <<difference in time, echo = T>>=
+x[1] - x[2]
+as.numeric(x[1] - x[2])
+@
+  \item logical
+  <<logical on dates, echo = T>>=
+x[1] > x[2]
+
+x[x > as.Date("1999-02-12")]
+@
+  \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Factors}
 \begin{frame}[fragile]{Factors}
   \begin{itemize}
@@ -335,7 +387,7 @@ head(dataframe.ht, n= 3)
 
 \pause
 
-select columns with \texttt{mutate()}
+select columns with \texttt{select()}
 <<select dplyr>>=
 dataframe.ht.sex <- dataframe.ht %>% select(Sex)
 head(dataframe.ht.sex, n= 3)
@@ -344,14 +396,26 @@ head(dataframe.ht.sex, n= 3)
 
 \pause
 
-select rows with \texttt{mutate()}
+select rows with \texttt{filter()}
 <<filter dplyr>>=
 datafrane.ht.female <- dataframe.ht %>% filter(Sex == "girl")
 head(datafrane.ht.female, n= 3)
 @
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames cool stuff with dpylr}
+They can be edited with dpylr way
+
+combining \texttt{summarise()} and \texttt{mutate()}
+<<edit df dplyr using summarise() and mutate >>=
+dataframe.ht <- dataframe.ht %>% mutate(linenumber = 1:nrow(dataframe.ht))
+@
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{playing with data frames}
 \begin{frame}[fragile]{reshaping data frame}
  << reshaping data frame, echo = FALSE>>=
@@ -409,28 +473,137 @@ you do:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame}
 
- << merging df creating df2, echo = T>>=
-  # df_to_merge1 <- my_df2 %>% mutate(ID = imap_chr(paste("ID", seq))
+ << merging df: creating df2, echo = F>>=
+  set.seed(1)
+   my_df1 <- data.frame(ID = paste("ID", 1:12, sep = "-"),
+                        age = rnorm(12, mean = 15, sd = 4))
+
+  my_df2 <- data.frame(ID = sample(my_df1$ID),
+                       school = rep(c("Youhou", "bababa", "genius"), 4),
+                       grade = round(rnorm(12, mean = 60, sd = 20), 2),
+                       origin = sample(rep(c("Swiss", "French", "German"), 4)))
+
+  my_df2 <- my_df2[1:10, ]
+  my_df1 <- my_df1[c(1:6, 11), ]
   @
 \begin{columns}
 \column{0.3\linewidth}
 \begin{center}
 you have df1:
  << merging df df1, echo = T>>=
-  # head(my_df2)
-dim(my_df2)
+  my_df1
   @
 \end{center}
-
 \column{0.3\linewidth}
 \begin{center}
 you have df2:
  << merging df df2, echo = T>>=
-  head(my_df2)
+  my_df2
   @
 \end{center}
 \end{columns}
+\vfill
+\begin{center}
+You want to merge the two data frames
+\end{center}
+\end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{joining data frame with merge}
+\begin{center}
+You can use \texttt{merge()}
+\end{center}
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+   << merging df with merge, echo = T>>=
+  my_df3 <- merge(my_df1, my_df2)
+  @
+\end{center}
+\column{0.3\linewidth}
+\begin{center}
+   << merging df with merge output, echo = T>>=
+  my_df3
+    @
+\end{center}
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{joining data frame with dpylr join}
+\begin{center}
+or use \texttt{inner\_join()}
+\end{center}
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+   << merging df with dplyr join, echo = T>>=
+  library(dplyr)
+  my_df3 <- inner_join(my_df1, my_df2)
+  @
+\end{center}
+\column{0.3\linewidth}
+\begin{center}
+   << merging df with merge dplyr join out, echo = T>>=
+  my_df3
+    @
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{joining data frame with dpylr left_join}
+\begin{center}
+\texttt{left\_join() or right\_join()} keep all the rows of the data frame on the left (or right)
+\end{center}
+\begin{center}
+adds NA when no data are present
+\end{center}
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+   << left join, echo = T>>=
+  library(dplyr)
+  my_df3 <- left_join(my_df1, my_df2)
+  @
+\end{center}
+\column{0.3\linewidth}
+\begin{center}
+   << left join out, echo = T>>=
+  my_df3
+    @
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{joining data frame with dpylr full_join}
+\begin{center}
+\texttt{full\_join()} keep all the rows of the two data frame
+\end{center}
+\begin{center}
+adds NA when no data are present
+\end{center}
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+   << full join, echo = T>>=
+  library(dplyr)
+  my_df3 <- full_join(my_df1, my_df2)
+  @
+\end{center}
+\column{0.3\linewidth}
+\begin{center}
+   << full join out, echo = T>>=
+  my_df3
+    @
+\end{center}
+\end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
