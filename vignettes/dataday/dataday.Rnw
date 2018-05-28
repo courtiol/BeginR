@@ -322,27 +322,32 @@ ncol(dataframe.ht)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{frame}[containsverbatim]{Data frames}
-They can be edited: dpylr way
+\begin{frame}[fragile]{Data frames}
+They can be edited with dpylr way
 
 \vspace{1em}
-add column with mutate()
+add column with \texttt{mutate()}
 <<edit df dplyr>>=
 dataframe.ht <- dataframe.ht %>% mutate(linenumber = 1:nrow(dataframe.ht))
 head(dataframe.ht, n= 3)
 @
 \vspace{1em}
-select columns with select()
+
+\pause
+
+select columns with \texttt{mutate()}
 <<select dplyr>>=
 dataframe.ht.sex <- dataframe.ht %>% select(Sex)
 head(dataframe.ht.sex, n= 3)
 @
 \vspace{1em}
-select rows with filter()
+
+\pause
+
+select rows with \texttt{mutate()}
 <<filter dplyr>>=
 datafrane.ht.female <- dataframe.ht %>% filter(Sex == "girl")
 head(datafrane.ht.female, n= 3)
-
 @
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,7 +371,7 @@ library(tidyr)
 you have wide data:
  << reshaping df1, echo = T>>=
   head(my_df1)
-
+  dim(my_df1)
   @
 \end{center}
 
@@ -375,7 +380,7 @@ you have wide data:
 you want long data:
  << reshaping df2, echo = T>>=
   head(my_df2)
-
+  dim(my_df2)
   @
 \end{center}
 \end{columns}
@@ -402,8 +407,29 @@ you do:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{joining data frame}
+\begin{frame}[fragile]{joining data frame}
 
+ << merging df creating df2, echo = T>>=
+  # df_to_merge1 <- my_df2 %>% mutate(ID = imap_chr(paste("ID", seq))
+  @
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+you have df1:
+ << merging df df1, echo = T>>=
+  # head(my_df2)
+dim(my_df2)
+  @
+\end{center}
+
+\column{0.3\linewidth}
+\begin{center}
+you have df2:
+ << merging df df2, echo = T>>=
+  head(my_df2)
+  @
+\end{center}
+\end{columns}
 
 \end{frame}
 
