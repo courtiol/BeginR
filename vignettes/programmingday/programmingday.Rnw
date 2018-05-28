@@ -1,0 +1,380 @@
+%\VignetteIndexEntry{Programming day}
+%\VignetteEngine{R.rsp::tex}
+
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[UKenglish]{babel}
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+
+\title{Programming with R}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\date[June 2018]{\small June 2018}%
+
+\begin{document}
+\setlength{\topsep}{1pt}%space between input and output
+<<echo = FALSE, message = FALSE>>=
+options(width = 60)
+library(knitr)
+opts_chunk$set("size" = "scriptsize")
+library(dplyr)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Table of contents}
+\tableofcontents
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Why programming?}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Why writing your own R functions?}
+\begin{center}
+\begin{minipage}{0.5\linewidth}
+Using your own functions makes your scripts
+\begin{itemize}
+\item easier to understand
+\item safer to (re)use
+\item shorter to write (often)
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{What do you prefer?}
+<<>>=
+d <- data.frame(proba = c(0.1, 0.5, 0.4), group = factor(c("A", "B", "C")))
+@
+<<>>=
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+@
+\vfill
+\pause
+Or
+<<>>=
+odds_ratio <- function(group1, group2, data){
+  with(data = data, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
+}
+
+odds_ratio(group1 = "B", group2 = "A", data = d)
+odds_ratio(group1 = "C", group2 = "A", data = d)
+odds_ratio(group1 = "B", group2 = "C", data = d)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What do you prefer?}
+Still not convinced? Let's compute all pairwise comparisons:
+
+\vfill
+
+<<>>=
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What do you prefer?}
+Still not convinced? Let's compute all pairwise comparisons:
+
+\vfill
+
+<<>>=
+for (group2 in d$group) {
+  for (group1 in d$group) {
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2, data = d)))
+  }
+}
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{When to write your own functions?}
+\begin{center}
+\begin{Huge}
+\underline{D}on't \underline{R}epeat \underline{Y}ourself
+\end{Huge}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Exploring existing code}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Learning by mimicking}
+\begin{center}
+\begin{minipage}{0.7\linewidth}
+Looking at code writen by others will teach you
+\begin{itemize}
+\item how their functions work
+\item how to code
+\item new functions or packages that could be usefull for you
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to get the code behind a function?}
+Usually, by simply typing its name (without brackets). But that is not always sufficient\dots
+<<size="scriptsize">>==
+mosaic::oddsRatio
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to get the code behind a function?}
+Usually, by simply typing its name (without brackets). But that is not always sufficient\dots
+<<size="scriptsize">>==
+mosaic::orrr
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>==
+residuals
+@
+
+\texttt{residuals()} is a \emph{generic} function which rely on class specific \emph{methods}:
+\vspace{1em}
+
+<<size="scriptsize">>==
+methods(residuals)
+@
+The methods with a \texttt{*} are not exported from their package namespace!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Getting the code for exported R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>==
+residuals.lm
+@
+\vfill
+Note: this requires to know the \verb`class` of the object you work with!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Getting the code for non-exported R methods (S3):
+\vspace{1em}
+<<size="scriptsize">>=
+residuals.nls
+@
+
+<<size="scriptsize">>=
+getAnywhere("residuals.nls") # or getS3method("residuals", "nls")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
+What is the code behind \verb`t.test()`?
+\end{center}
+\end{large}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Some functions -- the interfaces -- call functions that are written in other languages. The source code of these latter functions is not directly visible (spotted as \texttt{.C()}, \texttt{.Fortran()}, \texttt{.Call()}, \texttt{.Primitive()}, \texttt{.Internal()}, \texttt{.External()}).
+\vspace{1em}
+<<size="scriptsize">>=
+dnorm
+@
+\vspace{1em}
+In these cases, the easiest is to use the read-only mirror for R (\url{https://github.com/wch/r-source}) or the relevant package on Github!
+(here, the answer lies in r-source/src/nmath/dnorm.c)
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coding basics}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing simple functions}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing more advanced functions}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Object systems in R}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Debugging}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Optimisation \& Profiling}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing R packages}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Usual programming commands exist in R}
+<<>>=
+for (i in 1:4) {
+  print(x = i)
+  if (i == 2) print(x = "found 2!")
+}
+@
+<<tidy=F, eval=F>>=
+?"for"
+@
+\end{frame}
+
+\begin{frame}[fragile]{You can write your own functions!}
+<<>>=
+OddRatio <- function(a, b) {
+  odd.a <- a/(1 - a)
+  odd.b <- b/(1 - b)
+  return(odd.a/odd.b)
+}
+@
+
+<<>>=
+OddRatio(0.1, 0.01)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Numerical issues common to most programming languages}
+<<size="scriptsize">>=
+print(seq(0, 1, 0.1), digits = 22)
+@
+\vfill
+<<>>=
+x <- 0.7 - 0.4 - 0.3
+print(x, digits = 22)
+x == 0
+@
+\vfill
+NB: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+\end{frame}
+
+\begin{frame}[fragile]{Numerical issues common to most programming languages}
+<<eval=T>>=
+??"equality"
+@
+\begin{scriptsize}
+\begin{verbatim}
+Help files with alias or concept or title matching ‘equality’ using
+fuzzy matching:
+
+
+FactoMineR::prefpls     Scatter plot and additional variables with
+                        quality of representation contour lines
+base::all.equal         Test if Two Objects are (Nearly) Equal
+base::identical         Test Objects for Exact Equality
+datasets::airquality    New York Air Quality Measurements
+\end{verbatim}
+\end{scriptsize}
+<<>>=
+?all.equal
+all.equal(target = 0, current = x)
+@
+\end{frame}
+
+\begin{frame}[fragile]{R is a programming language\dots with usual limits}
+J.M Muller's Serie: $u_0=2$; $u_1=-4$; $u_{n+1} = 111 - \frac{1130}{u_n} + \frac{3000}{u_n*u_{n-1}}$
+<<size="scriptsize">>=
+u <- c(2, -4)
+new.u <- function(u) 111 -1130/u[length(u)] + 3000/(u[length(u)]*u[length(u)-1])
+for(i in 1:40) u <- c(u, new.u(u))
+@
+<<figMuller, fig.width=6, fig.height=6, include=F>>=
+par(las=1)
+plot(u, type="b", ylim=c(-10,110))
+abline(h=6, col=2, lty=2, lwd=2)
+legend("topleft", bty="n", lwd=2, col=2, lty=2, legend=c("Exact limit"))
+@
+\begin{center}
+\includegraphics[height=0.7\textheight]{./figure/figMuller-1.pdf}
+\end{center}
+\end{frame}
+
+
+
+\end{document}
