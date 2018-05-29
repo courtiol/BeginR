@@ -9,4 +9,4 @@ vignettes/**/*.toc
 vignettes/**/*.log
 vignettes/**/*.nav
 vignettes/**/*.vrb
-vignettes/**/figure/*
+vignettes/introduction/figure/*
