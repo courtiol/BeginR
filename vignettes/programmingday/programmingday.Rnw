@@ -33,6 +33,160 @@ library(dplyr)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing simple functions}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+The best way:
+<<>>=
+my_function <- function(input1, input2) {
+  output <- input1 + input2
+  return(output)
+}
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\pause
+\vfill
+If no \verb`return()`, then it returns the last row:
+<<>>=
+my_function <- function(input1, input2) {
+  input1 + input2
+}
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\pause
+\vfill
+Inline shortcut (usefull in \verb`*apply()`):
+<<>>=
+my_function <- function(input1, input2) input1 + input2
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can set defaults for your inputs:
+<<error=TRUE>>=
+my_function <- function(input1, input2 = 10) {
+  output <- input1 + input2
+  return(output)
+}
+
+my_function(input1 = 1)
+my_function(input1 = 1, input2 = 0)
+my_function(input2 = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can pass optional arguments to another function via ``\dots":
+<<>>=
+my_function <- function(input1, ...) {
+  output <- mean(input1, ...)
+  return(output)
+}
+
+x <- c(1, 2, 3, 4, 5, NA)
+my_function(input1 = x)
+my_function(input1 = x, na.rm = TRUE)
+@
+\vfill
+Note: this is particularly usefull when designing plotting functions!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can print things while the function runs:
+<<>>=
+my_function <- function() {
+  print("This function will output 2")
+  return(2)
+}
+
+my_function()
+@
+\vfill
+Note: observe also that it is possible to create functions that do not consider any input!
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can return only a single object:
+<<>>=
+my_function <- function(input1, ...) {
+  output1 <- min(input1, ...)
+  output2 <- max(input1, ...)
+  output <- list(output1 = output1, output2 = output2)
+  return(output)
+}
+
+x <- c(1, 2, 3, 4, 5, NA)
+my_function(input1 = x, na.rm = TRUE)
+@
+\vfill
+So if you need several outputs, you must combine them (as vector, matrix, dataframe, list\dots)!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can return return things ``invisibly":
+<<>>=
+my_function <- function(input1) {
+  output <- min(input1)
+  return(invisible(output))
+}
+
+my_function(input1 = c(1, 2, 3, -4))
+@
+\vfill
+\pause
+<<>>=
+foo <- my_function(input1 = c(1, 2, 3, -4))
+foo
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You don't have to return something:
+<<>>=
+my_function <- function(input1) {
+  the_min <- min(input1)
+  print(paste("The minimum is:", the_min))
+  return(invisible(NULL))
+}
+
+my_function(input1 = c(1, 2, 3, -4))
+@
+\vfill
+\pause
+<<>>=
+foo <- my_function(input1 = c(1, 2, 3, -4))
+foo
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Why programming?}
 \begin{frame}{Table of contents}
 \tableofcontents[currentsection]
@@ -70,13 +224,13 @@ with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group 
 \pause
 Or
 <<>>=
-odds_ratio <- function(group1, group2, data){
-  with(data = data, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
+odds_ratio <- function(group1, group2){
+  with(data = d, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
 }
 
-odds_ratio(group1 = "B", group2 = "A", data = d)
-odds_ratio(group1 = "C", group2 = "A", data = d)
-odds_ratio(group1 = "B", group2 = "C", data = d)
+odds_ratio(group1 = "B", group2 = "A")
+odds_ratio(group1 = "C", group2 = "A")
+odds_ratio(group1 = "B", group2 = "C")
 @
 \end{frame}
 
@@ -118,10 +272,12 @@ Still not convinced? Let's compute all pairwise comparisons:
 <<>>=
 for (group2 in d$group) {
   for (group1 in d$group) {
-    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2, data = d)))
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2)))
   }
 }
 @
+\vfill
+Note: this is bad code, we will come back on this!
 \end{frame}
 
 
@@ -131,6 +287,398 @@ for (group2 in d$group) {
 \begin{Huge}
 \underline{D}on't \underline{R}epeat \underline{Y}ourself
 \end{Huge}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coding basics}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Control flow: if()}
+<<>>=
+i <- 1
+a <- 2
+
+if (i == 1) {
+  a <- 1
+}
+
+a
+@
+\vfill
+\pause
+<<>>=
+i <- 5
+a <- 2
+
+if (i == 1) {
+  a <- 1
+} else {
+  a <- 2
+}
+
+a
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Control flow: for()}
+<<>>=
+for (i in 1:5) {
+  print(i)
+  }
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Control flow: while()}
+<<>>=
+i <- 1
+
+while (i < 5) {
+  print(i)
+  i <- i + 1
+  }
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Random number generators}
+<<>>=
+runif(5)
+runif(5)
+@
+\vfill
+\pause
+You can have reproducible results by setting a seed:
+<<>>=
+set.seed(10132)
+runif(5)
+
+set.seed(10132)
+runif(5)
+@
+\pause
+\vfill
+Note: check \verb`?Distributions` for more distributions.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Errors and Warnings}
+<<error = TRUE>>=
+process_factor <- function(x) {
+  if (!is.factor(x) & !is.character(x)) {
+    stop("Your input for factor is not a factor")
+  }
+  if (!is.factor(x) & is.character(x)) {
+    x <- as.factor(x)
+    warning("Your input has been converted to factor")
+  }
+  return(x)
+}
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = factor(c("A", "B")))
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = c("A", "B"))
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = c(2, 3))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+<<>>=
+i <- 1
+i <- i + 1
+i
+
+e1 <- environment()
+environmentName(e1)
+get("i", envir = e1)
+@
+\vfill
+Note: every object in R belongs to an environment!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <- i + 1
+  e <- environment()
+  return(e)
+  }
+
+e2 <- f(i)
+i
+
+e2
+
+get("i", envir = e1)
+get("i", envir = e2)
+@
+\vfill
+As a rule, anything created inside a function and not exported stays inside the function!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+There are a few exceptions:
+<<>>=
+i <- 1
+
+for (j in 1:10) {
+  i <- i + 1
+}
+
+i
+@
+\vfill
+And yet, \verb`for` is actually a function:
+<<>>=
+i <- 1
+
+`for`(j, 1:10, i <- i + 1)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{R has the same numerical issues as most programming languages}
+<<>>=
+x <- 0.7 - 0.4 - 0.3
+x == 0
+@
+\pause
+<<>>=
+print(x, digits = 22)
+@
+\pause
+\vfill
+<<size="scriptsize">>=
+print(seq(0, 1, 0.1), digits = 22)
+@
+\vfill
+NB: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{R has the same numerical issues as most programming languages}
+<<eval=T>>=
+??"equality"
+@
+\begin{scriptsize}
+\begin{verbatim}
+Help files with alias or concept or title matching ‘equality’ using
+fuzzy matching:
+
+
+FactoMineR::prefpls     Scatter plot and additional variables with
+                        quality of representation contour lines
+base::all.equal         Test if Two Objects are (Nearly) Equal
+base::identical         Test Objects for Exact Equality
+datasets::airquality    New York Air Quality Measurements
+\end{verbatim}
+\end{scriptsize}
+<<>>=
+?all.equal
+all.equal(target = 0, current = x)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{R has the same numerical issues as most programming languages}
+J.M Muller's Serie: $u_0=2$; $u_1=-4$; $u_{n+1} = 111 - \frac{1130}{u_n} + \frac{3000}{u_n*u_{n-1}}$
+<<size="scriptsize">>=
+u <- c(2, -4)
+new.u <- function(u) 111 - 1130/u[length(u)] + 3000/(u[length(u)]*u[length(u) - 1])
+for (i in 1:40) u <- c(u, new.u(u))
+@
+<<figMuller, fig.width=6, fig.height=6, include=F>>=
+plot(u, type = "b", ylim = c(-10,110))
+abline(h = 6, col = 2, lty = 2, lwd = 2)
+legend("topleft", bty = "n", lwd = 2, col = 2, lty = 2, legend = c("Exact limit"))
+@
+\begin{center}
+\includegraphics[height=0.7\textheight]{./figure/figMuller-1.pdf}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A few tips}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some key advices}
+\begin{itemize}
+\item everything you use in the body must pass through the inputs
+\item everything you output must pass through the return
+\item try to write functions that you could reuse in other situations
+\end{itemize}
+\vfill
+Bad:
+<<eval = FALSE>>=
+d <- data.frame(proba = c(0.1, 0.5, 0.4), group = factor(c("A", "B", "C")))
+
+odds_ratio <- function(group1, group2){
+  with(data = d, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
+}
+
+for (group2 in d$group) {
+  for (group1 in d$group) {
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2)))
+  }
+}
+@
+\vfill
+Why is this bad?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A better implementation of functions to compute odd ratios}
+Better because the function does not rely on \verb`d`:
+<<eval = FALSE>>=
+odds_ratio <- function(group1, group2, data){
+  p1 <- data$proba[data$group == group1]
+  p2 <- data$proba[data$group == group2]
+  OR <- (p1/(1 - p1)) / (p2/(1 - p2))
+  return(OR)
+}
+
+for (group2 in d$group) {
+  for (group1 in d$group) {
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2, data = d)))
+  }
+}
+@
+\dots but it stills rely on the name of the variable \verb`proba` and \verb`group`,
+
+and the second part of the code is not a function.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A better implementation of functions to compute odd ratios}
+Better because it is very general and based on functions (example 1):
+<<>>=
+all_pairwise <- function(proba, groups){
+  groups_id <- unique(groups)
+
+  results <- matrix(NA, ncol = length(groups_id), nrow = length(groups_id))
+  colnames(results) <- groups_id
+  rownames(results) <- groups_id
+
+  for(group1 in groups_id) {
+    for(group2 in groups_id) {
+      results[group1, group2] <- odds_ratio(p1 = proba[groups == group1], p2 = proba[groups == group2])
+    }
+  }
+
+  return(results)
+}
+
+odds_ratio <- function(p1, p2){
+  OR <- (p1/(1 - p1)) / (p2/(1 - p2))
+  return(OR)
+}
+
+all_pairwise(proba = d$proba, groups = d$group)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A better implementation of functions to compute odd ratios}
+Better because it is very general and based on functions (example 2):
+<<>>=
+all_pairwise2 <- function(proba, groups){
+  groups_id <- unique(groups)
+  to_do <- expand.grid(groups_id, groups_id)
+
+  OR <- apply(to_do, 1, function(gr) {
+    odds_ratio(p1 = proba[groups == gr[1]], p2 = proba[groups == gr[2]])
+    })
+
+  return(data.frame(group1 = to_do[, 1],
+                    group2 = to_do[, 2],
+                    OR = OR))
+}
+
+odds_ratio <- function(p1, p2){
+  OR <- (p1/(1 - p1)) / (p2/(1 - p2))
+  return(OR)
+}
+
+all_pairwise2(proba = d$proba, groups = d$group)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some key advices}
+\begin{itemize}
+\item everything you use in the body must pass through the inputs
+\item everything you output must pass through the return
+\item try to write functions that you could reuse in other situations
+\item there are many ways to reach the same outcome; experiment a bit to find something you like/understand
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example: comparing the performances of 2 tests}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Challenge}
+
+\begin{center}
+\begin{minipage}{0.8\linewidth}
+The t-test and the Mann-Whitney U tests are two tests aiming at comparing 2 groups.
+
+We want to compare the risk of false positives and true positives of these two tests in the following conditions:
+
+\begin{itemize}
+\item assuming that height of males is gaussian with mean 180 cm and SD 6 cm and that the height of females is gaussian with mean 170 cm and SD 5 cm, how many individuals (sex-ratio = 1) do I need to get a power of 80\% (risk of false negative = 20\%)?
+
+\item assuming that the null hyptohesis is true and that you have sampled 20 males and 20 females, what is the probability of false positives for the threshold alpha = 0.05? (And for any threshold between 0 and 1\%?)
+\end{itemize}
+\end{minipage}
 \end{center}
 \end{frame}
 
@@ -159,7 +707,7 @@ Looking at code writen by others will teach you
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{How to get the code behind a function?}
-Usually, by simply typing its name (without brackets). But that is not always sufficient\dots
+Start by simply typing the function name (without brackets):
 <<size="scriptsize">>==
 mosaic::oddsRatio
 @
@@ -168,7 +716,7 @@ mosaic::oddsRatio
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{How to get the code behind a function?}
-Usually, by simply typing its name (without brackets). But that is not always sufficient\dots
+Then, follows the successive calls:
 <<size="scriptsize">>==
 mosaic::orrr
 @
@@ -176,7 +724,7 @@ mosaic::orrr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-R methods (S3):
+Sometimes, the code is not directly displayed\dots e.g. R methods (S3):
 \vspace{1em}
 <<size="scriptsize">>==
 residuals
@@ -194,19 +742,21 @@ The methods with a \texttt{*} are not exported from their package namespace!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-Getting the code for exported R methods (S3):
+Add the \verb`class` at the end of the function name to get the code for exported R (S3) methods:
 \vspace{1em}
 <<size="scriptsize">>==
 residuals.lm
 @
 \vfill
 Note: this requires to know the \verb`class` of the object you work with!
+
+You can use \verb`class()` on your input to figure this out.
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-Getting the code for non-exported R methods (S3):
+It is also possible to get the code of non-exported R methods (S3):
 \vspace{1em}
 <<size="scriptsize">>=
 residuals.nls
@@ -222,6 +772,16 @@ getAnywhere("residuals.nls") # or getS3method("residuals", "nls")
 \begin{frame}[fragile]{Challenge}
 \begin{large}
 \begin{center}
+Which function actually computes the numbers behind \verb`boxplot()`?
+\end{center}
+\end{large}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
 What is the code behind \verb`t.test()`?
 \end{center}
 \end{large}
@@ -230,42 +790,26 @@ What is the code behind \verb`t.test()`?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-Some functions -- the interfaces -- call functions that are written in other languages. The source code of these latter functions is not directly visible (spotted as \texttt{.C()}, \texttt{.Fortran()}, \texttt{.Call()}, \texttt{.Primitive()}, \texttt{.Internal()}, \texttt{.External()}).
+Some functions -- the interfaces -- call functions that are written in other languages.
+
+The source code of these latter functions is not directly visible (spotted as \texttt{.C()}, \texttt{.Fortran()}, \texttt{.Call()}, \texttt{.Primitive()}, \texttt{.Internal()}, \texttt{.External()}).
 \vspace{1em}
 <<size="scriptsize">>=
 dnorm
 @
-\vspace{1em}
+\vfill
 In these cases, the easiest is to use the read-only mirror for R (\url{https://github.com/wch/r-source}) or the relevant package on Github!
 (here, the answer lies in r-source/src/nmath/dnorm.c)
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Coding basics}
-\begin{frame}{Table of contents}
-\tableofcontents[currentsection]
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Writing simple functions}
-\begin{frame}{Table of contents}
-\tableofcontents[currentsection]
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Writing more advanced functions}
-\begin{frame}{Table of contents}
-\tableofcontents[currentsection]
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Object systems in R}
-\begin{frame}{Table of contents}
-\tableofcontents[currentsection]
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
+What is the code really estimating coefficients behind \verb`lm()`?
+\end{center}
+\end{large}
 \end{frame}
 
 
@@ -273,6 +817,79 @@ In these cases, the easiest is to use the read-only mirror for R (\url{https://g
 \section{Debugging}
 \begin{frame}{Table of contents}
 \tableofcontents[currentsection]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Debugging a faulty function}
+<<>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\pause
+\vfill
+<<eval = FALSE>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  browser()
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\vfill
+Note: this is very usefull but you need to have access to the code!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Debugging a faulty function}
+<<>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\pause
+\vfill
+<<eval = FALSE>>=
+debug(pythagora)
+
+pythagora(x = 2, y = 2)
+
+undebug(pythagora) ## when you are done, or use debugonce() above, or reload the function
+@
+\vfill
+Note: this can work on any function without having to mess with the code!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Debugging a faulty function}
+
+There are plenty more debugging possibilities out there!
+\vfill
+Check:
+
+\begin{itemize}
+\item the nice possibility with R studio: \url{https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio}
+\item \verb`?option` and look at \verb`error`
+\item \verb`?traceback`
+\item \verb`?trace`
+\end{itemize}
+
 \end{frame}
 
 
@@ -290,91 +907,38 @@ In these cases, the easiest is to use the read-only mirror for R (\url{https://g
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing more advanced functions}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[fragile]{Usual programming commands exist in R}
-<<>>=
-for (i in 1:4) {
-  print(x = i)
-  if (i == 2) print(x = "found 2!")
-}
-@
-<<tidy=F, eval=F>>=
-?"for"
-@
+\begin{frame}[fragile]{Working on the language}
 \end{frame}
 
-\begin{frame}[fragile]{You can write your own functions!}
-<<>>=
-OddRatio <- function(a, b) {
-  odd.a <- a/(1 - a)
-  odd.b <- b/(1 - b)
-  return(odd.a/odd.b)
-}
-@
 
-<<>>=
-OddRatio(0.1, 0.01)
-@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Recursions}
 \end{frame}
 
-\begin{frame}[fragile]{Numerical issues common to most programming languages}
-<<size="scriptsize">>=
-print(seq(0, 1, 0.1), digits = 22)
-@
-\vfill
-<<>>=
-x <- 0.7 - 0.4 - 0.3
-print(x, digits = 22)
-x == 0
-@
-\vfill
-NB: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Using C++ code on the fly!}
 \end{frame}
 
-\begin{frame}[fragile]{Numerical issues common to most programming languages}
-<<eval=T>>=
-??"equality"
-@
-\begin{scriptsize}
-\begin{verbatim}
-Help files with alias or concept or title matching ‘equality’ using
-fuzzy matching:
 
-
-FactoMineR::prefpls     Scatter plot and additional variables with
-                        quality of representation contour lines
-base::all.equal         Test if Two Objects are (Nearly) Equal
-base::identical         Test Objects for Exact Equality
-datasets::airquality    New York Air Quality Measurements
-\end{verbatim}
-\end{scriptsize}
-<<>>=
-?all.equal
-all.equal(target = 0, current = x)
-@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Object systems in R}
+\begin{frame}{Table of contents}
+\tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}[fragile]{R is a programming language\dots with usual limits}
-J.M Muller's Serie: $u_0=2$; $u_1=-4$; $u_{n+1} = 111 - \frac{1130}{u_n} + \frac{3000}{u_n*u_{n-1}}$
-<<size="scriptsize">>=
-u <- c(2, -4)
-new.u <- function(u) 111 -1130/u[length(u)] + 3000/(u[length(u)]*u[length(u)-1])
-for(i in 1:40) u <- c(u, new.u(u))
-@
-<<figMuller, fig.width=6, fig.height=6, include=F>>=
-par(las=1)
-plot(u, type="b", ylim=c(-10,110))
-abline(h=6, col=2, lty=2, lwd=2)
-legend("topleft", bty="n", lwd=2, col=2, lty=2, legend=c("Exact limit"))
-@
-\begin{center}
-\includegraphics[height=0.7\textheight]{./figure/figMuller-1.pdf}
-\end{center}
-\end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{There are other object system than S3!}
+\end{frame}
 
 
 \end{document}
