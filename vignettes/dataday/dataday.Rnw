@@ -555,7 +555,7 @@ or use \texttt{inner\_join()}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr left_join}
+\begin{frame}[fragile]{joining data frame with dpylr left\_join}
 \begin{center}
 \texttt{left\_join() or right\_join()} keep all the rows of the data frame on the left (or right)
 \end{center}
@@ -566,22 +566,22 @@ adds NA when no data are present
 \begin{columns}
 \column{0.3\linewidth}
 \begin{center}
-   << left join, echo = T>>=
-  library(dplyr)
-  my_df3 <- left_join(my_df1, my_df2)
-  @
+<< left join, echo = T>>=
+library(dplyr)
+my_df3 <- left_join(my_df1, my_df2)
+@
 \end{center}
 \column{0.3\linewidth}
 \begin{center}
-   << left join out, echo = T>>=
-  my_df3
-    @
+<< left join out, echo = T>>=
+my_df3
+@
 \end{center}
 \end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr full_join}
+\begin{frame}[fragile]{joining data frame with dpylr full\_join}
 \begin{center}
 \texttt{full\_join()} keep all the rows of the two data frame
 \end{center}
