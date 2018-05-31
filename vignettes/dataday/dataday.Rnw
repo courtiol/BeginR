@@ -371,16 +371,32 @@ dataframe.ht$linenumber <- NULL  # remove column
 ncol(dataframe.ht)
 @
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{dplyr}
+\begin{frame}{dplyr}
+\begin{itemize}
+\item \texttt{dplyr} is a usefull package for data manipulation
+\vfill
+\pause
+\item \texttt{dplyr} is a grammar of data manipulation: one verb = one operation
+\vfill
+\pause
+\item operations can be chained with the pipe operator \texttt{\%>\%}
+\vfill
+\pause
+\item the pipe operator \texttt{\%>\%} takes the output from one function as input of another function.
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Data frames}
-They can be edited with dpylr way
+Usefull \texttt{dplyr} verbs
 
 \vspace{1em}
 add column with \texttt{mutate()}
 <<edit df dplyr>>=
-dataframe.ht <- dataframe.ht %>% mutate(linenumber = 1:nrow(dataframe.ht))
+dataframe.ht <- dataframe.ht %>% mutate(ID = 1:nrow(dataframe.ht))
 head(dataframe.ht, n= 3)
 @
 \vspace{1em}
@@ -398,77 +414,103 @@ head(dataframe.ht.sex, n= 3)
 
 select rows with \texttt{filter()}
 <<filter dplyr>>=
-datafrane.ht.female <- dataframe.ht %>% filter(Sex == "girl")
-head(datafrane.ht.female, n= 3)
+dataframe.ht.female <- dataframe.ht %>% filter(Sex == "girl")
+head(dataframe.ht.female, n= 3)
 @
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames cool stuff with dpylr}
-They can be edited with dpylr way
-
-combining \texttt{summarise()} and \texttt{mutate()}
-<<edit df dplyr using summarise() and mutate >>=
-dataframe.ht <- dataframe.ht %>% mutate(linenumber = 1:nrow(dataframe.ht))
-@
-
-
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{playing with data frames}
-\begin{frame}[fragile]{reshaping data frame}
- << reshaping data frame, echo = FALSE>>=
-library(dplyr)
-library(tidyr)
-  my_df1 <- dataframe.ht %>%
-    mutate(age1 = Height -100, age2 = Height -25, age3 = Height -10) %>%
-    rename(age4 = Height)
-
-  my_df2 <- my_df1 %>% gather("Age", "Height", -Sex) %>% arrange(Age)
-
-  @
-
-\begin{columns}
-\column{0.3\linewidth}
-\begin{center}
-you have wide data:
- << reshaping df1, echo = T>>=
-  head(my_df1)
-  dim(my_df1)
-  @
-\end{center}
-
-\column{0.3\linewidth}
-\begin{center}
-you want long data:
- << reshaping df2, echo = T>>=
-  head(my_df2)
-  dim(my_df2)
-  @
-\end{center}
-\end{columns}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{mutate\_if()}
+you want to change all numeric variables into character variables
 \vfill
-\pause
-
 \begin{columns}
+\column{0.4\linewidth}
+you have:
+<<mutate if, echo = F >>=
+x <- dataframe.ht %>%
+  group_by(Sex) %>%
+  mutate(mean_H = round(mean(Height, na.rm = T),2),
+            median_H = round(median(Height, na.rm = T),2),
+            n = n()) %>% ungroup() %>% mutate(Sex = as.character(Sex))
+@
+<<mutate if head, echo = F >>=
+str(as.data.frame(x))
+@
 \column{0.5\linewidth}
-\begin{center}
-you do:
- << reshaping solution, echo = T>>=
- my_df2 <- my_df1 %>% gather("Age", "Height", -Sex) %>% arrange(Age)
-  @
+you want
+<<mutate if out, echo = F >>=
 
-\end{center}
+str(as.data.frame(x %>% mutate_if(is.numeric, ~ as.character(.))))
+@
 \end{columns}
-\begin{center}
-\pause
 \vfill
-\textcolor{purple}{one row = one observation, one column = one variable}
-\end{center}
+you do:
+<<mutate if solution, echo = T>>=
+
+x_numeric <- x %>% mutate_if(is.numeric, ~ as.character(.))
+@
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{group\_by()}
+\begin{itemize}
+\item  \texttt{group\_by()} allow you to perform operation on gouped data.
+\vfill
+\pause
+\item  it is mostly used with \texttt{summarize()} \texttt{->} one value per group
+\vfill
+\pause
+\item  or with \texttt{mutate()} \texttt{->} one value per observation
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{group\_by() with summarize()}
+\begin{center}
+You want the mean height of males and females, the median height and the number in
+each group:
+\end{center}
+\vfill
+you do:
+<<group_by summarize dplyr>>=
+x <- dataframe.ht %>%
+  group_by(Sex) %>%
+  summarize(mean_H = mean(Height, na.rm = T),
+            median_H = median(Height, na.rm = T),
+            n = n())
+@
+\vfill
+you get:
+<<group_by summarize out>>=
+as.data.frame(x)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{group\_by() with mutate()}
+\begin{center}
+You want the mean height of males and females, the median height and the number in
+each group but get the value for each individual
+\end{center}
+\vfill
+you do:
+<<group_by mutate dplyr>>=
+x <- dataframe.ht %>%
+  group_by(Sex) %>%
+  mutate(mean_H = mean(Height, na.rm = T),
+            median_H = median(Height, na.rm = T),
+            n = n())
+@
+\vfill
+you get:
+<<group_by mutate out>>=
+as.data.frame(x)
+@
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame}
@@ -509,7 +551,7 @@ You want to merge the two data frames
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with merge}
+\begin{frame}[fragile]{joining data frame with base R}
 \begin{center}
 You can use \texttt{merge()}
 \end{center}
@@ -532,7 +574,7 @@ You can use \texttt{merge()}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr join}
+\begin{frame}[fragile]{joining data frame with dpylr join()}
 \begin{center}
 or use \texttt{inner\_join()}
 \end{center}
@@ -555,7 +597,7 @@ or use \texttt{inner\_join()}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr left\_join}
+\begin{frame}[fragile]{joining data frame with left\_join()}
 \begin{center}
 \texttt{left\_join() or right\_join()} keep all the rows of the data frame on the left (or right)
 \end{center}
@@ -581,7 +623,7 @@ my_df3
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr full\_join}
+\begin{frame}[fragile]{joining data frame with full\_join()}
 \begin{center}
 \texttt{full\_join()} keep all the rows of the two data frame
 \end{center}
@@ -606,12 +648,134 @@ adds NA when no data are present
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{extanding data frame}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{tidyr}
+\begin{frame}[fragile]{reshaping data frame}
+\begin{itemize}
+\item one row = one observation, one column = one variable
+\pause
+\vfill
+\item \texttt{gather()} turns wide data into long
+\pause
+\vfill
+\item \texttt{spread()} turns long data into wide
+\end{itemize}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{reshaping data frame}
+ << reshaping data frame, echo = FALSE>>=
+library(dplyr)
+library(tidyr)
+  my_df1 <- dataframe.ht %>%
+    mutate(age1 = Height -100, age2 = Height -25, age3 = Height -10) %>%
+    rename(age4 = Height) %>% select(ID, Sex, age1, age2, age3, age4) %>%
+    filter(ID == 1)
+
+  my_df2 <- my_df1 %>% gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
+
+  @
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+you have wide data:
+ << reshaping df1, echo = T>>=
+  head(my_df1)
+  dim(my_df1)
+  @
+\end{center}
+
+\column{0.3\linewidth}
+\begin{center}
+you want long data:
+ << reshaping df2, echo = T>>=
+  head(my_df2)
+  dim(my_df2)
+  @
+\end{center}
+\end{columns}
+
+\vfill
+\pause
+\begin{columns}
+\column{0.5\linewidth}
+\begin{center}
+you do:
+ << reshaping solution, echo = T>>=
+ my_df2 <- my_df1 %>% gather("Age", "Height", -Sex, -ID) %>% arrange(ID, Age)
+  @
+\end{center}
+\end{columns}
+\pause
+\begin{columns}
+\column{0.5\linewidth}
+\begin{center}
+or:
+ << reshaping solution bis, echo = T>>=
+ my_df2 <- my_df1 %>% gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
+  @
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{reshaping data frame}
+The reverse is done with \texttt{spread()}
+\vfill
+\begin{columns}
+\column{0.3\linewidth}
+\begin{center}
+you have wide data:
+ << reshaping df1 spread, echo = T>>=
+  head(my_df2)
+  dim(my_df2)
+  @
+\end{center}
+
+\column{0.3\linewidth}
+\begin{center}
+you want long data:
+ << reshaping df2 spread, echo = T>>=
+  head(my_df1)
+  dim(my_df1)
+  @
+\end{center}
+\end{columns}
+
+\vfill
+\pause
+\begin{columns}
+\column{0.5\linewidth}
+\begin{center}
+you do:
+ << reshaping solution spread, echo = T>>=
+ my_df2 %>% spread(-Sex, -ID)
+  @
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{some other usefull functions}
+
+\texttt{unite()} merges 2 columns of a data frame
+ << unite, echo = T>>=
+my_df3 <- my_df2 %>% unite(New_col, ID, Sex)
+head(my_df3)
+  @
+\pause
+\vfill
+\texttt{separate()} separate 2 columns of a data frame
+ << separate, echo = T>>=
+my_df3 %>% separate(New_col, c("ID", "Sex"))
+  @
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{cheating data frame}
 \begin{center}
 plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/cheatsheets/}
