@@ -158,7 +158,8 @@ plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = iris$Species)
 @
 <<tidy=F, eval=F>>=
 palette(c("red", "blue", "green"))
-plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = iris$Species)
+plot(Petal.Length ~ Petal.Width, data = iris,
+     pch = 16, col = iris$Species)
 @
 \vspace{-1.25cm}
 \begin{center}
@@ -209,12 +210,12 @@ Add a legend to make colours understandable.
 par(mgp = c(2.5, 1, 0))
 palette(c("red", "blue", "green"))
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species)
-legend(x = 0.05, y = 7, c("setosa", "versicolor", "virginica"), pch = 21, bg = c("red", "blue", "green"), bty = "n")
+legend(x = 0.05, y = 7, c("setosa", "versicolor", "virginica"), pch = 21, pt.bg = c("red", "blue", "green"), bty = "n")
 @
 <<tidy=F, eval=F>>=
 palette(c("red", "blue", "green"))
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species)
-legend(x = 0.05, y = 7, c("setosa", "versicolor", "virginica"), pch = 21, bg = c("red", "blue", "green"), bty = "n")
+legend(x = 0.05, y = 7, c("setosa", "versicolor", "virginica"), pch = 21, pt.bg = c("red", "blue", "green"), bty = "n")
 @
 \vspace{-1.25cm}
 \begin{center}
@@ -286,6 +287,33 @@ text(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, labels = "Max"
 \end{center}
 \end{frame}
 
+\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+Including error around lines requires you to build a polygon
+\vspace{0cm}
+<<scatter_base_8, fig.width=4, fig.height=4,include=F>>=
+par(mgp = c(2.5, 1, 0))
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = "grey")
+polygon(x = c(rev(newdat$Petal.Width), newdat$Petal.Width),
+        y = c(rev(pred[, 3]), pred[, 2]), col = "grey")
+abline(a = coef(test_mod)[1], lty = 2, b = coef(test_mod)[2], lwd = 2)
+@
+<<tidy=F, eval=F>>=
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = "grey")
+polygon(x = c(rev(newdat$Petal.Width), newdat$Petal.Width), y = c(rev(pred[, 3]), pred[, 2]), col = "grey")
+abline(a = coef(test_mod)[1], lty = 2, b = coef(test_mod)[2], lwd = 2)
+@
+\vspace{-1.25cm}
+\begin{center}
+\includegraphics[width=0.55\linewidth]{./figure/scatter_base_8-1.pdf}
+\end{center}
+\end{frame}
+
 %%%%%%%%%%%%%
 %%%%% BOXPLOT
 %%%%%%%%%%%%%
@@ -301,7 +329,7 @@ boxplot(Petal.Length ~ Species, data = iris)
 <<tidy=F, eval=F>>=
 boxplot(Petal.Length ~ Species, data = iris)
 @
-\vspace{-1.25cm}
+\vspace{-1.0cm}
 \begin{center}
 \includegraphics[width=0.55\linewidth]{./figure/boxplot_base_1-1.pdf}
 \end{center}
@@ -316,7 +344,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 1)
 <<tidy=F, eval=F>>=
 boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 1)
 @
-\vspace{-1.25cm}
+\vspace{-1.0cm}
 \begin{center}
 \includegraphics[width=0.55\linewidth]{./figure/boxplot_base_2-1.pdf}
 \end{center}
@@ -348,10 +376,10 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 1,
 \vspace{0.5cm}
 <<hist_base_1, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
-hist(iris$Petal.Length, data = iris, main = "")
+hist(iris$Petal.Length, main = "")
 @
 <<tidy=F, eval=F>>=
-hist(iris$Petal.Length, data = iris, main = "")
+hist(iris$Petal.Length, main = "")
 @
 \vspace{-1.25cm}
 \begin{center}
@@ -363,10 +391,10 @@ hist(iris$Petal.Length, data = iris, main = "")
 \vspace{0.5cm}
 <<hist_base_2, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
-hist(iris$Petal.Length, data = iris, main = "", breaks = 5, col = "grey")
+hist(iris$Petal.Length, main = "", breaks = 5, col = "grey")
 @
 <<tidy=F, eval=F>>=
-hist(iris$Petal.Length, data = iris, main = "", breaks = 5, col = "grey")
+hist(iris$Petal.Length, main = "", breaks = 5, col = "grey")
 @
 \vspace{-1.25cm}
 \begin{center}
@@ -375,15 +403,15 @@ hist(iris$Petal.Length, data = iris, main = "", breaks = 5, col = "grey")
 \end{frame}
 
 \begin{frame}[containsverbatim]{Baseplot: Histogram}
-\vspace{0cm}
+\vspace{0.5cm}
 <<hist_base_3, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
 hist_breaks <- seq(min(iris$Petal.Length), max(iris$Petal.Length), length.out = 10)
-hist(iris$Petal.Length, data = iris, main = "", breaks = hist_breaks, col = "grey")
+hist(iris$Petal.Length, main = "", breaks = hist_breaks, col = "grey")
 @
 <<tidy=F, eval=F>>=
 hist_breaks <- seq(min(iris$Petal.Length), max(iris$Petal.Length), length.out = 10)
-hist(iris$Petal.Length, data = iris, main = "", breaks = hist_breaks, col = "grey")
+hist(iris$Petal.Length, main = "", breaks = hist_breaks, col = "grey")
 @
 \vspace{-1.25cm}
 \begin{center}
@@ -535,14 +563,43 @@ par(mfrow = c(1, 1))
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.55\linewidth]{./figure/aes_2-1.pdf}
+\includegraphics[width=0.7\linewidth]{./figure/aes_2-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Facetting}
+This can be used to created 'facet' plots.
+\vspace{0cm}
+<<aes_3, fig.width=12, fig.height=4,include=F>>=
+par(mgp = c(2.5, 1, 0))
+par(mfrow = c(1, 3))
+split_data <- split(iris, iris$Species)
+plot(Petal.Length ~ Petal.Width, data = split_data$setosa, main = "Setosa", pch = 21, bg = "red", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$virginica, main = "Virginica", pch = 21, bg = "blue", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolor", pch = 21, bg = "green", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+par(mfrow = c(1, 1))
+@
+<<tidy=F, eval=F>>=
+par(mgp = c(2.5, 1, 0))
+par(mfrow = c(1, 3))
+split_data <- split(iris, iris$Species)
+plot(Petal.Length ~ Petal.Width, data = split_data$setosa, main = "Setosa", pch = 21, bg = "red", col = "black",
+     xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$virginica, main = "Virginica", pch = 21, bg = "blue", col = "black",
+     xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolor", pch = 21, bg = "green", col = "black",
+     xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.7\linewidth]{./figure/aes_3-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Text family}
 Global parameters can also be used to change the font family.
 \vspace{0cm}
-<<aes_3, fig.width=9, fig.height=5,include=F>>=
+<<aes_4, fig.width=9, fig.height=5,include=F>>=
 par(mgp = c(2.5, 1, 0))
 par(mfrow = c(1, 2), family = "serif")
 plot(Petal.Length ~ Petal.Width, data = iris,
@@ -564,13 +621,13 @@ par(mfrow = c(1, 1), family = "sans")
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.55\linewidth]{./figure/aes_3-1.pdf}
+\includegraphics[width=0.7\linewidth]{./figure/aes_4-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Plot margins}
 You can change individual plot margins (\textcolor{blue}{blue}) and outer margins (\textcolor{green}{green}).
-<<aes_4, fig.width=9, fig.height=5,include=F>>=
+<<aes_5, fig.width=9, fig.height=5,include=F>>=
 par(mfrow = c(1, 2), mar = c(4, 4, 1, 1),
     oma = c(1.5, 2, 1, 1))
 plot(Petal.Length ~ Petal.Width, data = iris,
@@ -590,7 +647,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", cex.lab = 0.75, cex.a
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.7\linewidth]{./figure/aes_4-1.pdf}
+\includegraphics[width=0.7\linewidth]{./figure/aes_5-1.pdf}
 \end{center}
 \end{frame}
 
@@ -602,7 +659,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", cex.lab = 0.75, cex.a
 @
 \vspace{0.5cm}
 <<tidy=F, eval=F>>=
-pdf("ggplot.pdf", width = 15, height = 5)
+pdf("base_plot.pdf", width = 15, height = 5)
 plot(Petal.Length ~ Petal.Width, data = iris)
 dev.off()
 @
@@ -621,10 +678,10 @@ Unlike baseplot, ggplot works around a single function.
 We use different functions to add layers onto a ggplot.
 \vspace{0.5cm}
 <<scatter_gg_2, fig.width=3, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length))
 @
 <<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length))
 @
 \vspace{0cm}
 \begin{center}
@@ -642,11 +699,11 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
 We build onto our initial ggplot argument.
 \vspace{0.5cm}
 <<scatter_gg_3, fig.width=3, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point()
 @
 <<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point()
 @
 \vspace{0cm}
@@ -660,11 +717,11 @@ You can change point shapes (shape) and colour (colour).
 The numbers used here are \textbf{the same} as the ones we used above.
 \vspace{0.5cm}
 <<scatter_gg_4, fig.width=4, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(colour = Species), shape = 16, size = 3)
 @
 <<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(colour = Species), shape = 16, size = 3)
 @
 \vspace{0cm}
@@ -673,50 +730,17 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-
-\begin{frame}[containsverbatim]{Beware}
-Again, there is a difference between outline colour (colour) and backgroun colour (fill).
-\begin{columns}
-\column[t]{0.48\linewidth}
-<<scatter_base_5a, fig.width=4, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), fill = "black", shape = 21, size = 3)
-@
-<<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), fill = "black", shape = 21, size = 3)
-@
-\vspace{0cm}
-\begin{center}
-\includegraphics[width = 1\linewidth]{./figure/scatter_base_5a-1.pdf}
-\end{center}
-\column[t]{0.48\linewidth}
-<<scatter_base_5b, fig.width=4, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), colour = "black", shape = 21, size = 3)
-@
-<<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), colour = "black", shape = 21, size = 3)
-@
-\vspace{0cm}
-\begin{center}
-\includegraphics[width = 1\linewidth]{./figure/scatter_base_5b-1.pdf}
-\end{center}
-\end{columns}
-\end{frame}
-
 \begin{frame}[containsverbatim]{ggplot: Scatter plots}
-In ggplot the legend is included by default. You will need to manuall remove it.
+In ggplot the legend is included by default. You will need to manually remove it.
 \vspace{0cm}
 <<scatter_gg_5, fig.width=3, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), shape = 21, size = 3)+
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)+
   theme(legend.position = "none")
 @
 <<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), shape = 21, size = 3)+
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)+
   theme(legend.position = "none")
 @
 \vspace{0cm}
@@ -725,11 +749,82 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
+\begin{frame}[containsverbatim]{The aesthetic argument}
+The aesthetic argument in ggplot (aes) is a powerful tool for changing plot aesthetics.
+If you specify an aesthetic argument inside aes() it will give each data point a different aesthetic based on its value.
+If you specify the same aesthetic argument outside aes() it will give all data points the same aesthetic.
+\vspace{0cm}
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<scatter_gg_6a, fig.width=4, fig.height=3,include=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)
+@
+<<tidy=F, eval=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 1\linewidth]{./figure/scatter_gg_6a-1.pdf}
+\end{center}
+\column[t]{0.48\linewidth}
+<<scatter_gg_6b, fig.width=4, fig.height=3,include=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(colour = "blue", shape = 16, size = 3)
+@
+<<tidy=F, eval=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(colour = "blue", shape = 16, size = 3)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 1\linewidth]{./figure/scatter_gg_6b-1.pdf}
+\end{center}
+\end{columns}
+\pause
+Here, we have used aes() to apply colours. However, we will use it later to make other changes.
+\end{frame}
+
+\begin{frame}[containsverbatim]{Beware}
+Again, there is a difference between outline colour (colour) and backgroun colour (fill).
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<scatter_gg_7a, fig.width=4, fig.height=3,include=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), fill = "black", shape = 21, size = 3)
+@
+<<tidy=F, eval=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), fill = "black",
+             shape = 21, size = 3)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 1\linewidth]{./figure/scatter_gg_7a-1.pdf}
+\end{center}
+\column[t]{0.48\linewidth}
+<<scatter_gg_7b, fig.width=4, fig.height=3,include=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), colour = "black", shape = 21, size = 3)
+@
+<<tidy=F, eval=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), colour = "black",
+             shape = 21, size = 3)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 1\linewidth]{./figure/scatter_gg_7b-1.pdf}
+\end{center}
+\end{columns}
+\end{frame}
+
 \begin{frame}[containsverbatim]{ggplot: Scatter plots}
 You can add lines to the plot.
 \vspace{0cm}
-<<scatter_gg_6, fig.width=3, fig.height=3,include=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+<<scatter_gg_8, fig.width=3, fig.height=3,include=F>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(fill = Species), shape = 21, size = 3)+
   theme(legend.position = "none")+
   geom_hline(yintercept = 4, lty = 3)+
@@ -737,7 +832,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_abline(intercept = 1.084, slope = 2.23, lty = 1)
 @
 <<tidy=F, eval=F>>=
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(fill = Species), shape = 21, size = 3)+
   theme(legend.position = "none")+
   geom_hline(yintercept = 4, lty = 3)+
@@ -746,15 +841,15 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.4\linewidth]{./figure/scatter_gg_6-1.pdf}
+\includegraphics[width=0.4\linewidth]{./figure/scatter_gg_8-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Baseplot: Scatter plots}
 You can add text and arrows.
-<<scatter_gg_7, fig.width=3, fig.height=3,include=F>>=
+<<scatter_gg_9, fig.width=3, fig.height=3,include=F>>=
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(fill = Species), shape = 21, size = 3)+
   theme(legend.position = "none")+
   geom_segment(aes(x = max.value$Petal.Width - 0.75,
@@ -765,7 +860,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 @
 <<tidy=F, eval=F>>=
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
-ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(fill = Species), shape = 21, size = 3)+
   theme(legend.position = "none")+
   geom_segment(aes(x = max.value$Petal.Width - 0.75, xend = max.value$Petal.Width,
@@ -774,8 +869,39 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.4\linewidth]{./figure/scatter_gg_7-1.pdf}
+\includegraphics[width=0.4\linewidth]{./figure/scatter_gg_9-1.pdf}
 \end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+In ggplot, confidence intervals can be added with specialised function geom_ribbon.
+\vspace{0cm}
+<<scatter_gg_10, fig.width=3, fig.height=3,include=F>>=
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+ggplot() +
+  geom_point(data = iris, aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
+  geom_ribbon(data = NULL, aes(x = newdat$Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "grey", alpha = 0.5) +
+  geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2) +
+  theme(legend.position = "none")
+@
+<<tidy=F, eval=F>>=
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+ggplot() +
+  geom_point(data = iris, aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
+  geom_ribbon(data = NULL, aes(x = newdat$Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "grey", alpha = 0.5) +
+  geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2) +
+  theme(legend.position = "none")
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/scatter_gg_10-1.pdf}
+\end{center}
+\pause
+\textbf{Note:} Because we are building the plot with two different datasets (i.e. newdat and iris) we specify the data separately in each line of the ggplot code.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%
@@ -805,11 +931,11 @@ ggplot(iris, aes(x = Species, y = Petal.Length))+
 \vspace{0.5cm}
 <<boxplot_gg_2, fig.width=3, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Species, y = Petal.Length))+
-  geom_boxplot(fill = "grey", size = 2, lty = 1)
+  geom_boxplot(fill = "grey", size = 1, lty = 1)
 @
 <<tidy=F, eval=F>>=
 ggplot(iris, aes(x = Species, y = Petal.Length))+
-  geom_boxplot(fill = "grey", size = 2, lty = 1)
+  geom_boxplot(fill = "grey", size = 1, lty = 1)
 @
 \vspace{0cm}
 \begin{center}
@@ -897,7 +1023,7 @@ spp_means <- data.frame(Species = c("setosa", "versicolor", "virginica"),
 })))
 ggplot(spp_means, aes(x = Species, y = mean))+
   geom_col()+
-  geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), size = 1, width = 0.5)
+  geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = 0.5)
 @
 <<tidy=F, eval=F>>=
 ggplot(spp_means, aes(x = Species, y = mean))+
@@ -936,24 +1062,17 @@ ggplot(spp_means, aes(x = Species, y = mean))+
 In ggplot, you can change aesthetics in individual segments of the code \textit{or} you can change information for the whole plot using theme.
 \end{frame}
 
-\begin{frame}[containsverbatim]{Change text}
-You can size and colour of axis text easily. Note that text size uses different measurement units.
+\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+We'll start by looking back at the aesthetic (aes) argument.
+We can use it to change multiple different aesthetics of a plot.
 \vspace{0cm}
-<<aes_gg_1, fig.width=3, fig.height=3,include=F>>=
+<<aes_gg_1, fig.width=4, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
-  geom_point()+
-  xlab("Petal Width (cm)")+
-  ylab("Petal Length (cm")+
-  theme(axis.text = element_text(size = 12, colour = "red"),
-        axis.title = element_text(size = 12))
+  geom_point(aes(fill = Species, size = Sepal.Length), shape = 21)
 @
 <<tidy=F, eval=F>>=
 ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
-  geom_point()+
-  xlab("Petal Width (cm)")+
-  ylab("Petal Length (cm")+
-  theme(axis.text = element_text(size = 12, colour = "red"),
-        axis.title = element_text(size = 12))
+  geom_point(aes(fill = Species, size = Sepal.Length), shape = 21)
 @
 \vspace{0cm}
 \begin{center}
@@ -961,11 +1080,106 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
+\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+\vspace{0cm}
+<<aes_gg_2, fig.width=4, fig.height=3,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Species, alpha = Sepal.Length), shape = 21, size = 5)
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Species, alpha = Sepal.Length), shape = 21, size = 5)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/aes_gg_2-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+Applying aesthetics to continuous variables will be different to categorical variables.
+\vspace{0cm}
+<<aes_gg_3, fig.width=4, fig.height=3,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/aes_gg_3-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+We can adjust the way the aesthetics are applied.
+\vspace{0cm}
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<aes_gg_4a, fig.width=4, fig.height=3,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)+
+  scale_fill_continuous(low = "white", high = "black")
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)+
+  scale_fill_continuous(low = "white", high = "black")
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 0.7\linewidth]{./figure/aes_gg_4a-1.pdf}
+\end{center}
+\column[t]{0.48\linewidth}
+<<aes_gg_4b, fig.width=4, fig.height=3,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(size = Sepal.Length), shape = 21, fill = "grey")+
+  scale_size_continuous(range = c(3, 10))
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(size = Sepal.Length), shape = 21, fill = "grey")+
+  scale_size_continuous(range = c(3, 10))
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width = 0.7\linewidth]{./figure/aes_gg_4b-1.pdf}
+\end{center}
+\end{columns}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Change text}
+You can change size and colour of axis text easily. Note that text size uses different measurement units.
+\vspace{0cm}
+<<aes_gg_5, fig.width=3, fig.height=3,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point()+
+  xlab("Petal Width (cm)")+
+  ylab("Petal Length (cm")+
+  theme(axis.text = element_text(size = 12, colour = "red"),
+        axis.title = element_text(size = 12))
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point()+
+  xlab("Petal Width (cm)")+
+  ylab("Petal Length (cm")+
+  theme(axis.text = element_text(size = 12, colour = "red"),
+        axis.title = element_text(size = 12))
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.4\linewidth]{./figure/aes_gg_5-1.pdf}
+\end{center}
+\end{frame}
+
 \begin{frame}[containsverbatim]{Combining plots}
 Combining plots it much less straightforward in ggplot.
-You need to use an additional package. Here we will use gridExtra.
+You need to use an additional package.
 \vspace{0cm}
-<<aes_gg_2, fig.width=6, fig.height=4,include=F>>=
+<<aes_gg_6, fig.width=6, fig.height=4,include=F>>=
 scatter <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
   geom_point()+
   xlab("Petal Width (cm)")+
@@ -992,14 +1206,39 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.4\linewidth]{./figure/aes_gg_2-1.pdf}
+\includegraphics[width=0.55\linewidth]{./figure/aes_gg_6-1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Faceting}
+Although combining multiple plots is cumbersome, there is an inbuilt option to create facets.
+\vspace{0cm}
+<<aes_gg_7, fig.width=7, fig.height=4,include=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Species), shape = 21, colour = "black", size = 3)+
+  xlab("Petal Width (cm)")+
+  ylab("Petal Length (cm)")+
+  facet_wrap(~Species) +
+  theme(axis.text = element_text(size = 12, colour = "red"), axis.title = element_text(size = 12))
+@
+<<tidy=F, eval=F>>=
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point(aes(fill = Species), shape = 21, colour = "black", size = 3)+
+  xlab("Petal Width (cm)")+
+  ylab("Petal Length (cm)")+
+  facet_wrap(~Species) +
+  theme(axis.text = element_text(size = 12, colour = "red"), axis.title = element_text(size = 12))
+@
+\vspace{0cm}
+\begin{center}
+\includegraphics[width=0.6\linewidth]{./figure/aes_gg_7-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Text family}
 Unlike baseplot, in ggplot you can change font family of individual elements in theme.
 \vspace{0cm}
-<<aes_gg_3, fig.width=6, fig.height=4,include=F>>=
+<<aes_gg_8, fig.width=7, fig.height=4,include=F>>=
 scatter <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
   geom_point()+
   xlab("Petal Width (cm)")+
@@ -1027,21 +1266,21 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.4\linewidth]{./figure/aes_gg_3-1.pdf}
+\includegraphics[width=0.55\linewidth]{./figure/aes_gg_8-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Plot margins}
 Plot margins are also controlled in theme of each plot individually.
 \vspace{0cm}
-<<aes_gg_4, fig.width=6, fig.height=4,include=F>>=
+<<aes_gg_9, fig.width=7, fig.height=4,include=F>>=
 scatter <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
   geom_point()+
   xlab("Petal Width (cm)")+
   ylab("Petal Length (cm")+
   theme(axis.text = element_text(size = 12, colour = "red"),
         axis.title = element_text(size = 12),
-        plot.margin = unit(c(4, 4, 1, 1), "mm"))
+        plot.margin = unit(c(30, 4, 1, 1), "mm"))
 
 box     <- ggplot(iris, aes(x = Species, y = Petal.Length))+
   geom_boxplot()+
@@ -1064,14 +1303,14 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.4\linewidth]{./figure/aes_gg_4-1.pdf}
+\includegraphics[width=0.55\linewidth]{./figure/aes_gg_9-1.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}[containsverbatim]{Preset themes}
 ggplot also has a number of preset themes that you can use.
 \vspace{0cm}
-<<aes_gg_5, fig.width=9, fig.height=4,include=F>>=
+<<aes_gg_10, fig.width=9, fig.height=4,include=F>>=
 grey <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
   geom_point()+
   theme_grey()
@@ -1100,7 +1339,7 @@ gridExtra::grid.arrange(grey, bw, classic, nrow = 1)
 @
 \vspace{0cm}
 \begin{center}
-\includegraphics[width=0.6\linewidth]{./figure/aes_gg_5-1.pdf}
+\includegraphics[width=0.6\linewidth]{./figure/aes_gg_10-1.pdf}
 \end{center}
 \end{frame}
 
@@ -1117,6 +1356,41 @@ classic <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
   theme_classic()
 ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
 @
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% COMPARE THE TWO %
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Which one to use?}
+
+\begin{frame}{Which plotting tool should you use?}
+\begin{columns}
+\column[t]{0.4\linewidth}
+\begin{block}{Baseplot:}
+\begin{itemize}
+  \item No new packages required
+  \item Easy to combine many plots
+  \item Looks good out of the box (but harder to customise)
+\end{itemize}
+\end{block}
+\pause
+\column[t]{0.4\linewidth}
+\begin{block}{ggplot:}
+\begin{itemize}
+  \item Requires multiple packages for best results
+  \item More difficult to combine many plots
+  \item Easy to customise (but looks poor out of the box)
+  \item Faster. Better for bigger datasets
+\end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Which plotting tool should you use?}
+\textbf{It is useful to know both!!}
 \end{frame}
 
 %\end{comment}
