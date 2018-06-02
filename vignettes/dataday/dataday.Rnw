@@ -9,7 +9,7 @@
 \usetheme[secheader]{Madrid}%
 
 \title{Using data in R}
-\author[Alexandre Courtiol]{Alexandre Courtiol}
+\author[Alexandre Courtiol \& Colin Vullioud]{Alexandre Courtiol \& Colin Vullioud}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \date[June 2018]{\small June 2018}%
 
