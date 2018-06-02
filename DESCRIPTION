@@ -1,9 +1,9 @@
 Package: BeginR
 Title: Getting Started With R
 Version: 0.0.0.9000
-Authors@R: person("Alexandre", "Courtiol", email = "alexandre.courtiol@gmail.com",
-  role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Author: Alexandre Courtiol [aut, cre], Liam Bailey [aut] and Colin Vullioud [aut]
+Maintainer: Alexandre Courtiol <alexandre.courtiol@gmail.com>
+Description: This package contains an introductory course about R.
 Depends: R (>= 3.5.0)
 Imports:
   dplyr,
