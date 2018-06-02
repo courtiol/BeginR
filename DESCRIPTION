@@ -6,7 +6,13 @@ Authors@R: person("Alexandre", "Courtiol", email = "alexandre.courtiol@gmail.com
 Description: What the package does (one paragraph).
 Depends: R (>= 3.5.0)
 Imports:
-  mosaic
+  dplyr,
+  ggplot2,
+  mosaic,
+  profvis,
+  pryr,
+  R6,
+  spaMM
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
