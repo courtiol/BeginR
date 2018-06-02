@@ -23,7 +23,7 @@
 \begin{document}
 \setlength{\topsep}{1pt}%space between input and output
 <<knitr options, echo = FALSE, message = FALSE>>=
-  options(width = 60)
+options(width = 60)
 library(knitr)
 opts_chunk$set("size" = "scriptsize")
 @
