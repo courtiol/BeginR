@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Introduction}
+%\VignetteIndexEntry{Plotting day}
 %\VignetteEngine{R.rsp::tex}
 
 \documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
@@ -15,17 +15,22 @@
 \def\r{{\bf R}}
 \def\s{{\bf S}}
 
-\title{Plotting in \R}
-\author[Liam D. Bailey]{Liam D. Bailey}
+\title{Plotting in \r}
+\author[Alexandre Courtiol \& Liam D. Bailey]{Alexandre Courtiol \& Liam D. Bailey}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \date[June 2018]{\small June 2018}%
 
 \begin{document}
 \setlength{\topsep}{1pt}%space between input and output
 <<knitr options, echo = FALSE, message = FALSE>>=
-  options(width = 60)
+options(width = 60)
+par(mar = c(3,1,0,0))
 library(knitr)
+library(ggplot2)
 opts_chunk$set("size" = "scriptsize")
+knit_hooks$set(moveup = function(before, options, envir) {
+  if (before) par(mar = c(3,1,0,0))
+})
 @
 
 \AtBeginSection[]{
@@ -44,63 +49,52 @@ opts_chunk$set("size" = "scriptsize")
      \end{frame}
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \maketitle
 
-
-\begin{frame}{Why plot in \R?}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Why plot in \r?}
 \begin{itemize}
-\item Powerful (Large range of plot types)
-\item Customizable (Make your own style)
-\item Practical (Integrate your plots and your code together)
+\item Powerful (large range of plot types)
+\item Fully customizable (make your own style)
+\item Practical (integrate your plots and your code together)
 \end{itemize}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% INTRO %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Two ways to plot in \r}
-
-\begin{frame}{Two ways to plot in \r}
-\justifying
-In \R \ there are two (main) ways to make plots:
+\begin{frame}[fragile]{Graphics systems in \r}
+They are three main graphics systems in \r:
 \begin{itemize}
-\item \textbf{base plotting}: The standard way of plotting.
-\item \textbf{tidyverse plotting}: The most common alternative, using package \textit{ggplot2}.
+\item base (\verb`graphics`)
+\item \verb`lattice` (based on \verb`grid`)
+\item \verb`ggplot2` (based on \verb`grid`)
 \end{itemize}
+\vfill
+Note 1: some other systems are sometimes usefull too (e.g. \verb`rgl`, \verb`plotly`)
+
+Note 2: we will focus on base and \verb`ggplot2` but \verb`lattice` is excellent too!
+
+Note 3: \verb`ggplot2` is part of the tidyverse universe.
 \end{frame}
 
-\begin{frame}[containsverbatim]{An example}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{An example (using default settings)}
 \begin{columns}
 \column[t]{0.4\linewidth}
-<<baseplot_eg, fig.width=7, fig.height=7,include=F>>=
+<<baseplot_eg, fig.width=7, fig.height=7>>=
 plot(Petal.Length ~ Petal.Width, data = iris)
 @
-<<tidy=F, eval=F>>=
-plot(Petal.Length ~ Petal.Width, data = iris)
-@
-\vspace{0cm}
-\begin{center}
-\includegraphics[width=\linewidth]{./figure/baseplot_eg-1.pdf}
-\end{center}
 \column[t]{0.4\linewidth}
-<<ggplot_eg, fig.width=3, fig.height=3,include=F>>=
+<<ggplot_eg, fig.width=3, fig.height=3>>=
 library(ggplot2)
-ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point()
 @
-<<tidy=F, eval=F>>=
-ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
-  geom_point()
-@
-\vspace{0cm}
-\begin{center}
-\includegraphics[width=\linewidth]{./figure/ggplot_eg-1.pdf}
-\end{center}
 \end{columns}
 \end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -116,23 +110,15 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 
 \subsection{Scatter plot}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 In baseplot, you use slightly different functions for different plots.
-\vspace{0cm}
-<<scatter_base_1, fig.width=4, fig.height=4,include=F>>=
-par(mgp = c(2.5, 1, 0))
+<<scatter_base_1, fig.width=4, fig.height=4, out.width="7cm", out.height="7cm", fig.align='center'>>=
 plot(Petal.Length ~ Petal.Width, data = iris)
 @
-<<tidy=F, eval=F>>=
-plot(Petal.Length ~ Petal.Width, data = iris)
-@
-\vspace{-1.25cm}
-\begin{center}
-\includegraphics[width=0.55\linewidth]{./figure/scatter_base_1-1.pdf}
-\end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 You can choose what type of scatter plot to display with argument type.
 \vspace{0cm}
 <<scatter_base_2, fig.width=4, fig.height=4,include=F>>=
@@ -148,7 +134,7 @@ plot(Petal.Length ~ Petal.Width, data = iris)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 You can change point shapes (pch) and colour (col).
 \vspace{0cm}
 <<scatter_base_3, fig.width=4, fig.height=4,include=F>>=
@@ -167,7 +153,7 @@ plot(Petal.Length ~ Petal.Width, data = iris,
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Beware}
+\begin{frame}[fragile]{Beware}
 Be aware that for many elements they have both an outline colour (col) and background colour (bg).
 \begin{columns}
 \column[t]{0.48\linewidth}
@@ -203,7 +189,7 @@ plot(Petal.Length ~ Petal.Width, data = iris, cex = 2,
 \end{columns}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 Add a legend to make colours understandable.
 \vspace{0cm}
 <<scatter_base_5, fig.width=4, fig.height=4,include=F>>=
@@ -223,7 +209,7 @@ legend(x = 0.05, y = 7, c("setosa", "versicolor", "virginica"), pch = 21, pt.bg 
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 You can add lines to the plot.
 \vspace{0cm}
 <<scatter_base_6, fig.width=4, fig.height=4,include=F>>=
@@ -246,7 +232,7 @@ abline(a = 1.084, lty = 1, b = 2.23, lwd = 2)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{A side note on points and lines}
+\begin{frame}[fragile]{A side note on points and lines}
 There are standard values for each point and line type.
 These are \textbf{the same} for ggplot and baseplot.
 \vspace{0.5cm}
@@ -262,7 +248,7 @@ These are \textbf{the same} for ggplot and baseplot.
 \end{columns}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 You can add text and arrows.
 \vspace{0cm}
 <<scatter_base_7, fig.width=4, fig.height=4,include=F>>=
@@ -287,7 +273,7 @@ text(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, labels = "Max"
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 Including error around lines requires you to build a polygon
 \vspace{0cm}
 <<scatter_base_8, fig.width=4, fig.height=4,include=F>>=
@@ -320,7 +306,7 @@ abline(a = coef(test_mod)[1], lty = 2, b = coef(test_mod)[2], lwd = 2)
 
 \subsection{Boxplot}
 
-\begin{frame}[containsverbatim]{Baseplot: Boxplot}
+\begin{frame}[fragile]{Baseplot: Boxplot}
 Other plot types use different functions.
 \vspace{0cm}
 <<boxplot_base_1, fig.width=4, fig.height=4,include=F>>=
@@ -335,7 +321,7 @@ boxplot(Petal.Length ~ Species, data = iris)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Boxplot}
+\begin{frame}[fragile]{Baseplot: Boxplot}
 Many of the same changes made to scatterplots can be made here.
 \vspace{0cm}
 <<boxplot_base_2, fig.width=4, fig.height=4,include=F>>=
@@ -350,7 +336,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 1)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Boxplot}
+\begin{frame}[fragile]{Baseplot: Boxplot}
 There are also some boxplot specific arguments.
 \vspace{0cm}
 <<boxplot_base_3, fig.width=4, fig.height=4,include=F>>=
@@ -372,7 +358,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 1,
 
 \subsection{Histograms}
 
-\begin{frame}[containsverbatim]{Baseplot: Histogram}
+\begin{frame}[fragile]{Baseplot: Histogram}
 \vspace{0.5cm}
 <<hist_base_1, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
@@ -387,7 +373,7 @@ hist(iris$Petal.Length, main = "")
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Histogram}
+\begin{frame}[fragile]{Baseplot: Histogram}
 \vspace{0.5cm}
 <<hist_base_2, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
@@ -402,7 +388,7 @@ hist(iris$Petal.Length, main = "", breaks = 5, col = "grey")
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Histogram}
+\begin{frame}[fragile]{Baseplot: Histogram}
 \vspace{0.5cm}
 <<hist_base_3, fig.width=4, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
@@ -425,7 +411,7 @@ hist(iris$Petal.Length, main = "", breaks = hist_breaks, col = "grey")
 
 \subsection{Bargraphs}
 
-\begin{frame}[containsverbatim]{Baseplot: Bargraph}
+\begin{frame}[fragile]{Baseplot: Bargraph}
 \vspace{0cm}
 <<bar_base_1, fig.width=5, fig.height=4,include=F>>=
 par(mgp = c(2.5, 1, 0))
@@ -450,7 +436,7 @@ barplot(height = spp_means$mean, names.arg = spp_means$Species, ylim = c(0, 7),
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Bargraph}
+\begin{frame}[fragile]{Baseplot: Bargraph}
 Adding errorbars can be done with the arrows function.
 \vspace{0cm}
 <<bar_base_2, fig.width=5, fig.height=4,include=F>>=
@@ -484,7 +470,7 @@ arrows(x0 = bar_locations[, 1], x1 = bar_locations[, 1],
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Bargraph}
+\begin{frame}[fragile]{Baseplot: Bargraph}
 As before, there are similar arguments available.
 \vspace{0cm}
 <<bar_base_3, fig.width=5, fig.height=4,include=F>>=
@@ -520,7 +506,7 @@ barplot(height = spp_means$mean, names.arg = spp_means$Species, ylim = c(0, 7),
 
 \subsection{Aesthetics}
 
-\begin{frame}[containsverbatim]{Change text}
+\begin{frame}[fragile]{Change text}
 You can size and colour of axis text easily.
 \vspace{0cm}
 <<aes_1, fig.width=4, fig.height=4,include=F>>=
@@ -540,7 +526,7 @@ plot(Petal.Length ~ Petal.Width, data = iris,
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Combining plots}
+\begin{frame}[fragile]{Combining plots}
 You can easily combine multiple baseplots together by changing the global parameters.
 \vspace{0cm}
 <<aes_2, fig.width=9, fig.height=5,include=F>>=
@@ -567,7 +553,7 @@ par(mfrow = c(1, 1))
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Facetting}
+\begin{frame}[fragile]{Facetting}
 This can be used to created 'facet' plots.
 \vspace{0cm}
 <<aes_3, fig.width=12, fig.height=4,include=F>>=
@@ -596,7 +582,7 @@ plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolo
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Text family}
+\begin{frame}[fragile]{Text family}
 Global parameters can also be used to change the font family.
 \vspace{0cm}
 <<aes_4, fig.width=9, fig.height=5,include=F>>=
@@ -625,7 +611,7 @@ par(mfrow = c(1, 1), family = "sans")
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Plot margins}
+\begin{frame}[fragile]{Plot margins}
 You can change individual plot margins (\textcolor{blue}{blue}) and outer margins (\textcolor{green}{green}).
 <<aes_5, fig.width=9, fig.height=5,include=F>>=
 par(mfrow = c(1, 2), mar = c(4, 4, 1, 1),
@@ -653,7 +639,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey", cex.lab = 0.75, cex.a
 
 \subsection{Saving your plot}
 
-\begin{frame}[containsverbatim]{Baseplot: Exporting}
+\begin{frame}[fragile]{Baseplot: Exporting}
 <<tidy=F, eval=F>>=
 ?pdf ?jpeg ?tiff ?bmp ?postscript
 @
@@ -673,7 +659,7 @@ dev.off()
 
 \section{Plotting with ggplot}
 
-\begin{frame}[containsverbatim]{ggplot: An introduction}
+\begin{frame}[fragile]{ggplot: An introduction}
 Unlike baseplot, ggplot works around a single function.
 We use different functions to add layers onto a ggplot.
 \vspace{0.5cm}
@@ -695,7 +681,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length))
 
 \subsection{Scatter plot}
 
-\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+\begin{frame}[fragile]{ggplot: Scatter plots}
 We build onto our initial ggplot argument.
 \vspace{0.5cm}
 <<scatter_gg_3, fig.width=3, fig.height=3,include=F>>=
@@ -712,7 +698,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+\begin{frame}[fragile]{ggplot: Scatter plots}
 You can change point shapes (shape) and colour (colour).
 The numbers used here are \textbf{the same} as the ones we used above.
 \vspace{0.5cm}
@@ -730,7 +716,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+\begin{frame}[fragile]{ggplot: Scatter plots}
 In ggplot the legend is included by default. You will need to manually remove it.
 \vspace{0cm}
 <<scatter_gg_5, fig.width=3, fig.height=3,include=F>>=
@@ -749,7 +735,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{The aesthetic argument}
+\begin{frame}[fragile]{The aesthetic argument}
 The aesthetic argument in ggplot (aes) is a powerful tool for changing plot aesthetics.
 If you specify an aesthetic argument inside aes() it will give each data point a different aesthetic based on its value.
 If you specify the same aesthetic argument outside aes() it will give all data points the same aesthetic.
@@ -786,7 +772,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 Here, we have used aes() to apply colours. However, we will use it later to make other changes.
 \end{frame}
 
-\begin{frame}[containsverbatim]{Beware}
+\begin{frame}[fragile]{Beware}
 Again, there is a difference between outline colour (colour) and backgroun colour (fill).
 \begin{columns}
 \column[t]{0.48\linewidth}
@@ -820,7 +806,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{columns}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+\begin{frame}[fragile]{ggplot: Scatter plots}
 You can add lines to the plot.
 \vspace{0cm}
 <<scatter_gg_8, fig.width=3, fig.height=3,include=F>>=
@@ -845,7 +831,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Baseplot: Scatter plots}
+\begin{frame}[fragile]{Baseplot: Scatter plots}
 You can add text and arrows.
 <<scatter_gg_9, fig.width=3, fig.height=3,include=F>>=
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
@@ -873,10 +859,10 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Scatter plots}
+\begin{frame}[fragile]{ggplot: Scatter plots}
 In ggplot, confidence intervals can be added with specialised function geom_ribbon.
 \vspace{0cm}
-<<scatter_gg_10, fig.width=3, fig.height=3,include=F>>=
+<<scatter_gg_10, fig.width=3, fig.height=3, include=F>>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
 pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
@@ -885,6 +871,7 @@ ggplot() +
   geom_ribbon(data = NULL, aes(x = newdat$Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "grey", alpha = 0.5) +
   geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2) +
   theme(legend.position = "none")
+
 @
 <<tidy=F, eval=F>>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
@@ -910,7 +897,7 @@ ggplot() +
 
 \subsection{Boxplot}
 
-\begin{frame}[containsverbatim]{ggplot: Boxplot}
+\begin{frame}[fragile]{ggplot: Boxplot}
 We build different plot types in a similar way.
 \vspace{0.5cm}
 <<boxplot_gg_1, fig.width=3, fig.height=3,include=F>>=
@@ -927,7 +914,7 @@ ggplot(iris, aes(x = Species, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Boxplot}
+\begin{frame}[fragile]{ggplot: Boxplot}
 \vspace{0.5cm}
 <<boxplot_gg_2, fig.width=3, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Species, y = Petal.Length))+
@@ -949,7 +936,7 @@ ggplot(iris, aes(x = Species, y = Petal.Length))+
 
 \subsection{Histograms}
 
-\begin{frame}[containsverbatim]{ggplot: Histogram}
+\begin{frame}[fragile]{ggplot: Histogram}
 \vspace{0.5cm}
 <<hist_gg_1, fig.width=3, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Petal.Length))+
@@ -965,7 +952,7 @@ ggplot(iris, aes(x = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Histogram}
+\begin{frame}[fragile]{ggplot: Histogram}
 \vspace{0.5cm}
 <<hist_gg_2, fig.width=3, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Petal.Length))+
@@ -987,7 +974,7 @@ ggplot(iris, aes(x = Petal.Length))+
 
 \subsection{Bargraphs}
 
-\begin{frame}[containsverbatim]{ggplot: Bargraph}
+\begin{frame}[fragile]{ggplot: Bargraph}
 \vspace{0.5cm}
 <<bar_gg_1, fig.width=3, fig.height=3,include=F>>=
 spp_means <- data.frame(Species = c("setosa", "versicolor", "virginica"),
@@ -1010,7 +997,7 @@ ggplot(spp_means, aes(x = Species, y = mean))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Bargraph}
+\begin{frame}[fragile]{ggplot: Bargraph}
 Adding errorbars in ggplot is much easier than baseplot.
 \vspace{0.5cm}
 <<bar_gg_2, fig.width=3, fig.height=3,include=F>>=
@@ -1036,7 +1023,7 @@ ggplot(spp_means, aes(x = Species, y = mean))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{ggplot: Bargraph}
+\begin{frame}[fragile]{ggplot: Bargraph}
 \vspace{0.5cm}
 <<bar_gg_3, fig.width=3, fig.height=3,include=F>>=
 ggplot(spp_means, aes(x = Species, y = mean))+
@@ -1062,7 +1049,7 @@ ggplot(spp_means, aes(x = Species, y = mean))+
 In ggplot, you can change aesthetics in individual segments of the code \textit{or} you can change information for the whole plot using theme.
 \end{frame}
 
-\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+\begin{frame}[fragile]{Using the aesthetic argument more}
 We'll start by looking back at the aesthetic (aes) argument.
 We can use it to change multiple different aesthetics of a plot.
 \vspace{0cm}
@@ -1080,7 +1067,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+\begin{frame}[fragile]{Using the aesthetic argument more}
 \vspace{0cm}
 <<aes_gg_2, fig.width=4, fig.height=3,include=F>>=
 ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
@@ -1096,7 +1083,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+\begin{frame}[fragile]{Using the aesthetic argument more}
 Applying aesthetics to continuous variables will be different to categorical variables.
 \vspace{0cm}
 <<aes_gg_3, fig.width=4, fig.height=3,include=F>>=
@@ -1113,7 +1100,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Using the aesthetic argument more}
+\begin{frame}[fragile]{Using the aesthetic argument more}
 We can adjust the way the aesthetics are applied.
 \vspace{0cm}
 \begin{columns}
@@ -1150,7 +1137,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{columns}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Change text}
+\begin{frame}[fragile]{Change text}
 You can change size and colour of axis text easily. Note that text size uses different measurement units.
 \vspace{0cm}
 <<aes_gg_5, fig.width=3, fig.height=3,include=F>>=
@@ -1175,7 +1162,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Combining plots}
+\begin{frame}[fragile]{Combining plots}
 Combining plots it much less straightforward in ggplot.
 You need to use an additional package.
 \vspace{0cm}
@@ -1210,7 +1197,7 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Faceting}
+\begin{frame}[fragile]{Faceting}
 Although combining multiple plots is cumbersome, there is an inbuilt option to create facets.
 \vspace{0cm}
 <<aes_gg_7, fig.width=7, fig.height=4,include=F>>=
@@ -1235,7 +1222,7 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Text family}
+\begin{frame}[fragile]{Text family}
 Unlike baseplot, in ggplot you can change font family of individual elements in theme.
 \vspace{0cm}
 <<aes_gg_8, fig.width=7, fig.height=4,include=F>>=
@@ -1270,7 +1257,7 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Plot margins}
+\begin{frame}[fragile]{Plot margins}
 Plot margins are also controlled in theme of each plot individually.
 \vspace{0cm}
 <<aes_gg_9, fig.width=7, fig.height=4,include=F>>=
@@ -1307,7 +1294,7 @@ gridExtra::grid.arrange(scatter, box, nrow = 1)
 \end{center}
 \end{frame}
 
-\begin{frame}[containsverbatim]{Preset themes}
+\begin{frame}[fragile]{Preset themes}
 ggplot also has a number of preset themes that you can use.
 \vspace{0cm}
 <<aes_gg_10, fig.width=9, fig.height=4,include=F>>=
@@ -1345,7 +1332,7 @@ gridExtra::grid.arrange(grey, bw, classic, nrow = 1)
 
 \subsection{Saving your plot}
 
-\begin{frame}[containsverbatim]{ggplot: Exporting}
+\begin{frame}[fragile]{ggplot: Exporting}
 <<tidy=F, eval=F>>=
 ?ggsave
 @
