@@ -915,6 +915,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 @
 \end{frame}
 
+
 \begin{frame}[fragile]{ggplot: Scatter plots}
 In ggplot, confidence intervals can be added with specialised function geom_ribbon.
 \vspace{0cm}
