@@ -3,6 +3,8 @@
 
 \documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
+\usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
 \usepackage[UKenglish]{babel}
 \usepackage{verbatim}%for comment environment
 \usepackage{pdfpages} %for importing specific pages from pdf
