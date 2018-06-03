@@ -1,5 +1,5 @@
 Package: BeginR
-Title: Getting Started With R
+Title: Getting Started with R
 Version: 0.0.0.9000
 Author: Alexandre Courtiol [aut, cre], Liam Bailey [aut] and Colin Vullioud [aut]
 Maintainer: Alexandre Courtiol <alexandre.courtiol@gmail.com>
@@ -8,6 +8,8 @@ Depends: R (>= 3.5.0)
 Imports:
   dplyr,
   ggplot2,
+  knitr,
+  lattice,
   mosaic,
   profvis,
   pryr,
