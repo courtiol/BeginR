@@ -1,0 +1,1298 @@
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
+\usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
+\usepackage[UKenglish]{babel}
+\usepackage{verbatim}%for comment environment
+\usepackage{pdfpages} %for importing specific pages from pdf
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+
+\def\R{{\Large \bf R}}
+\def\S{{\Large \bf S}}
+\def\r{{\bf R}}
+\def\s{{\bf S}}
+
+\title{Getting to plot in \r}
+\author[Alexandre Courtiol \& Liam D. Bailey]{Alexandre Courtiol \& Liam D. Bailey}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\date[June 2018]{\small June 2018}%
+
+\begin{document}
+\setlength{\topsep}{1pt}%space between input and output
+<<knitr options, echo = FALSE, message = FALSE>>=
+options(width = 60)
+library(knitr)
+library(ggplot2)
+opts_chunk$set("size" = "scriptsize",
+               "fig.width" = 5,
+               "fig.height" = 5,
+               "out.width" = "0.4\\linewidth",
+               "out.height" = "0.4\\linewidth",
+               "fig.align" = "center")
+opts_knit$set(global.par = TRUE)
+@
+
+%the following needs to be in a different chunk than knitr option for some reasons...
+<<global_plot_settings, echo = FALSE>>=
+par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0), oma = c(0, 0, 0, 0))
+@
+
+\AtBeginSection[]{
+    \begin{frame}
+    \frametitle{Plotting in \r}
+    \setcounter{tocdepth}{1}
+    \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\AtBeginSubsection[]{
+     \begin{frame}
+     \frametitle{Plotting in \r}
+     \setcounter{tocdepth}{2}
+     \tableofcontents[currentsubsection]
+     \end{frame}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Why plot in \r?}
+\begin{itemize}
+\item Powerful (large range of plot types)
+\item Fully customizable (make your own style)
+\item Practical (integrate your plots and your code together)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Graphics paradigms in \r}
+They are three dominant graphics paradigms in \r:
+\begin{itemize}
+\item traditional graphics (based on \verb`graphics`)
+\item \verb`lattice` (based on \verb`grid`)
+\item \verb`ggplot2` (based on \verb`grid`)
+\end{itemize}
+\vfill
+\pause
+Note:
+\begin{itemize}
+\item \verb`graphics` and \verb`grid` are part of any basic installation of \r
+\item \verb`lattice` is part of the so-called list of CRAN recommended packages
+\item \verb`ggplot2` is part of the tidyverse universe (from RStudio)
+\item we will focus on traditional graphics and \verb`ggplot2`, but \verb`lattice` is excellent too!
+\item some other packages are sometimes usefull too (e.g. \verb`rgl`, \verb`plotly`)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{An example (using default settings)}
+\begin{columns}
+\column[b]{0.32\linewidth}
+<<baseplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
+plot(Petal.Length ~ Petal.Width,
+     data = iris)
+@
+\column[b]{0.32\linewidth}
+<<lattice_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
+library(lattice)
+xyplot(Petal.Length ~ Petal.Width,
+       data = iris)
+@
+\column[b]{0.32\linewidth}
+<<ggplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
+library(ggplot2)
+ggplot(data = iris,
+  aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point()
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to learn on your own?}
+
+1. Check the examples readily available in \r, e.g.
+\vfill
+<<tidy=F, eval=F>>=
+demo(graphics)
+demo(image)
+demo(persp)
+demo(colors)
+demo(plotmath)
+demo(Hershey)
+
+example(plot)
+example(boxplot)
+example(hist)
+example(bartplot)
+
+browseVignettes(package = "ggplot2")
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to learn on your own?}
+2. Scroll the web:
+
+(e.g. \url{http://www.r-graph-gallery.com/all-graphs/})
+\vfill
+\begin{center}
+\includegraphics[width=0.8\linewidth]{../figures/graph.png}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{How to learn on your own?}
+3. Read books:
+\vfill
+\begin{center}
+\includegraphics[height=6cm]{../figures/Murrell_Rgraphics.jpg} % R core member
+\includegraphics[height=6cm]{../figures/Deepayan_lattice.jpg}
+\includegraphics[height=6cm]{../figures/Wickham_ggplot2.jpg}
+\end{center}
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% START Traditional graphics SECTION %
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Plotting with traditional graphics}
+
+%%%%%%%%%%%%%%%%%
+%%%%% SCATTERPLOT
+%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter plot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+In traditional graphics, use \verb`plot()` to draw a scatter plot:
+<<scatter_base_1>>=
+plot(Petal.Length ~ Petal.Width, data = iris)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can choose what type of scatter plot to display with argument type:
+% mind that only prevent to correct display of dollar signs, and tildas...
+<<scatter_base_2a>>=
+plot(Petal.Length ~ Petal.Width, data = iris, type = "p")
+@
+\vfill
+Note: see \verb`"?plot.default"`
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can choose what type of scatter plot to display with argument type:
+<<scatter_base_2b>>=
+plot(Petal.Length ~ Petal.Width, data = iris, type = "l")
+@
+\vfill
+Note: it makes more sense when data are ordered\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can choose what type of scatter plot to display with argument type:
+<<scatter_base_2c>>=
+plot(Petal.Length ~ Petal.Width, data = iris, type = "b")
+@
+\vfill
+Note: it makes more sense when data are ordered\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can choose what type of scatter plot to display with argument type:
+<<scatter_base_2d>>=
+plot(Petal.Length ~ Petal.Width, data = iris, type = "o")
+@
+\vfill
+Note: it makes more sense when data are ordered\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can choose what type of scatter plot to display with argument type:
+<<scatter_base_2e>>=
+plot(Petal.Length ~ Petal.Width, data = iris, type = "h")
+@
+\vfill
+Note: it makes more sense when x-values are unique\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can change point shapes (pch) and colour (col):
+<<scatter_base_3a>>=
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = "blue")
+@
+\vfill
+Note: you can use colour names
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can change point shapes (pch) and colour (col):
+<<scatter_base_3a_bis>>=
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = 4)
+@
+\vfill
+Note: you can use number of basic colours
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can change point shapes (pch) and colour (col):
+<<scatter_base_3a_ter>>=
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = "#0000FFFF")
+rgb(red = 0, green = 0, blue = 255, alpha = 255, maxColorValue = 255)
+@
+\vfill
+Note: you can have full control using hexadecimal!!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can change point shapes (pch) and colour (col):
+<<scatter_base_3b>>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 17, col = iris$Species)
+@
+\vfill
+Note: you can use a palette to match the levels of a factor
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can change point shapes (pch) and colour (col):
+<<scatter_base_3c, fig.width=9, fig.height=3, out.width="0.9\\linewidth", out.height="0.3\\linewidth">>=
+plot(rep(1, 25) ~ I(1:25), data = iris, pch = 1:25, col = rainbow(25))
+@
+\vfill
+Note:
+\begin{itemize}
+\item there are 25 basic symbols (but other ways allow to use many more)
+\item check \verb`"?rainbow"` for a list of different color palettes
+\item the \verb`I()` allows for the creation of the vector before being interpreted by \verb`plot()`
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+For many elements you can set both an outline colour (col) and background colour (bg):
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<scatter_base_4a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, cex = 2,
+     pch = 21, col = "black", bg = iris$Species, lwd = 2)
+@
+
+\column[t]{0.48\linewidth}
+<<scatter_base_4b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, cex = 2,
+     pch = 21, col = iris$Species, bg = "black", lwd = 2)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+Add a legend to make colours understandable:
+<<scatter_base_5>>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species)
+legend(x = "topleft", legend = c("setosa", "versicolor", "virginica"), pch = 21, pt.bg = c("red", "blue", "green"), bty = "n")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can add lines to the plot:
+<<scatter_base_6a>>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species)
+abline(v = mean(iris$Petal.Width), lty = 2, col = "red", lwd = 2)
+abline(h = mean(iris$Petal.Length), lty = 3, col = "black", lwd = 2)
+abline(a = 1.084, b = 2.23, lty = 1, lwd = 2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can add lines to the plot:
+\begin{columns}
+\column{0.48\linewidth}
+<<scatter_base_6b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+plot(NULL, xlim = c(0, 1), ylim = c(-1, 7))
+abline(h = 0, lty = 0, lwd = 2)
+abline(h = 1, lty = 1, lwd = 2)
+abline(h = 2, lty = 2, lwd = 2)
+abline(h = 3, lty = 3, lwd = 2)
+abline(h = 4, lty = 4, lwd = 2)
+abline(h = 5, lty = 5, lwd = 2)
+abline(h = 6, lty = 6, lwd = 2)
+@
+\column{0.48\linewidth}
+<<scatter_base_6c, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+plot(NULL, xlim = c(0, 1), ylim = c(-1, 7))
+abline(h = 0, lty = 1, lwd = 0.2)
+abline(h = 1, lty = 1, lwd = 0.5)
+abline(h = 2, lty = 1, lwd = 1)
+abline(h = 3, lty = 1, lwd = 2)
+abline(h = 4, lty = 1, lwd = 3)
+abline(h = 5, lty = 1, lwd = 4)
+abline(h = 6, lty = 1, lwd = 5)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can add text and arrows:
+<<scatter_base_7>>=
+palette(c("red", "blue", "green"))
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species, ylim = c(0.8, 7.2))
+max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
+arrows(x0 = max.value$Petal.Width - 0.75, y0 = max.value$Petal.Length,
+       x1 = max.value$Petal.Width, y1 = max.value$Petal.Length, lwd = 2)
+text(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, labels = "Max")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+Including an interval around a prediction line requires you to build a polygon:
+<<scatter_base_8, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+
+plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = "grey")
+polygon(x = c(newdat$Petal.Width, rev(newdat$Petal.Width)),
+        y = c(pred[, "lwr"], rev(pred[, "upr"])),
+        col = alpha("purple", alpha = 0.4),  ## alpha sets transparency!
+        border = NA)  ## removes black line around the polygon
+abline(test_mod, lty = 2, lwd = 2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%
+%%%%% BOXPLOT
+%%%%%%%%%%%%%
+
+\subsection{Box plots}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Box plots}
+In traditional graphics, use \verb`boxplot()` to draw a box plot:
+<<boxplot_base_1>>=
+boxplot(Petal.Length ~ Species, data = iris)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Box plots}
+Many of the same changes made to scatter plots can be made here:
+<<boxplot_base_2>>=
+boxplot(Petal.Length ~ Species, data = iris, col = "grey", lwd = 2, lty = 3)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Box plots}
+There are also some boxplot specific arguments:
+<<boxplot_base_3>>=
+boxplot(Petal.Length ~ Species, data = iris, width = c(1, 2, 1), notch = TRUE)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Box plots}
+You can retrieve information by storing the output in an object:
+<<boxplot_base_4>>=
+my_boxcox <- boxplot(Petal.Length ~ Species, data = iris, plot = FALSE)
+
+my_boxcox
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%
+%%%%% HISTOGRAMS
+%%%%%%%%%%%%%%%%
+
+\subsection{Histograms}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Histograms}
+In traditional graphics, use \verb`hist()` to draw an histogram:
+<<hist_base_1>>=
+hist(iris$Petal.Length, main = "") ## main used here to remove the automatic title
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Histograms}
+You can change the number and location of breaks between bins:
+<<hist_base_2>>=
+hist(iris$Petal.Length, main = "", breaks = 5, col = "grey")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Histograms}
+You can change the number and location of breaks between bins:
+<<hist_base_3>>=
+hist_breaks <- seq(min(iris$Petal.Length), max(iris$Petal.Length), length.out = 10)
+hist(iris$Petal.Length, main = "", breaks = hist_breaks, col = "grey")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Histograms}
+You can change the number and location of breaks between bins:
+<<hist_base_4>>=
+hist_breaks <- seq(min(iris$Petal.Length), max(iris$Petal.Length), length.out = 10)
+hist(iris$Petal.Length, main = "", breaks = hist_breaks, col = "grey")
+rug(x = iris$Petal.Length, col = "blue")
+@
+\vfill
+Note: it never hurts to add a rug under an histogram!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+%%%%% Bar plots
+%%%%%%%%%%%%%%%
+
+\subsection{Bar plots}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Traditional graphics: Bar plots}
+<<bar_base_0>>=
+spp_means <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+                        mean = as.numeric(by(iris$Petal.Length, iris$Species, mean)),
+                        SE = as.numeric(by(iris$Petal.Length, iris$Species, function(x)sd(x)/sqrt(length(x))))
+                        )
+
+spp_means
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Bar plots}
+In traditional graphics, use \verb`barplot()` to draw a bar plot:
+<<bar_base_1>>=
+barplot(height = spp_means$mean, names.arg = spp_means$Species, ylim = c(0, 7),
+        xlab = "Species", ylab = "Mean petal length (cm)")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Bar plots}
+Adding error bars can be done with the arrows function:
+<<bar_base_2>>=
+bar_locations <- barplot(height = spp_means$mean, names.arg = spp_means$Species, plot = FALSE)
+barplot(height = spp_means$mean, names.arg = spp_means$Species, ylim = c(0, 7),
+        xlab = "Species", ylab = "Mean petal length (cm)")
+arrows(x0 = bar_locations[, 1], x1 = bar_locations[, 1],
+       y0 = spp_means$mean - 2*spp_means$SE, y1 = spp_means$mean + 2*spp_means$SE,
+       angle = 90, lwd = 2, code = 3, length = 0.1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Bar plots}
+As before, there are similar arguments available:
+<<bar_base_3>>=
+barplot(height = spp_means$mean, names.arg = spp_means$Species, ylim = c(0, 7),
+        xlab = "Species", ylab = "Mean petal length (cm)",
+        col = "white", cex.axis = 0.75)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%
+%%%%% AESTHETICS
+%%%%%%%%%%%%%%%%
+
+\subsection{Aesthetics}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Combining plots}
+You can easily combine multiple traditional graphics using global parameters:
+<<aes_2, fig.width=10, fig.height=5, out.width="0.6\\linewidth", out.height="0.3\\linewidth">>=
+oldpar <- par(mfrow = c(1, 2))
+plot(Petal.Length ~ Petal.Width, data = iris)
+boxplot(Petal.Length ~ Species, data = iris, col = "grey")
+par(oldpar) ## or par(mfrow = c(1, 1))
+@
+\vfill
+Note: if you want to combine graphics of different sizes it is a bit more complex (see \verb`?layout`).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Facetting}
+This can be used to created 'facet' plots:
+<<aes_3, fig.width=15, fig.height=5, out.width="0.9\\linewidth", out.height="0.3\\linewidth">>=
+oldpar <- par(mfrow = c(1, 3))
+split_data <- split(iris, iris$Species)
+plot(Petal.Length ~ Petal.Width, data = split_data$setosa, main = "Setosa", pch = 21,
+     bg = "red", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$virginica, main = "Virginica", pch = 21,
+     bg = "blue", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolor", pch = 21,
+     bg = "green", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+par(oldpar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Facetting}
+Note: there is also an easier function for that:
+<<aes_3_bis, fig.width=15, fig.height=5, out.width="0.9\\linewidth", out.height="0.3\\linewidth">>=
+coplot(Petal.Length ~ Petal.Width | Species, data = iris, rows = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Background}
+Global parameters can also be used to change the background colour:
+<<aes_9>>=
+oldpar <- par(bg = "pink")
+plot(Petal.Length ~ Petal.Width, data = iris)
+par(oldpar)
+@
+\vfill
+Note: you can also plot a background image but you need to use specific packages for that.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Modifying typefaces}
+Global parameters can also be used to change the typeface:
+<<aes_4>>=
+oldpar <- par(family = "serif")
+plot(Petal.Length ~ Petal.Width, data = iris,
+     xlab = "Petal Width (cm)", ylab = "Petal Length (cm)",
+     cex.lab = 1.25, cex.axis = 1.25, col.axis = "red")
+par(oldpar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Special characters}
+You can use weird characters:
+<<aes_8>>=
+foo <- round(pi, 3)
+plot(Petal.Length ~ Petal.Width, data = iris,
+     xlab = expression(beta^2 + 2[alpha]), ylab = expression(paste(italic("bla bla bla"))),
+     main = paste("Plot number", foo))
+text(0.4, 4, "\\VE", vfont = c("serif", "plain"), cex = 3)
+text(0.5, 4, "\\MA", vfont = c("serif", "plain"), cex = 3)
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Plot margins}
+Global parameters can also be used to change individual plot margins (\textcolor{blue}{blue}) and outer margins (\textcolor{green}{green}):
+<<aes_5, fig.width=10, fig.height=5, out.width="0.6\\linewidth", out.height="0.3\\linewidth">>=
+oldpar <- par(mfrow = c(1, 2), mar = c(4, 4, 1, 1), oma = c(1.5, 2, 1, 1))
+plot(Petal.Length ~ Petal.Width, data = iris,
+     xlab = "Petal Width (cm)", ylab = "Petal Length (cm)",
+     cex.lab = 1.5, cex.axis = 1.5, col.axis = "red")
+boxplot(Petal.Length ~ Species, data = iris, col = "grey",
+        cex.lab = 0.75, cex.axis = 1.25, col.axis = "red")
+box('figure', col = 'blue', lty = "dashed")
+box('outer', col = 'green', lwd = 5)
+par(oldpar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Change axes}
+You can change the size, colour and orientation of the axis labels and text easily:
+<<aes_1>>=
+plot(Petal.Length ~ Petal.Width, data = iris,
+     xlab = "Petal Width (cm)", ylab = "Petal Length (cm)",
+     cex.lab = 1.5, cex.axis = 0.5, col.axis = "red", col.lab = "purple", las = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Change axes}
+You can change the position of the axes:
+<<aes_6>>=
+oldpar <- par(mgp = c(0.4, 2, 1.5))
+plot(Petal.Length ~ Petal.Width, data = iris)
+par(oldpar)
+@
+\vfill
+Note: check \verb`?par` for a huge list of the things you can easily change!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Change axes}
+You can change the axes themselves:
+<<aes_7>>=
+oldpar <- par(mar = c(4, 4, 1, 4))
+plot(Petal.Length ~ Petal.Width, data = iris, axes = FALSE,
+     xlab = "Petal Width (cm)", ylab = "")
+axis(side = 1)
+axis(side = 4, at = seq(1, 7, 0.25), labels =  seq(1, 7, 0.25), col.ticks = "red", las = 1)
+mtext("Petal Length (cm)", side = 4, line = 3)
+box()
+par(oldpar)
+@
+\end{frame}
+
+
+\subsection{Saving your plot}
+
+\begin{frame}[fragile]{Traditional graphics: Exporting}
+<<eval = FALSE>>=
+?pdf ?jpeg ?tiff ?bmp ?postscript
+@
+\vfill
+<<eval = FALSE >>=
+pdf("base_plot.pdf", width = 15, height = 5)
+plot(Petal.Length ~ Petal.Width, data = iris)
+dev.off()
+@
+\vfill
+\end{frame}
+
+
+\subsection{Other plots}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+Run the examples of the following traditional plot functions:
+\begin{itemize}
+\item \verb`plot.ecdf()`
+\item \verb`curve()`
+\item \verb`pie()`
+\item \verb`cdplot()`
+\item \verb`image()`
+\item \verb`contour()`
+\item \verb`persp()`
+\item \verb`dotchart()`
+\item \verb`mosaicplot()`
+\item \verb`stars()`
+\item \verb`matplot()`
+\item \verb`pairs()`
+\item \verb`sunflowerplot()`
+\end{itemize}
+\vfill
+Note: there are a few other ones, but they do not seem very interesting\dots
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{You can create home-made \r \ graphics too}
+\begin{center}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot5}
+  \hspace{0.1cm}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot9}
+  \hspace{0.1cm}
+  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot8}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% START GGPLOT SECTION %
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Plotting with ggplot}
+\subsection{Introduction}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{ggplot: An introduction}
+\verb`ggplot` (defunct) and \verb`ggplot2` were both created by Hadley Wickham (now chief Scientist at Rstudio) during his PhD: \url{http://had.co.nz/thesis/practical-tools-hadley-wickham.pdf}
+\vfill
+The idea was to create a grammar of graphics for \r.
+\vfill
+It is inspired from the seminal Leland Wilkson's book \textbf{The Grammar of Graphics}:
+\justifying
+\emph{"This book [...] presents a unique foundation for producing almost every quantitative graphic found in scientific journals, newspapers, statistical packages, and data visualization systems. This foundation was designed for a distributed computing environment (Internet, Intranet, client-server), with special attention given to conserving computer code and system resources."}
+\vfill
+In plain english, that means that the graphics are build by considering successive layers.
+\vfill
+The originality is that the user directly handles different functions corresponding to each layer.
+\vfill
+Other graphics systems do use layers too, but only behind the curtain.
+\vfill
+The conceptual unit is thus shifted from the type of plot to the type of layer!
+\vfill
+It has pros and cons.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: An introduction}
+Unlike traditional graphics, ggplot works around a single function:
+<<scatter_gg_2,>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length))
+@
+\vfill
+Note: we will then use different functions to add layers on top.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%% SCATTERPLOT
+%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter plots}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+We add points on the empty plot:
+<<scatter_gg_3>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+You can change point shapes \verb`shape` (= \verb`pch` in traditional graphics) and \verb`colour` (= \verb`col` in traditional graphics):
+<<scatter_gg_4>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)
+@
+\vfill
+Note: everytime we want to create a connection between the data and some elements of the plot, we use the same function: \verb`aes()`!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+In ggplot the legend is included by default but you can remove it:
+<<scatter_gg_5>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3) +
+  theme(legend.position = "none")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+The aesthetic function in ggplot is a powerful tool for changing plot aesthetics.
+
+If you specify an aesthetic argument inside \verb`aes()`, it will give each point a different aesthetic based on its value.
+
+If you specify the same aesthetic argument outside \verb`aes()`, it will give all data points the same aesthetic:
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<scatter_gg_6a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), shape = 16, size = 3)
+@
+\column[t]{0.48\linewidth}
+<<scatter_gg_6b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(colour = "blue", shape = 16, size = 3)
+@
+\end{columns}
+\vfill
+Note: we have used \verb`aes()` to apply colours but it can be used to make other changes (see later).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+Again, for many elements you can set both an outline \verb`colour` (= \verb`col` for traditional graphics) and background \verb`fill` colour (= \verb`bg` for traditional graphics):
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<scatter_gg_7a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(colour = Species), fill = "black", shape = 21)
+@
+
+\column[t]{0.48\linewidth}
+<<scatter_gg_7b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), colour = "black", shape = 21)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+You can also add lines to the plot:
+<<scatter_gg_8>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), shape = 21, size = 3) +
+  theme(legend.position = "none") +
+  geom_hline(yintercept = mean(iris$Petal.Length), lty = 3) +
+  geom_vline(xintercept = mean(iris$Petal.Width), lty = 2) +
+  geom_abline(intercept = 1.084, slope = 2.23, lty = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can add text and arrows:
+<<scatter_gg_9, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), shape = 21, size = 3) +
+  theme(legend.position = "none") +
+  geom_segment(aes(x = max.value$Petal.Width - 0.75,
+                   xend = max.value$Petal.Width, y = max.value$Petal.Length,
+                   yend = max.value$Petal.Length), size = 1,
+               arrow = arrow(length = unit(0.5, "cm"))) +
+  geom_text(aes(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, label = "Max"))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+In ggplot, confidence intervals can be added with specialised function \verb`geom_ribbon()`:
+<<scatter_gg_10, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
+pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+
+ggplot() +
+  geom_point(data = iris,    aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
+  geom_ribbon(data = newdat, aes(x = Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "purple", alpha = 0.5) +
+  geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2)
+@
+\vfill
+Note: because we are building the plot with two different datasets (i.e. \verb`iris` \& \verb`newdat`), we specify the data separately in each line of the ggplot code.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%% BOXPLOT
+%%%%%%%%%%%%%%%%%
+
+\subsection{Box plots}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Box plots}
+In ggplot, use \verb`geom_boxplot()` to draw a box plot:
+<<boxplot_gg_1F>>=
+ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
+  geom_boxplot()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Box plots}
+Many of the same changes made to scatter plots can be made here:
+<<boxplot_gg_2>>=
+ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
+  geom_boxplot(fill = "grey", size = 1, lty = 2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%% HISTOGRAM
+%%%%%%%%%%%%%%%%%
+
+\subsection{Histograms}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Histograms}
+In ggplot, use \verb`geom_histogram()` to draw an histogram:
+<<hist_gg_1>>=
+ggplot(data = iris, aes(x = Petal.Length)) +
+  geom_histogram()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Histograms}
+You can change the width of bins with \verb`binwidth` or their number with \verb`bins`:
+\begin{columns}
+\column{0.48\linewidth}
+<<hist_gg_2, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Length)) +
+  geom_histogram(binwidth = 0.5, colour = "black", fill = "grey")
+@
+\column{0.48\linewidth}
+<<hist_gg_2bis, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Length)) +
+  geom_histogram(bins = 6, colour = "black", fill = "grey")
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%% Bar plots
+%%%%%%%%%%%%%%%%%
+
+\subsection{Bar plots}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Bar plots}
+In ggplot, use \verb`geom_col()` to draw a bar plot:
+<<bar_gg_1>>=
+ggplot(data = spp_means, aes(x = Species, y = mean)) +
+  geom_col()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Bar plots}
+Adding error bars in ggplot is much easier than in traditional graphics:
+<<bar_gg_2>>=
+ggplot(data = spp_means, aes(x = Species, y = mean)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = 0.1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Bar plots}
+As before, modifications are straigthforward:
+<<bar_gg_3>>=
+ggplot(data = spp_means, aes(x = Species, y = mean)) +
+  geom_col(fill = "white", colour = "black")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%
+%%%%% AESTHETICS
+%%%%%%%%%%%%%%%%%
+
+\subsection{Aesthetics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Introduction to aesthetics}
+In ggplot, you can change aesthetics in individual segments of the code (\verb`aes()`) \textit{or} you can change information for the whole plot using themes (\verb`theme()`).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Using the aesthetic function more}
+We'll start by looking back at \verb`aes()`.
+
+We can use it to change multiple aesthetics of a plot:
+<<aes_gg_1>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species, size = Sepal.Length), shape = 21)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Using the aesthetic function more}
+Here we change the transparency:
+<<aes_gg_2>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species, alpha = Sepal.Length), shape = 21, size = 5)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Using the aesthetic argument more}
+Applying aesthetics to continuous variables will be different to categorical variables:
+<<aes_gg_3>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Using the aesthetic argument more}
+We can adjust the way the aesthetics are applied:
+\begin{columns}
+\column[t]{0.48\linewidth}
+<<aes_gg_4a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5) +
+  scale_fill_continuous(low = "white", high = "black")
+@
+\column[t]{0.48\linewidth}
+<<aes_gg_4b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(size = Sepal.Length), shape = 21, fill = "grey") +
+  scale_size_continuous(range = c(3, 10))
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Change text}
+You can change size and colour of axis text easily:
+<<aes_gg_5, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth",>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  xlab("Petal Width (cm)") +
+  ylab("Petal Length (cm") +
+  theme(axis.text = element_text(size = 12, colour = "red"),
+        axis.title = element_text(size = 12))
+@
+\vfill
+Note: the text size uses different measurement units than traditional graphics.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Combining plots}
+Combining plots is less straightforward in ggplot\dots
+
+You need to use an additional package:
+<<aes_gg_6, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
+scatter <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() + xlab("Petal Width (cm)") + ylab("Petal Length (cm")
+
+box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
+  geom_boxplot()
+
+library(gridExtra)
+grid.arrange(scatter, box, nrow = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Faceting}
+Although combining multiple plots is cumbersome, there is an inbuilt function to create facets:
+<<aes_gg_7, out.width = "0.9\\linewidth", out.height = "0.3\\linewidth", fig.height = 5, fig.width = 15>>=
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(aes(fill = Species), shape = 21, colour = "black", size = 3) +
+  xlab("Petal Width (cm)") +
+  ylab("Petal Length (cm)") +
+  facet_wrap(~ Species)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Modifying typefaces}
+Unlike traditional graphics, in ggplot you can easily change the typeface of individual elements in theme:
+<<aes_gg_8, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
+scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  xlab("Petal Width (cm)") +
+  ylab("Petal Length (cm") +
+  theme(axis.text = element_text(size = 12, colour = "red", family = "serif"),
+        axis.title = element_text(size = 12, family = "mono"))
+
+box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size = 12, colour = "red", family = "sans"),
+        axis.title = element_text(size = 12, family = "sans"))
+
+grid.arrange(scatter, box, nrow = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Plot margins}
+Plot margins are also controlled in theme of each plot individually:
+<<aes_gg_9, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
+scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  xlab("Petal Width (cm)") +
+  ylab("Petal Length (cm") +
+  theme(axis.text = element_text(size = 12, colour = "red"),
+        axis.title = element_text(size = 12),
+        plot.margin = unit(c(30, 4, 1, 1), "mm"))
+
+box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
+  geom_boxplot() +
+  theme(axis.text = element_text(size = 12, colour = "red"),
+        axis.title = element_text(size = 12))
+
+grid.arrange(scatter, box, nrow = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Preset themes}
+ggplot also has a number of preset themes that you can use:
+<<aes_gg_10, out.width = "0.75\\linewidth", out.height = "0.25\\linewidth", fig.height = 5, fig.width = 15>>=
+grey <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  theme_grey()
+
+bw <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  theme_bw()
+
+classic <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  theme_classic()
+
+grid.arrange(grey, bw, classic, nrow = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Preset themes}
+You can create your own theme once for all!
+<<own_theme, out.height = "0.3\\linewidth", out.width = "0.3\\linewidth",>>=
+theme_pink <- theme_classic() + theme(panel.background = element_rect(fill = "pink"))
+theme_old  <- theme_set(theme_pink)
+
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point()
+
+theme_set(theme_old) ## restore original theme
+@
+\vfill
+Note: check \verb`?theme` for the list of options that can be changed.
+\end{frame}
+
+
+\subsection{Saving your plot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Exporting}
+<<tidy=F, eval=F>>=
+?ggsave
+@
+\vspace{0.5cm}
+<<tidy=F, eval=F>>=
+classic <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point()+
+  theme_classic()
+
+ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
+@
+\end{frame}
+
+
+\subsection{Other plots}
+
+\begin{frame}[fragile]{There are other ggplots out there!}
+There are a few other plot types in ggplots (e.g. \verb`geom_violin()`\dots).
+\vfill
+But the true force of having developed something as modular as ggplot is that there are many more packages each week providing ggplot extensions!
+\vfill
+A few random examples of ggplot extensions:
+\begin{itemize}
+\item \verb`ggExtra` (for marginal distribution)
+\item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
+\item \verb`ggmap` (for maps)
+% to be completed!
+\end{itemize}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% COMPARE THE TWO %
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Conclusion: traditional graphics vs. ggplot}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Which plotting tool should you use?}
+\begin{columns}
+\column[t]{0.45\linewidth}
+\begin{block}{Traditional graphics:}
+\begin{itemize}
+  \item no new packages required
+  \item arguments often differ between functions
+  \item help files useful
+  \item easier for doing something simple
+  \item more difficult for doing something complex
+\end{itemize}
+\end{block}
+\column[t]{0.45\linewidth}
+\begin{block}{ggplot:}
+\begin{itemize}
+  \item requires multiple packages for best results
+  \item uniform grammar
+  \item help files often useless (due to modularity)
+  \item more difficult for doing something simple
+  \item easier for doing something complex
+  \item faster for large datasets
+  \item more accessible than lattice (or grid itself)
+\end{itemize}
+\end{block}
+\end{columns}
+\vfill
+$\rightarrow$ It may be useful to know both!!
+\end{frame}
+
+\end{document}

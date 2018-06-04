@@ -1,0 +1,1782 @@
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
+\usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
+\usepackage[UKenglish]{babel}
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+
+\def\R{{\Large \bf R}}
+\def\S{{\Large \bf S}}
+\def\r{{\bf R}}
+\def\s{{\bf S}}
+
+\title{Getting to program in \r}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\date[June 2018]{\small June 2018}%
+
+\begin{document}
+\setlength{\topsep}{1pt}%space between input and output
+<<echo = FALSE, message = FALSE>>=
+options(width = 60)
+library(knitr)
+opts_chunk$set("size" = "scriptsize")
+do_slow <- TRUE
+@
+
+\AtBeginSection[]{
+    \begin{frame}
+    \frametitle{Programming with \r}
+    \setcounter{tocdepth}{1}
+    \tableofcontents[currentsection]
+    \end{frame}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing simple functions}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+The best way:
+<<>>=
+my_function <- function(input1, input2) {
+  output <- input1 + input2
+  return(output)
+}
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\pause
+\vfill
+If no \verb`return()`, then it returns the last row:
+<<>>=
+my_function <- function(input1, input2) {
+  input1 + input2
+}
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\pause
+\vfill
+Inline shortcut (usefull in \verb`*apply()`):
+<<>>=
+my_function <- function(input1, input2) input1 + input2
+
+my_function(input1 = 1, input2 = 3)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can set defaults for your inputs:
+<<error=TRUE>>=
+my_function <- function(input1, input2 = 10) {
+  output <- input1 + input2
+  return(output)
+}
+
+my_function(input1 = 1)
+my_function(input1 = 1, input2 = 0)
+my_function(input2 = 1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can pass optional arguments to another function via ``\dots":
+<<>>=
+my_function <- function(input1, ...) {
+  output <- mean(input1, ...)
+  return(output)
+}
+
+x <- c(1, 2, 3, 4, 5, NA)
+my_function(input1 = x)
+my_function(input1 = x, na.rm = TRUE)
+@
+\vfill
+Note: this is particularly usefull when designing plotting functions!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can print things while the function runs:
+<<>>=
+my_function <- function() {
+  print("This function will output 2")
+  return(2)
+}
+
+my_function()
+@
+\vfill
+Note: observe also that it is possible to create functions that do not consider any input!
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can return only a single object; so if you need several outputs, you must combine them:
+
+<<>>=
+my_function <- function(input1, ...) {
+  output1 <- min(input1, ...)
+  output2 <- max(input1, ...)
+  output <- list(output1 = output1, output2 = output2)
+  return(output)
+}
+
+x <- c(1, 2, 3, 4, 5, NA)
+my_function(input1 = x, na.rm = TRUE)
+@
+\vfill
+Note: you can also use a vector, a matrix, a data frame\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You can return the output ``invisibly":
+<<>>=
+my_function <- function(input1) {
+  output <- min(input1)
+  return(invisible(output))
+}
+
+my_function(input1 = c(1, 2, 3, -4))
+@
+\vfill
+\pause
+<<>>=
+foo <- my_function(input1 = c(1, 2, 3, -4))
+foo
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{My first function}
+You don't have to return something:
+<<>>=
+my_function <- function(input1) {
+  the_min <- min(input1)
+  print(paste("The minimum is:", the_min))
+  return(invisible(NULL))
+}
+
+my_function(input1 = c(1, 2, 3, -4))
+@
+\vfill
+\pause
+<<>>=
+foo <- my_function(input1 = c(1, 2, 3, -4))
+foo
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Why programming?}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Why writing your own \r \ functions?}
+\begin{center}
+\begin{minipage}{0.5\linewidth}
+Using your own functions makes your scripts
+\begin{itemize}
+\item easier to understand
+\item safer to (re)use
+\item shorter to write (often)
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{What do you prefer?}
+<<>>=
+d <- data.frame(proba = c(0.1, 0.5, 0.4), group = factor(c("A", "B", "C")))
+@
+<<>>=
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+@
+\vfill
+\pause
+Or
+<<>>=
+odds_ratio <- function(group1, group2){
+  with(data = d, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
+}
+
+odds_ratio(group1 = "B", group2 = "A")
+odds_ratio(group1 = "C", group2 = "A")
+odds_ratio(group1 = "B", group2 = "C")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What do you prefer?}
+Still not convinced? Let's compute all pairwise comparisons:
+
+\vfill
+
+<<>>=
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "A"] / (1 - proba[group == "A"])))
+
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "B"] / (1 - proba[group == "B"])))
+
+with(data = d, (proba[group == "A"] / (1 - proba[group == "A"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+
+with(data = d, (proba[group == "B"] / (1 - proba[group == "B"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+
+with(data = d, (proba[group == "C"] / (1 - proba[group == "C"])) / (proba[group == "C"] / (1 - proba[group == "C"])))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What do you prefer?}
+Still not convinced? Let's compute all pairwise comparisons:
+
+\vfill
+
+<<>>=
+for (group2 in d$group) {
+  for (group1 in d$group) {
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2)))
+  }
+}
+@
+\vfill
+Note: this is bad code, we will come back on this!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{When to write your own functions?}
+\begin{center}
+\begin{Huge}
+\underline{D}on't \underline{R}epeat \underline{Y}ourself
+\end{Huge}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coding basics}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Control structures}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Control structures: if()}
+<<>>=
+i <- 1
+a <- 2
+
+if (i == 1) {
+  a <- 1
+}
+
+a
+@
+\vfill
+\pause
+<<>>=
+i <- 5
+a <- 2
+
+if (i == 1) {
+  a <- 1
+} else {
+  a <- 2
+}
+
+a
+@
+\vfill
+Note: for help, check \verb`?"if"`
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Control structures: loops using for() \& while()}
+<<>>=
+for (i in 1:5) {
+  print(i)
+  }
+@
+\vfill
+<<>>=
+i <- 1
+
+while (i < 5) {
+  print(i)
+  i <- i + 1
+  }
+@
+\vfill
+Note: for help, check \verb`?"for"`
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Random number generators}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Random number generators}
+<<>>=
+runif(5)
+runif(5)
+@
+\vfill
+\pause
+You can have reproducible results by setting a seed:
+<<>>=
+set.seed(10132)
+runif(5)
+
+set.seed(10132)
+runif(5)
+@
+\pause
+\vfill
+Note: check \verb`?Distributions` for more distributions.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Errors and Warnings}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Errors and Warnings}
+<<error = TRUE>>=
+process_factor <- function(x) {
+  if (!is.factor(x) & !is.character(x)) {
+    stop("Your input for factor should be of class character or factor")
+  }
+  if (!is.factor(x) & is.character(x)) {
+    x <- as.factor(x)
+    warning("Your input has been converted to factor")
+  }
+  return(x)
+}
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = factor(c("A", "B")))
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = c("A", "B"))
+@
+\pause
+\vfill
+<<>>=
+process_factor(x = c(2, 3))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Logicals}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Boolean logic in \r}
+\begin{columns}
+\column{0.5\linewidth}
+<<>>=
+!TRUE
+!FALSE
+TRUE == 1
+TRUE & TRUE
+TRUE & FALSE
+FALSE & FALSE
+c(TRUE, TRUE) & c(TRUE, FALSE)
+
+FALSE && "foo"
+FALSE & "foo"
+TRUE && "foo"
+c(TRUE, TRUE) && c(TRUE, FALSE) ## dangerous
+@
+\column{0.5\linewidth}
+<<>>=
+TRUE | TRUE
+TRUE | FALSE
+FALSE | FALSE
+c(TRUE, TRUE) | c(TRUE, FALSE)
+
+FALSE || "foo"
+TRUE || "foo"
+
+any(c(FALSE, FALSE, FALSE, TRUE))
+@
+\vfill
+Note: help available at \verb`?"&"`.
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Scope of objects}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+Every object in \r \ belongs to an environment:
+<<>>=
+i <- 1
+i <- i + 1
+i
+@
+\vfill
+<<>>=
+e1 <- environment()
+e1
+get("i", envir = e1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+As a rule, anything created inside a function stays inside the function:
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <- i + 1
+  return(i)
+  }
+
+f(i)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+This is because the functions have their own environments:
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <- i + 1
+  e <- environment()
+  return(list(env = e, i = i))
+  }
+
+res <- f(i)
+res$i
+
+res$env
+@
+\vfill
+\pause
+<<>>=
+get("i", envir = globalenv()) ## globalenv() provides the address of the global environment
+get("i", envir = res$env)
+@
+\vfill
+\pause
+Challenge: check whether the environment remains the same at each function call or not!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+Environments can be hacked, but it is usually source of troubles:
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <<- i + 1
+  return(i)
+  }
+
+f(i)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+Environments can be defined, but it is usually not necessary:
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <- i + 1
+  assign("i", i, envir = globalenv())
+  return(i)
+  }
+
+f(i)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+The best is to use a functional approach:
+<<>>=
+i <- 1
+
+f <- function(i) {
+  i <- i + 1
+  return(i)
+  }
+
+i <- f(i)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Scope}
+There are a few scoping exceptions:
+<<>>=
+i <- 1
+
+for (j in 1:10) {
+  i <- i + 1
+}
+
+i
+@
+\vfill
+And yet, \verb`for` is actually a function:
+<<>>=
+i <- 1
+
+`for`(j, 1:10, i <- i + 1)
+i
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Scope}
+For more info:
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/Chambers_Software}
+\includegraphics[height=0.8\textheight]{../figures/Wickham_AdvancedR}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Accuracy problems \& finite precision}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\r \ has the same numerical issues as most programming languages}
+<<>>=
+x <- 0.7 - 0.4 - 0.3
+x == 0
+@
+\pause
+<<>>=
+print(x, digits = 22)
+@
+\pause
+\vfill
+<<size="scriptsize">>=
+print(seq(0, 1, 0.1), digits = 22)
+@
+\vfill
+Note 1: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+
+Note 2: this kind of problem sometimes kills people (\url{http://www-users.math.umn.edu/~arnold/disasters/Patriot-dharan-skeel-siam.pdf})
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\r \ has the same numerical issues as most programming languages}
+The errors sometimes add up:
+
+\vspace{1em}
+Example of the J.M Muller's Serie
+
+$u_0=2$; $u_1=-4$; $u_{n+1} = 111 - \frac{1130}{u_n} + \frac{3000}{u_n*u_{n-1}}$
+<<size="scriptsize">>=
+u <- c(2, -4)
+new.u <- function(u) 111 - 1130/u[length(u)] + 3000/(u[length(u)]*u[length(u) - 1])
+for (i in 1:40) u <- c(u, new.u(u))
+@
+<<figMuller, fig.width=6, fig.height=6, include=F>>=
+plot(u, type = "b", ylim = c(-10,110))
+abline(h = 6, col = 2, lty = 2, lwd = 2)
+legend("topleft", bty = "n", lwd = 2, col = 2, lty = 2, legend = c("Exact limit"))
+@
+\begin{center}
+\includegraphics[height=0.6\textheight]{./figure/figMuller-1.pdf}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\r \ has the same numerical issues as most programming languages}
+Solution: beware of floats and use adequate functions, not boolean tests, when performing comparisons!
+<<eval=T>>=
+??"equality"
+@
+\begin{scriptsize}
+\begin{verbatim}
+Help pages:
+base::all.equal               Test if Two Objects are (Nearly) Equal
+base::identical               Test Objects for Exact Equality
+data.table::all.equal         Equality Test Between Two Data Tables
+datasets::airquality          New York Air Quality Measurements
+dplyr::all_equal              Flexible equality comparison for data frames
+\end{verbatim}
+\end{scriptsize}
+<<>>=
+all.equal(target = 0, current = x)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A few coding tips}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some key advices}
+\begin{itemize}
+\item everything you use in the body must pass through the inputs
+\item everything you output must pass through the return
+\item try to write functions that you could reuse in other situations
+\end{itemize}
+\vfill
+\pause
+Bad:
+<<eval = FALSE>>=
+d <- data.frame(proba = c(0.1, 0.5, 0.4), group = factor(c("A", "B", "C")))
+
+odds_ratio <- function(group1, group2){
+  with(data = d, (proba[group == group1] / (1 - proba[group == group1])) / (proba[group == group2] / (1 - proba[group == group2])))
+}
+
+for (group2 in d$group) {
+  for (group1 in d$group) {
+    print(paste(group1, group2, odds_ratio(group1 = group1, group2 = group2)))
+  }
+}
+@
+\vfill
+Why is this bad?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A better implementation of functions to compute odd ratios}
+Better because it is general and based on functions (example 1):
+<<>>=
+odds_ratio <- function(p1, p2){
+  OR <- (p1/(1 - p1)) / (p2/(1 - p2))
+  return(OR)
+}
+
+all_pairwise <- function(proba, groups){
+  groups_id <- unique(groups)
+
+  results <- matrix(NA, ncol = length(groups_id), nrow = length(groups_id))
+  colnames(results) <- groups_id
+  rownames(results) <- groups_id
+
+  for (group1 in groups_id) {
+    for (group2 in groups_id) {
+      results[group1, group2] <- odds_ratio(p1 = proba[groups == group1], p2 = proba[groups == group2])
+    }
+  }
+
+  return(results)
+}
+
+all_pairwise(proba = d$proba, groups = d$group)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A better implementation of functions to compute odd ratios}
+Better because it is very general and based on functions (example 2):
+<<>>=
+odds_ratio <- function(p1, p2){
+  OR <- (p1/(1 - p1)) / (p2/(1 - p2))
+  return(OR)
+}
+
+all_pairwise2 <- function(proba, groups){
+  groups_id <- unique(groups)
+  to_do <- expand.grid(groups_id, groups_id)
+
+  OR <- apply(to_do, 1, function(gr) {
+    odds_ratio(p1 = proba[groups == gr[1]], p2 = proba[groups == gr[2]])
+    })
+
+  return(data.frame(group1 = to_do[, 1],
+                    group2 = to_do[, 2],
+                    OR = OR))
+}
+
+all_pairwise2(proba = d$proba, groups = d$group)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some key advices}
+\begin{itemize}
+\item everything you use in the body must pass through the inputs
+\item everything you output must pass through the return
+\item try to write functions that you could reuse in other situations
+\item there are many ways to reach the same outcome; experiment a bit to find something you like/understand
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example: comparing the performances of 2 tests}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Challenge}
+
+\begin{center}
+\begin{minipage}{0.8\linewidth}
+The t-test and the Mann-Whitney U tests are two tests aiming at comparing 2 groups.
+
+We want to compare the risk of false positives and true positives of these two tests in the following conditions:
+
+\begin{itemize}
+\item assuming that height of males is gaussian with mean 180 cm and SD 6 cm and that the height of females is gaussian with mean 170 cm and SD 5 cm, how many individuals (sex-ratio = 1) do I need to get a power of 80\% (risk of false negative = 20\%)?
+
+\item assuming that the null hyptohesis is true and that you have sampled 20 males and 20 females, what is the probability of false positives for the threshold alpha = 0.05? (And for any threshold between 0 and 1\%?)
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Exploring existing code}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Learning by mimicking}
+\begin{center}
+\begin{minipage}{0.7\linewidth}
+Looking at code writen by others will teach you
+\begin{itemize}
+\item how their functions work
+\item how to code
+\item new functions or packages that could be usefull for you
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to get the code behind a function?}
+Start by simply typing the function name (without brackets):
+<<size="scriptsize">>==
+mosaic::oddsRatio
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to get the code behind a function?}
+Then, follows the successive calls:
+<<size="scriptsize">>==
+mosaic::orrr
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Sometimes, the code is not directly displayed\dots e.g. \r \  methods (S3):
+\vspace{1em}
+<<size="scriptsize">>==
+residuals
+@
+
+\texttt{residuals()} is a \emph{generic} function which rely on class specific \emph{methods}:
+\vspace{1em}
+
+<<size="scriptsize">>==
+methods(residuals)
+@
+The methods with a \texttt{*} are not exported from their package namespace!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Add the \verb`class` at the end of the function name to get the code for exported \r \ (S3) methods:
+\vspace{1em}
+<<size="scriptsize">>==
+residuals.lm
+@
+\vfill
+Note: this requires to know the \verb`class` of the object you work with!
+
+You can use \verb`class()` on your input to figure this out.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+It is also possible to get the code of non-exported \r \ methods (S3):
+\vspace{1em}
+<<size="scriptsize">>=
+residuals.nls
+@
+
+<<size="scriptsize">>=
+getAnywhere("residuals.nls") # or getS3method("residuals", "nls")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
+Which function actually computes the numbers behind \verb`boxplot()`?
+\end{center}
+\end{large}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
+What is the code behind \verb`t.test()`?
+\end{center}
+\end{large}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to get the code behind a function?}
+Some functions -- the interfaces -- call functions that are written in other languages.
+
+The source code of these latter functions is not directly visible (spotted as \texttt{.C()}, \texttt{.Fortran()}, \texttt{.Call()}, \texttt{.Primitive()}, \texttt{.Internal()}, \texttt{.External()}).
+\vspace{1em}
+<<size="scriptsize">>=
+dnorm
+@
+\vfill
+In these cases, the easiest is to use the read-only mirror for \r \ (\url{https://github.com/wch/r-source}) or the relevant package on Github!
+(here, the answer lies in r-source/src/nmath/dnorm.c)
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{large}
+\begin{center}
+What is the code really estimating coefficients behind \verb`lm()`?
+\end{center}
+\end{large}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Debugging}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Debugging a faulty function}
+<<>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\pause
+\vfill
+<<eval = FALSE>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  browser()
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\vfill
+Note: this is very usefull but you need to have access to the code!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Debugging a faulty function}
+<<>>=
+pythagora <- function(x, y) {
+  x2 <- x^2
+  y2 <- y^2
+  hyp <- (x^2 + y^2)^1/2
+  return(hyp)
+}
+
+pythagora(x = 2, y = 2)
+@
+\vfill
+<<eval = FALSE>>=
+debug(pythagora)
+
+pythagora(x = 2, y = 2)
+
+undebug(pythagora) ## when you are done, or use debugonce() above, or reload the function
+@
+\vfill
+Note: this can work on any function without having to mess with the code!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Debugging a faulty function}
+
+There are plenty more debugging possibilities out there!
+\vfill
+Check:
+
+\begin{itemize}
+\item the nice possibilities with Rstudio: \url{https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio}
+\item \verb`?option` and look at \verb`error`
+\item \verb`?traceback`
+\item \verb`?trace`
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Optimisation \& Profiling}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Remember}
+\begin{center}
+\huge{\huge{``\emph{premature optimization is the root of all evil}\ ''}}
+\end{center}
+
+\begin{flushright}
+Donald Knuth, Computing Surveys, Vol 6, No 4, December 1974
+\end{flushright}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{When to optimize?}
+\begin{itemize}
+\item optimize only when the code really works
+\item optimize only if needed
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Profilling}
+You can time functions:
+<<message=FALSE, eval = do_slow>>=
+library(spaMM)
+
+data("Loaloa")
+
+system.time({
+  fullfit <- fitme(maxNDVI ~ 1 + Matern(1|latitude+longitude), data = Loaloa)
+})
+@
+\vfill
+\pause
+You can profile the code very precisely using \verb`profvis`:
+<<eval = FALSE>>=
+library(profvis)
+
+profvis({
+  fullfit <- fitme(maxNDVI ~ 1 + Matern(1|latitude+longitude), data = Loaloa)
+})
+@
+\vfill
+Note: try it out!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{General tips to improve speed}
+\begin{itemize}
+\item limit to number of function calls as much as possible!
+\end{itemize}
+\vfill
+<<eval = do_slow>>=
+system.time({
+  replicate(1e6, runif(1))
+  })
+@
+\vfill
+<<>>=
+system.time({
+  runif(1e6)
+  })
+@
+\vfill
+Note: it is always best to design functions that can work on vectors and not just on single values.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{General tips to improve speed}
+\begin{itemize}
+\item limit to number of function calls as much as possible!
+\item compare alternative implementations
+\end{itemize}
+\vfill
+<<eval = do_slow>>=
+d <- data.frame(proba = runif(500), group = factor(1:500))
+
+system.time({
+  all_pairwise(proba = d$proba, groups = d$group)
+  })
+@
+\vfill
+<<eval = do_slow>>=
+system.time({
+  all_pairwise2(proba = d$proba, groups = d$group)
+  })
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{General tips to improve speed}
+\begin{itemize}
+\item limit to number of function calls as much as possible!
+\item compare alternative implementations
+\item code bottlenecks in another language and rely on interfaces (advanced)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing \r \ packages}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{What is an \r \ package}
+An \r \ package is only a way to organise one's data, scripts and documentation!
+\vfill
+Benefits:
+\begin{itemize}
+\item easy distribution
+\item thorough check of the code
+\item incentive to write up some documentation and examples
+\end{itemize}
+\vfill
+Note: it is good practice to write a research project as a package!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to create an \r \ package}
+\begin{itemize}
+\item you can simply use the function \verb`package.skeleton()` (see help for example)
+\item you can use the combo RStudio + the \r \ package \verb`devtools`
+\end{itemize}
+\vfill
+\pause
+For more info:
+
+\url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html}
+\vfill
+Or:
+\begin{center}
+\includegraphics[height = 0.5\textheight]{../figures/Wickham_RPackages.jpg}
+\includegraphics[height = 0.5\textheight]{../figures/Chambers_ExtendingR.jpg}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing more advanced functions}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Working on the language}
+Crude:
+<<>>=
+set.seed(1)
+d <- data.frame(foo = runif(10), bar = runif(10))
+
+my_wilcox <- function(var1, var2, data) {
+  w <- wilcox.test(x = data[, var1], y = data[, var2])  ## data$var1 would not work!
+  return(w)
+}
+
+my_wilcox(var1 = "foo", var2 = "bar", data = d)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Working on the language}
+Better:
+<<>>=
+set.seed(1)
+d <- data.frame(foo = runif(10), bar = runif(10))
+
+my_wilcox <- function(var1, var2, data) {
+  w <- eval(substitute(wilcox.test(x = data$var1, y = data$var2)))
+  return(w)
+}
+
+my_wilcox(var1 = "foo", var2 = "bar", data = d)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Working on the language}
+A few examples:
+<<>>=
+foo <- 1
+getNameFromObject <- function(i) paste(substitute(i))
+getNameFromObject(foo)
+@
+
+<<>>=
+getValueFromName <- function(i) get(i)
+getValueFromName("foo")
+@
+
+<<>>=
+setObjectFromName <- function(i, x) assign(i, x, envir = globalenv())
+setObjectFromName("bar", 2)
+bar
+@
+\vfill
+Note: there are plenty more possibilities for working on the language in \r, but it would require to dive quite deeper into how \r \ works.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Recursions}
+The Fibonacci example:
+<<eval = do_slow>>=
+ fibonacci <- function(x) {
+   if (x == 0) return(0)
+   if (x == 1) return(1)
+   return(fibonacci(x - 1) + fibonacci(x - 2))
+ }
+
+system.time(foo <- fibonacci(35))
+foo
+@
+\vfill
+Note: if you plan to rename functions, you can use \verb`"Recall()"`!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Using C++ code within functions}
+The package \verb`Rcpp` allows to run C++ code inside \r \ on the fly!
+<<>>=
+library(Rcpp)
+fibRcpp <- cppFunction('
+int fibonacci(const int x) {
+   if (x == 0) return(0);
+   if (x == 1) return(1);
+   return (fibonacci(x - 1) + fibonacci(x - 2));
+}
+')
+system.time(foo <- fibRcpp(35))  ## beware: memory issue if x is too large!
+foo
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Object systems in \r}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Definitions}
+What is an \underline{object}?
+
+An instance of a class.
+
+\vfill
+
+What is a \underline{class}?
+
+A data structure for which specific methods can be defined.
+
+\vfill
+
+What is a \underline{method}?
+
+A function that is designed to work with all objects of a given class.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\r \ is an object-based system}
+Rule \#1:
+
+\alert{Everything that exists in \r \ is an object}
+\begin{flushright}
+(John M. Chambers)
+\end{flushright}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example}
+<<>>=
+res <- 1
+@
+<<>>=
+res
+class(res)
+methods(class = "numeric")
+@
+\vfill
+<<>>=
+`<-`
+class(`<-`)
+methods(class = "function")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Objects are accessed or modified using \underline{references}}
+Reference = a name + an environment:
+<<>>=
+ls()
+environmentName(pryr::where("res"))
+@
+\vfill
+Note: remember, we discussed environments earlier on!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Objects are accessed or modified using \underline{references}}
+Behind one reference there is one memory address:
+<<>>=
+pryr::address(res)
+@
+
+\vfill
+
+Behind one memory address there can be several references:
+<<results='hold'>>=
+res2 <- res
+pryr::address(res2)
+@
+
+\vfill
+
+Note: as we will see, the address behind a reference can change during computation.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{There are different systems for defining and using objects in \r}
+
+Native class systems:
+\begin{itemize}
+\item S3 (legacy from S version 3, in \emph{base})
+\item S4 (legacy from S version 4, in core package \emph{methods})
+\item Reference Class (sometimes referred to as R5, in \emph{methods})
+\end{itemize}
+
+\vfill
+\pause
+
+Additional class systems:
+\begin{itemize}
+\item R6 (in the package \emph{R6}, one of the most downloaded package on CRAN!)
+\item ggproto (in the package \emph{ggplot2})
+\item others (proto, \dots)
+\end{itemize}
+
+\vfill
+Note: the objects created with one system can contain objects created with another.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The 2 main object-based programming paradigms}
+\begin{columns}[t]
+\column{0.5\linewidth}
+Functional (Object Oriented) Programming
+\begin{itemize}
+\item suitable for analytical workflows
+\item S3, S4
+\item methods defined outside the objects
+\item objects are not mutable
+\item a $\xrightarrow[]{\text{fn}}$ b $\xrightarrow[]{\text{fn}}$ c $\xrightarrow[]{\text{fn}}$\dots
+\end{itemize}
+\pause
+\column{0.5\linewidth}
+Encapsulated Object Oriented Programming (aka OOP)
+\begin{itemize}
+\item suitable for data that evolve over time (modularity and reusability)
+\item RC, R6
+\item methods defined inside the objects
+\item objects are mutable
+\item a $\xrightarrow[]{\text{fn}}$ b \& a $\xrightarrow[]{\text{fn}} \varnothing$
+\end{itemize}
+\end{columns}
+\vfill
+Note: actual programming can borrow from multiple paradigms (pure form is difficult).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A simple example using S3}
+<<>>=
+addone <- function(x) res + 1
+res <- 1
+addone(res)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A simple example using S4}
+<<>>=
+setClass(Class = "S4_obj", slots = list(value = "numeric"))
+setGeneric(name = "addone", def = function(object) stop("only for S4_obj")) ## set generic with default behaviour
+setMethod(f = "addone", signature = "S4_obj", definition = function(object) {
+  object@value <- object@value + 1
+  return(object)
+  }
+  )
+@
+
+<<>>=
+resS4 <- new("S4_obj", value = 1)
+addone(resS4)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A simple example using RC}
+<<>>=
+RC_obj <- setRefClass(Class   = "RC_obj",
+                      fields  = list(value = "numeric"),
+                      methods = list(
+                        addone = function() value <<- value + 1)
+                      )
+@
+
+<<>>=
+resRC <- RC_obj$new(value = 1)
+resRC$addone()
+resRC
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A simple example using R6}
+<<>>=
+library(R6)
+R6_obj <- R6Class(
+  public  = list(
+    value = NA,
+    initialize = function(value) self$value <- value,
+    addone = function() self$value <- self$value + 1
+  )
+)
+@
+
+<<>>=
+resR6 <- R6_obj$new(value = 1)
+resR6$addone()
+resR6$value
+@
+
+<<>>=
+resR6$value <- 1
+replicate(10, resR6$addone())
+resR6$value
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Encapsulated OOP requires mutability}
+S3 objects are (generally) not mutable (same for S4):
+\begin{columns}[t]
+\column{0.3\linewidth}
+<<>>=
+a <- 1:3
+a
+pryr::address(a)
+@
+
+\column{0.3\linewidth}
+<<>>=
+a[2] <- 10
+a
+pryr::address(a)
+@
+\column{0.3\linewidth}
+<<>>=
+b <- a
+b
+pryr::address(b)
+@
+
+<<>>=
+b[2] <- 11
+pryr::address(b)
+pryr::address(a)
+@
+<<>>=
+a
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Encapsulated OOP requires mutability}
+R6 objects are mutable (same for RC):
+
+\begin{columns}[t]
+\column{0.3\linewidth}
+<<>>=
+resR6$value
+pryr::address(resR6)
+@
+
+\column{0.3\linewidth}
+<<>>=
+resR6$value <- 3
+resR6$value
+pryr::address(resR6)
+@
+
+\column{0.3\linewidth}
+<<>>=
+resR6_bis <- resR6
+pryr::address(resR6_bis)
+@
+
+<<>>=
+resR6_bis$value
+resR6_bis$value <- 4
+resR6_bis$value
+@
+<<>>=
+resR6$value
+@
+\end{columns}
+\vfill
+Note: mutability can be prevented if necessary.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Example: An simple Individual Based Models (IBM)}
+Setup:
+\begin{itemize}
+  \item two age classes: children (0--14 yrs), adults (15+ yrs)
+  \item children die at an average rate of 15 deaths per 1000 per year
+  \item adults die at an average rate of 5 deaths per 1000 per year
+  \item children do not reproduce
+  \item adults reproduce at an average rate of 10 births per 1000 per year
+\end{itemize}
+
+\vfill
+
+Question:
+
+Starting with 1000 individuals (with age following a uniform distribution between 0 and 40 yrs), what is the number of children and adults after 50 years?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Functional way using S3: functions}
+<<>>=
+death <- function(pop) {
+  death_children <- rbinom(n = length(pop), size = 1, prob = 15/1000)
+  death_adults   <- rbinom(n = length(pop), size = 1, prob = 5/1000)
+  alive <- rep(1, length(pop))
+  alive[pop < 15] <- 1 - death_children[pop < 15]
+  alive[pop > 14] <- 1 - death_adults[pop > 14]
+  pop <- pop[alive == 1]
+  return(pop)
+}
+
+birth <- function(pop) {
+  adults <- pop[pop > 14]
+  babies_nb <- sum(rbinom(n = length(adults), size = 1, prob = 10/1000))
+  babies <- rep(0, babies_nb)
+  pop <- c(pop, babies)
+  return(pop)
+}
+
+age <- function(pop) pop <- pop + 1
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Functional way using S3: run}
+<<>>=
+pop <- round(runif(1000, min = 0, max = 40))
+
+for (i in 1:50) {
+  pop <- birth(pop)
+  pop <- death(pop)
+  pop <- age(pop)
+}
+table(pop > 14)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: definition of the class \texttt{individual}}
+<<>>=
+individual <- R6Class(
+  public  = list(
+    age = NA,
+    alive = 1,
+    initialize = function(age = 0) {self$age <- age},
+    die = function() {
+      if (self$age < 15 & self$alive) self$alive <- 1 - rbinom(n = 1, size = 1, prob = 15/1000)
+      if (self$age > 14 & self$alive) self$alive <- 1 - rbinom(n = 1, size = 1, prob =  5/1000)
+    },
+    reproduce = function() {
+      ifelse(self$alive == 1 & self$age > 14, rbinom(n = 1, size = 1,  prob = 10/1000), FALSE)
+    },
+    aging = function() {
+      if (self$alive == 1) {self$age <- self$age + 1; self$die()}
+    }
+  )
+)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: test}
+You can test things before creating the population!
+\begin{columns}[t]
+\column{0.5\linewidth}
+<<>>=
+alex <- individual$new()
+alex
+@
+\column{0.5\linewidth}
+<<>>=
+for (i in 1:200) alex$aging()
+alex
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: definition of the class \texttt{population}}
+<<size = "scriptsize">>=
+population <- R6Class(
+  public  = list(
+    individuals = list(),
+    initialize = function(N = 1000) {
+        for (i in 1:N)
+          self$individuals[[i]] <- individual$new(age = round(runif(n = 1, min = 0, max = 40)))
+    },
+    repro = function() {
+      for (i in 1:length(self$individuals))
+        if (self$individuals[[i]]$reproduce() == TRUE)
+          self$individuals[[length(self$individuals) + 1]] <- individual$new()
+      },
+    death = function(){
+      alive <- sapply(self$individuals, function(i) i[["alive"]])
+      self$individuals[!alive] <- NULL
+      },
+    aging = function(){
+      for (i in 1:length(self$individuals)) self$individuals[[i]]$aging()
+      },
+    year = function() {self$repro(); self$death(); self$aging()},
+    count = function() table(sapply(self$individuals, function(i) i[["age"]]) > 14)
+  )
+)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: run}
+<<>>=
+pop <- population$new()
+for (i in 1:50) pop$year()
+pop$count()
+@
+\vfill
+Note: I did not handle the possible population crash, so it may crash :-/
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Our Individual Based Models (IBM): \alert{UPDATE}}
+Setup:
+\begin{itemize}
+  \item two age classes: children (0--14 yrs), adults (15+ yrs)
+  \item children die at an average rate of 15 deaths per 1000 per year
+  \item adults die at an average rate of 5 deaths per 1000 per year
+  \item children do not reproduce
+  \item adults reproduce at an average rate of 10 births per 1000 per year
+  \item \alert{two sexes, females do not reproduce after 45 yrs (males do not reproduce)}
+\end{itemize}
+
+\vfill
+
+Question:
+
+Starting with 1000 individuals (with age following a uniform distribution between 0 and 40 yrs), what is the number of children and adults after 50 years?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: re-definition of the class \texttt{individual}}
+<<size = "scriptsize">>=
+individual <- R6Class(
+  public  = list(
+    age = NA,
+    alive = 1,
+    sex = NA,                                                              ##new
+    initialize = function(age = 0) {
+      self$age <- age
+      self$sex <- ifelse(runif(1) < 0.5, "male", "female")                 ##new
+    },
+    die = function() {
+      if (self$age < 15 & self$alive) self$alive <- 1 - rbinom(n = 1, size = 1, prob = 15/1000)
+      if (self$age > 14 & self$alive) self$alive <- 1 - rbinom(n = 1, size = 1, prob =  5/1000)
+    },
+    reproduce = function() {
+      ifelse(self$alive == 1 &
+               (self$age > 14 & self$age < 44 & self$sex == "female"),     ##new
+             rbinom(n = 1, size = 1,  prob = 10/1000), FALSE)
+    },
+    aging = function() {
+      if (self$alive == 1) {self$age <- self$age + 1; self$die()}
+    }
+  )
+)
+@
+\vfill
+Note: there is no need to redefine the class \texttt{population}!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{OOP way using R6: re-run}
+<<>>=
+pop <- population$new()
+for (i in 1:50) pop$year()
+pop$count()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Functional way using S3: re-defining functions}
+We would have to recode everything \dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Pros and cons of R6 for IBM}
+
+\begin{columns}[t]
+\column{0.5\linewidth}
+Pros
+\begin{itemize}
+  \item clearer structure (see butterfly example)
+  \item easier to modify once existing
+  \item easier to share classes between projects, packages\dots
+  \item easier to translate to C++
+\end{itemize}
+
+\column{0.5\linewidth}
+Cons
+\begin{itemize}
+  \item initially difficult for those knowing mostly S3
+  \item much slower (cost can somewhat be reduced with some tweaks)
+  \item additional issues to take care (e.g. side effects)
+\end{itemize}
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more advanced simulation model using R6}
+<<eval = FALSE>>=
+?load_butterfly_example
+@
+\end{frame}
+
+\end{document}
