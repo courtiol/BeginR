@@ -87,7 +87,7 @@ Note:
 \begin{itemize}
 \item \verb`graphics` and \verb`grid` are part of any basic installation of \r
 \item \verb`lattice` is part of the so-called list of CRAN recommended packages
-\item \verb`ggplot2` is part of the tidyverse universe (from Rstudio)
+\item \verb`ggplot2` is part of the tidyverse universe (from RStudio)
 \item we will focus on traditional graphics and \verb`ggplot2`, but \verb`lattice` is excellent too!
 \item some other packages are sometimes usefull too (e.g. \verb`rgl`, \verb`plotly`)
 \end{itemize}
@@ -578,7 +578,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey")
 par(oldpar) ## or par(mfrow = c(1, 1))
 @
 \vfill
-Note: if you want to combine graphics of different sizes it is a bit more complex (see \verb`?layout`)
+Note: if you want to combine graphics of different sizes it is a bit more complex (see \verb`?layout`).
 \end{frame}
 
 
@@ -586,7 +586,7 @@ Note: if you want to combine graphics of different sizes it is a bit more comple
 \begin{frame}[fragile, t]{Facetting}
 This can be used to created 'facet' plots:
 <<aes_3, fig.width=15, fig.height=5, out.width="0.9\\linewidth", out.height="0.3\\linewidth">>=
-par(mfrow = c(1, 3))
+oldpar <- par(mfrow = c(1, 3))
 split_data <- split(iris, iris$Species)
 plot(Petal.Length ~ Petal.Width, data = split_data$setosa, main = "Setosa", pch = 21,
      bg = "red", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
@@ -594,7 +594,7 @@ plot(Petal.Length ~ Petal.Width, data = split_data$virginica, main = "Virginica"
      bg = "blue", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
 plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolor", pch = 21,
      bg = "green", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
-par(mfrow = c(1, 1))
+par(oldpar)
 @
 \end{frame}
 
@@ -617,7 +617,7 @@ plot(Petal.Length ~ Petal.Width, data = iris)
 par(oldpar)
 @
 \vfill
-Note: you can also plot a background image but you need to use specific packages for that (which one depends on the format of the image).
+Note: you can also plot a background image but you need to use specific packages for that.
 \end{frame}
 
 
@@ -733,7 +733,6 @@ Run the examples of the following traditional plot functions:
 \item \verb`curve()`
 \item \verb`pie()`
 \item \verb`cdplot()`
-\item \verb`coplot()`
 \item \verb`image()`
 \item \verb`contour()`
 \item \verb`persp()`
@@ -781,9 +780,9 @@ It is inspired from the seminal Leland Wilkson's book \textbf{The Grammar of Gra
 \vfill
 In plain english, that means that the graphics are build by considering successive layers.
 \vfill
-The originality is that the user direclty handles different functions corresponding to each layers.
+The originality is that the user directly handles different functions corresponding to each layer.
 \vfill
-Other graphics systems do use layers that too, but only behind the curtain.
+Other graphics systems do use layers too, but only behind the curtain.
 \vfill
 The conceptual unit is thus shifted from the type of plot to the type of layer!
 \vfill
@@ -1247,7 +1246,7 @@ ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
 \begin{frame}[fragile]{There are other ggplots out there!}
 There are a few other plot types in ggplots (e.g. \verb`geom_violin()`\dots).
 \vfill
-But the true force of having developped something as modular as ggplot is that there are many more packages each week providing ggplot extensions!
+But the true force of having developed something as modular as ggplot is that there are many more packages each week providing ggplot extensions!
 \vfill
 A few random examples of ggplot extensions:
 \begin{itemize}
@@ -1277,7 +1276,7 @@ A few random examples of ggplot extensions:
 \begin{itemize}
   \item no new packages required
   \item arguments often differ between functions
-  \item help files usefull
+  \item help files useful
   \item easier for doing something simple
   \item more difficult for doing something complex
 \end{itemize}

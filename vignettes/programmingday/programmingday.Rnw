@@ -812,7 +812,7 @@ We want to compare the risk of false positives and true positives of these two t
 \begin{frame}{Learning by mimicking}
 \begin{center}
 \begin{minipage}{0.7\linewidth}
-Looking at code writen by others will teach you
+Looking at code written by others will teach you
 \begin{itemize}
 \item how their functions work
 \item how to code
