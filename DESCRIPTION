@@ -3,7 +3,7 @@ Title: Getting Started with R
 Version: 0.0.0.9000
 Author: Alexandre Courtiol [aut, cre], Liam Bailey [aut] and Colin Vullioud [aut]
 Maintainer: Alexandre Courtiol <alexandre.courtiol@gmail.com>
-Description: This package contains an introductory course about R.
+Description: An introductory course about R.
 Depends: R (>= 3.5.0)
 Imports:
   dplyr,
