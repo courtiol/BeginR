@@ -10,8 +10,8 @@ build: clean
 	(cd inst/doc/; for f in *.Rnw; do mv "$$f" "$${f%.Rnw}.txt"; done;)
 	Rscript -e "devtools::build()"
 
-checkcode:
-	(cd ..; Rscript -e "if(require(BeginR)) codetools::checkUsagePackage('BeginR', skipWith=TRUE)")
+checkcode: install
+	(cd ..; Rscript -e "if(require(BeginR) & require(codetools)) codetools::checkUsagePackage('BeginR', skipWith=TRUE)")
 
 quickcheck:
 	(cd ..; R CMD check $(PKGFILE))
@@ -30,9 +30,9 @@ clean:
 install: $(PKGFILE)
 	(cd ..; R CMD INSTALL $(PKGFILE))
 
-$(PKGFILE): build
-
 remove:
 	(cd ..; R CMD REMOVE $(PKG))
 
 reinstall: remove install
+
+$(PKGFILE): build
