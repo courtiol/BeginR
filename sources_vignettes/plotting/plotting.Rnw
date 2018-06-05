@@ -350,7 +350,6 @@ abline(a = 1.084, b = 2.23, lty = 1, lwd = 2)
 @
 \end{frame}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
 You can add lines to the plot:
@@ -380,11 +379,23 @@ abline(h = 6, lty = 1, lwd = 5)
 \end{columns}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
+You can also add additional points to the plot:
+<<scatter_base_7>>=
+versicolor <- subset(iris, Species == "versicolor")
+setosa     <- subset(iris, Species == "setosa")
+plot(Petal.Length ~ Petal.Width, data = versicolor, pch = 21, bg = "blue", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+points(Petal.Length ~ Petal.Width, data = setosa, pch = 21, bg = "red", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+@
+\vfill
+Note: You need to make sure the axis limits are the same!
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
 You can add text and arrows:
-<<scatter_base_7>>=
+<<scatter_base_8>>=
 palette(c("red", "blue", "green"))
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species, ylim = c(0.8, 7.2))
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
@@ -398,7 +409,7 @@ text(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, labels = "Max"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
 Including an interval around a prediction line requires you to build a polygon:
-<<scatter_base_8, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_base_9, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
 pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
@@ -639,11 +650,10 @@ foo <- round(pi, 3)
 plot(Petal.Length ~ Petal.Width, data = iris,
      xlab = expression(beta^2 + 2[alpha]), ylab = expression(paste(italic("bla bla bla"))),
      main = paste("Plot number", foo))
-text(0.4, 4, "\\VE", vfont = c("serif", "plain"), cex = 3)
-text(0.5, 4, "\\MA", vfont = c("serif", "plain"), cex = 3)
+text(0.4, 4, "\u2640", cex = 3)
+text(0.6, 4, "\\VE", vfont = c("serif", "plain"), cex = 3)
 @
 \end{frame}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -894,11 +904,25 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Scatter plots}
+You can add extra points to the plot by using two \verb`geom_point` layers:
+<<scatter_gg_9>>=
+versicolor <- subset(iris, Species == "versicolor")
+setosa     <- subset(iris, Species == "setosa")
+ggplot() +
+  geom_point(data = versicolor, aes(x = Petal.Width, y = Petal.Length), fill = "red", shape = 21, size = 3) +
+  geom_point(data = setosa, aes(x = Petal.Width, y = Petal.Length), fill = "blue", shape = 21, size = 3)
+@
+\vfill
+Note: Unlike traditional plots, \verb`ggplot` will automatically adjust the axis limits.
+\end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: Scatter plots}
 You can add text and arrows:
-<<scatter_gg_9, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_gg_10, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
 ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(aes(fill = Species), shape = 21, size = 3) +
@@ -915,7 +939,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{ggplot: Scatter plots}
 In ggplot, confidence intervals can be added with specialised function \verb`geom_ribbon()`:
-<<scatter_gg_10, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_gg_11, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
 pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
@@ -989,6 +1013,15 @@ ggplot(data = iris, aes(x = Petal.Length)) +
 \end{columns}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{ggplot: Histograms}
+Add a rug below the histogram with \verb`geom_rug`:
+<<hist_gg_3>>=
+ggplot(data = iris, aes(x = Petal.Length)) +
+  geom_histogram(binwidth = 0.5, colour = "black", fill = "grey")+
+  geom_rug()
+@
+\end{frame}
 
 %%%%%%%%%%%%%%%%%
 %%%%% Bar plots
@@ -1159,11 +1192,26 @@ grid.arrange(scatter, box, nrow = 1)
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Special characters}
+You can use weird characters:
+<<aes_gg_9>>=
+foo <- round(pi, 3)
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
+  geom_point()+
+  labs(x = expression(beta^2 + 2[alpha]),
+       y = expression(paste(italic("bla bla bla"))),
+       title = paste("Plot number", foo))+
+  annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12)+
+  theme(plot.title = element_text(hjust = 0.5, size = 20),
+        axis.title = element_text(size = 20))
+@
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Plot margins}
 Plot margins are also controlled in theme of each plot individually:
-<<aes_gg_9, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
+<<aes_gg_10, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
 scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   xlab("Petal Width (cm)") +
@@ -1185,7 +1233,7 @@ grid.arrange(scatter, box, nrow = 1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Preset themes}
 ggplot also has a number of preset themes that you can use:
-<<aes_gg_10, out.width = "0.75\\linewidth", out.height = "0.25\\linewidth", fig.height = 5, fig.width = 15>>=
+<<aes_gg_11, out.width = "0.75\\linewidth", out.height = "0.25\\linewidth", fig.height = 5, fig.width = 15>>=
 grey <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   theme_grey()
@@ -1207,7 +1255,20 @@ grid.arrange(grey, bw, classic, nrow = 1)
 \begin{frame}[fragile, t]{Preset themes}
 You can create your own theme once for all!
 <<own_theme, out.height = "0.3\\linewidth", out.width = "0.3\\linewidth",>>=
-theme_pink <- theme_classic() + theme(panel.background = element_rect(fill = "pink"))
+theme_pink <- theme_classic() %+replace% theme(panel.background = element_rect(fill = "pink"))
+
+ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point()+
+  theme_pink
+@
+\vfill
+Note: check \verb`?theme` for the list of options that can be changed.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Preset themes}
+You can set a theme for all plots with \verb`theme_set`
+<<own_theme2, out.height = "0.3\\linewidth", out.width = "0.3\\linewidth",>>=
 theme_old  <- theme_set(theme_pink)
 
 ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
@@ -1215,10 +1276,7 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 
 theme_set(theme_old) ## restore original theme
 @
-\vfill
-Note: check \verb`?theme` for the list of options that can be changed.
 \end{frame}
-
 
 \subsection{Saving your plot}
 
@@ -1241,7 +1299,12 @@ ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
 \subsection{Other plots}
 
 \begin{frame}[fragile]{There are other ggplots out there!}
-There are a few other plot types in ggplots (e.g. \verb`geom_violin()`\dots).
+There are a few other plot types in ggplot that are worth looking at:
+\begin{itemize}
+\item \verb`geom_violin()`
+\item \verb`geom_area()`
+\item \verb`geom_smooth()`
+\item \verb`geom_density()`
 \vfill
 But the true force of having developed something as modular as ggplot is that there are many more packages each week providing ggplot extensions!
 \vfill
@@ -1250,6 +1313,9 @@ A few random examples of ggplot extensions:
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
 \item \verb`ggmap` (for maps)
+\item \verb`ggrepel` (for adding labels to plots)
+\item \verb`ggalt` (for creating cluster plots)
+\item \verb`cowplot` (for creating nested figures)
 % to be completed!
 \end{itemize}
 \vfill
