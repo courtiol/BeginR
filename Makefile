@@ -7,7 +7,7 @@ build: clean
 	mkdir vignettes
 	cp sources_vignettes/introduction/*.pdf* sources_vignettes/usingdata/*.pdf* sources_vignettes/plotting/*.pdf* sources_vignettes/programming/*.pdf* vignettes ## for linux add -u after cp
 	cp sources_vignettes/introduction/*.Rnw sources_vignettes/usingdata/*.Rnw sources_vignettes/plotting/*.Rnw sources_vignettes/programming/*.Rnw inst/doc ## for linux add -u after cp
-	(cd inst/doc; rename .Rnw .txt *.Rnw) ## not working on MacOS
+	(cd inst/doc/; for f in *.Rnw; do mv "$$f" "$${f%.Rnw}.txt"; done;)
 	Rscript -e "devtools::build()"
 
 checkcode:
