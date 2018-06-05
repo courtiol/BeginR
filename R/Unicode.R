@@ -1,0 +1,43 @@
+#' Test Unicode characters
+#'
+#' This function test for the ability of R to draw certain unicode characters.
+#' It was slightly adapted for the function communicated by Ben Bolker for R-bloggers (\url{https://www.r-bloggers.com/unicode-symbols-in-r/}).
+#' If some unicode are missing, you may have to install the necessary typefaces.
+#' If you struggle with unicodes, you may consider using the Hershey font system.
+#'
+#' @param start The first unicode to draw
+#' @param end The last unicode to draw
+#' @param ... Additional graphical parameters
+#'
+#' @seealso ?Hershey
+#'
+#' @return nothing
+#' @export
+#'
+#' @examples
+#' test_unicodes()
+#' test_unicodes(65, 90)
+#' test_unicodes(9900, 10100)
+#' test_unicodes(start = "25a0", end = "25ff")
+test_unicodes <- function(start = 9500, end = 9900, ...) {
+  nstart <- as.hexmode(start)
+  nend <- as.hexmode(end)
+  r <- nstart:nend
+  s <- ceiling(sqrt(length(r)))
+  oldpar <- graphics::par(pty = "s")
+  graphics::plot(
+    c(-1, (s)),
+    c(-1, (s)),
+    type = "n",
+    xlab = "",
+    ylab = "",
+    xaxs = "i",
+    yaxs = "i"
+  )
+  graphics::grid(s + 1, s + 1, lty = 1)
+  for (i in seq(r)) {
+    try(graphics::points(i %% s, i %/% s, pch = -1 * r[i], ...))
+  }
+  graphics::par(oldpar)
+  return(invisible(NULL))
+}
