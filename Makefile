@@ -16,7 +16,7 @@ checkcode: install
 quickcheck:
 	(cd ..; R CMD check $(PKGFILE))
 
-check:
+check: install
 	(cd ..; R CMD check --as-cran $(PKGFILE))
 
 clean:
@@ -26,6 +26,9 @@ clean:
 	-rm -r sources_vignettes/**/figure
 	-(cd ..; rm -r $(PKG)_*.tar.gz $(PKG).Rcheck)
 
+drat: install
+	Rscript -e "drat::insertPackage('../$(PKGFILE)', '~/Boulot/Mes_projets_de_recherche/R_packages/drat', commit = TRUE)"
+	(cd ~/Boulot/Mes_projets_de_recherche/R_packages/drat; git push)
 
 install: $(PKGFILE)
 	(cd ..; R CMD INSTALL $(PKGFILE))
