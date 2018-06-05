@@ -1,7 +1,7 @@
-%\VignetteIndexEntry{Introduction}
+%\VignetteIndexEntry{1. Introduction}
 %\VignetteEngine{R.rsp::asis}
 %\VignetteKeyword{PDF}
 %\VignetteKeyword{vignette}
 %\VignetteKeyword{package}
 %%for sources, check the folder inst/doc/ of the installed library!
-%%the library location can be retrieve by running system.file(package = "BeginR") in R
+%%the library location can be retrieved by running system.file(package = "BeginR") in R
