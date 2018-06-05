@@ -660,14 +660,14 @@ legend("topleft", bty = "n", lwd = 2, col = 2, lty = 2, legend = c("Exact limit"
 \begin{frame}[fragile, t]{\r \ has the same numerical issues as most programming languages}
 And it is not just about fractions:
 <<figLargenumbers, fig.width=6, fig.height=6, include=F>>=
-plot(   (2^30 + 1:10) - 2^30, type = "o", col = 1, lwd = 2, ylim = c(0, 10), ylab = "Difference")
+plot(   (2^30 + 1:10) - 2^30, type = "o", col = 1, lwd = 2, ylim = c(0, 20), ylab = "Difference")
 points( (2^53 + 1:10) - 2^53, type = "o", col = 2, lwd = 2)
 points( (2^55 + 1:10) - 2^55, type = "o", col = 3, lwd = 2)
-points( (2^60 + 1:10) - 2^60, type = "o", col = 4, lwd = 2)
+points( (2^56 + 1:10) - 2^56, type = "o", col = 4, lwd = 2)
 legend("topleft", bty = "n", col = 1:4, legend = c("(2^30 + 1:10) - 2^30",
                                          "(2^53 + 1:10) - 2^53",
                                          "(2^55 + 1:10) - 2^55",
-                                         "(2^60 + 1:10) - 2^60"), lty = 1, lwd = 2, pch = 1)
+                                         "(2^56 + 1:10) - 2^56"), lty = 1, lwd = 2, pch = 1)
 @
 \begin{center}
 \includegraphics[height=0.6\textheight]{./figure/figLargenumbers-1.pdf}
