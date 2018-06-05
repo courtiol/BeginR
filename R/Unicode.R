@@ -2,8 +2,8 @@
 #'
 #' This function test for the ability of R to draw certain unicode characters.
 #' It was slightly adapted for the function communicated by Ben Bolker for R-bloggers (\url{https://www.r-bloggers.com/unicode-symbols-in-r/}).
-#' If some unicode are missing, you may have to install the necessary typefaces.
-#' If you struggle with unicodes, you may consider using the Hershey font system.
+#' If some unicode are missing (shown as squares), you may have to install the necessary typefaces.
+#' If you struggle with unicode, you may consider using the Hershey font system.
 #'
 #' @param start The first unicode to draw
 #' @param end The last unicode to draw
@@ -15,11 +15,11 @@
 #' @export
 #'
 #' @examples
-#' test_unicodes()
-#' test_unicodes(65, 90)
-#' test_unicodes(9900, 10100)
-#' test_unicodes(start = "25a0", end = "25ff")
-test_unicodes <- function(start = 9500, end = 9900, ...) {
+#' test_unicode()
+#' test_unicode(65, 90)
+#' test_unicode(9900, 10100)
+#' test_unicode(start = "25a0", end = "25ff")
+test_unicode <- function(start = 9500, end = 9900, ...) {
   nstart <- as.hexmode(start)
   nend <- as.hexmode(end)
   r <- nstart:nend
