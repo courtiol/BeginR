@@ -4,8 +4,16 @@
 \name{BeginR-package}
 \alias{BeginR-package}
 \alias{BeginR}
-\title{This is the R package...}
+\title{This is the R package Getting Started with R}
 \description{
-A small description here...
+The goal of this package is to provide basic information about how to use R.
+This is part of a course designed and taught by Alexandre Courtiol, IZW, Berlin.
+Liam Bailey and Colin Vullioud also contributed to create some slides (provided as vignettes).
+}
+\details{
+The core of this package is its collection of vignettes, see examples.
+}
+\examples{
+browseVignettes(package = 'BeginR')
 }
 \keyword{package}
