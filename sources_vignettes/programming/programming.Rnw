@@ -1211,33 +1211,34 @@ my_wilcox(var1 = "foo", var2 = "bar", data = d)
 @
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Working on the language}
-\verb`substitute` is an expression (a piece of code) that is \textit{not evaluated}.
+\verb`quote` \& \verb`substitute` generate unevaluated pieces of code.
+
 \verb`eval` can be used to evaluate the piece of code.
 <<>>=
-saved_code <- substitute(a + b)
+saved_code <- quote(a + b)
 saved_code
 
 a <- 2
 b <- 3
 
 eval(saved_code)
+@
 
+<<>>=
 eval_example <- function(){
-
   a <- 5
   b <- 5
-
   print(eval(saved_code))
   print(eval(saved_code, envir = .GlobalEnv))
-
 }
 
 eval_example()
 @
 \vfill
-Note: This can be useful to evaluate the same code in different environments.
+Note: the difference between \verb`quote` \& \verb`substitute` is that \verb`substitute` allows for substitution before the evaluation (useful to play with variable names).
 \end{frame}
 
 
