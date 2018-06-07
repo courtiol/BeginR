@@ -405,7 +405,7 @@ ncol(dataframe.ht)
 \subsection{dplyr}
 \begin{frame}{dplyr}
 \begin{itemize}
-\item \texttt{dplyr} is a usefull package for data manipulation
+\item \texttt{dplyr} is a useful package for data manipulation
 \vfill
 \pause
 \item \texttt{dplyr} is a grammar of data manipulation: one verb = one operation
@@ -419,7 +419,7 @@ ncol(dataframe.ht)
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Data frames}
-Usefull \texttt{dplyr} verbs
+Useful \texttt{dplyr} verbs
 
 \vspace{1em}
 add column with \texttt{mutate()}
@@ -786,7 +786,7 @@ you do:
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{some other usefull functions}
+\begin{frame}[fragile]{some other useful functions}
 
 \texttt{unite()} merges 2 columns of a data frame
  << unite, echo = T>>=

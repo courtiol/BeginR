@@ -67,7 +67,7 @@ my_function(input1 = 1, input2 = 3)
 
 \pause
 \vfill
-Inline shortcut (usefull in \verb`*apply()`):
+Inline shortcut (useful in \verb`*apply()`):
 <<>>=
 my_function <- function(input1, input2) input1 + input2
 
@@ -107,7 +107,7 @@ my_function(input1 = x)
 my_function(input1 = x, na.rm = TRUE)
 @
 \vfill
-Note: this is particularly usefull when designing plotting functions!
+Note: this is particularly useful when designing plotting functions!
 \end{frame}
 
 
@@ -837,7 +837,7 @@ Looking at code writen by others will teach you
 \begin{itemize}
 \item how their functions work
 \item how to code
-\item new functions or packages that could be usefull for you
+\item new functions or packages that could be useful for you
 \end{itemize}
 \end{minipage}
 \end{center}
@@ -982,7 +982,7 @@ pythagora <- function(x, y) {
 pythagora(x = 2, y = 2)
 @
 \vfill
-Note: this is very usefull but you need to have access to the code!
+Note: this is very useful but you need to have access to the code!
 \end{frame}
 
 
@@ -1019,7 +1019,7 @@ There are plenty more debugging possibilities out there!
 Check:
 
 \begin{itemize}
-\item the nice possibilities with Rstudio: \url{https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio}
+\item the nice possibilities with RStudio: \url{https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio}
 \item \verb`?option` and look at \verb`error`
 \item \verb`?traceback`
 \item \verb`?trace`
