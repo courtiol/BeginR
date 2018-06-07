@@ -327,7 +327,7 @@ if (i == 1) {
 a
 @
 \vfill
-Note: for help, check \verb`?"if"`
+Note: for help, check \verb`?"if"`.
 \end{frame}
 
 
@@ -348,7 +348,7 @@ while (i < 5) {
   }
 @
 \vfill
-Note: for help, check \verb`?"for"`
+Note: for help, check \verb`?"for"`.
 \end{frame}
 
 
@@ -625,9 +625,9 @@ print(x, digits = 22)
 print(seq(0, 1, 0.1), digits = 22)
 @
 \vfill
-Note 1: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118})
+Note 1: same kind of thing can happen in Excel too (\url{https://support.microsoft.com/en-us/kb/214118}).
 
-Note 2: this kind of problem sometimes kills people (\url{http://www-users.math.umn.edu/~arnold/disasters/Patriot-dharan-skeel-siam.pdf})
+Note 2: this kind of problem sometimes kills people (\url{http://www-users.math.umn.edu/~arnold/disasters/Patriot-dharan-skeel-siam.pdf}).
 
 \end{frame}
 

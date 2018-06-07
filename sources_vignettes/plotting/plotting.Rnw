@@ -196,7 +196,7 @@ You can choose what type of scatter plot to display with argument type:
 plot(Petal.Length ~ Petal.Width, data = iris, type = "p")
 @
 \vfill
-Note: see \verb`"?plot.default"`
+Note: see \verb`"?plot.default"`.
 \end{frame}
 
 
@@ -251,7 +251,7 @@ You can change point shapes (pch) and colour (col):
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = "blue")
 @
 \vfill
-Note: you can use colour names
+Note: you can use colour names.
 \end{frame}
 
 
@@ -262,7 +262,7 @@ You can change point shapes (pch) and colour (col):
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = 4)
 @
 \vfill
-Note: you can use number of basic colours
+Note: you can use number of basic colours.
 \end{frame}
 
 
@@ -286,7 +286,7 @@ palette(c("red", "blue", "green"))
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 17, col = iris$Species)
 @
 \vfill
-Note: you can use a palette to match the levels of a factor
+Note: you can use a palette to match the levels of a factor.
 \end{frame}
 
 
@@ -645,7 +645,7 @@ par(oldpar)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Special characters}
 You can use weird characters:
-<<aes_8>>=
+<<aes_8, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth">>=
 foo <- round(pi, 3)
 plot(Petal.Length ~ Petal.Width, data = iris,
      xlab = expression(beta^2 + 2[alpha]), ylab = expression(paste(italic("bla bla bla"))),
@@ -1199,9 +1199,9 @@ grid.arrange(scatter, box, nrow = 1)
 You can use weird characters:
 <<aes_gg_9>>=
 foo <- round(pi, 3)
-ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
-  geom_point()+
-  labs(x = expression(beta^2 + 2[alpha]), y = expression(paste(italic("bla bla bla"))), title = paste("Plot number", foo))+
+ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
+  labs(x = expression(beta^2 + 2[alpha]), y = expression(paste(italic("bla bla bla"))), title = paste("Plot number", foo)) +
   #annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12)+ # require font with unicode installed (try it!)
   theme(plot.title = element_text(hjust = 0.5, size = 20),
         axis.title = element_text(size = 20))
