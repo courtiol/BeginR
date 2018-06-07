@@ -61,16 +61,49 @@ We will focus on:
 Note: if you master those, we are pretty much all set!
 \end{frame}
 
+
+\begin{frame}[fragile]{Handling data in \r}
+\begin{itemize}
+  \item vector
+  \vfill
+  \begin{itemize}
+    \item A single row of data
+    \item All elements have the same type (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+  \end{itemize}
+  \vfill
+  \item \texttt{matrix} \& \texttt{array}
+  \vfill
+  \begin{itemize}
+    \item All rows \& columns have same length
+    \item All rows \& columns have the same type (\texttt{numeric} or \texttt{character})
+  \end{itemize}
+  \vfill
+  \item \texttt{data.frame} \& \texttt{tibble}
+  \vfill
+  \begin{itemize}
+    \item All rows \& columns have same length
+    \item Each column can have its own type (\texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+  \end{itemize}
+  \vfill
+  \item \texttt{list}
+  \vfill
+  \begin{itemize}
+    \item Each element can have its own length
+    \item Each element can have its own type (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+  \end{itemize}
+  \end{itemize}
+  \vfill
+\end{frame}
+
+
 \section{Vectors}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Vector}
-\begin{center}
-A vector is a sequence of data elements of the same basic type.
+The vector is the simplest way to store data in \r; it is a sequence of data elements of the same kind.
 \vfill
-\end{center}
-  \begin{itemize}
-  \item Vectors allow the organisation of entities (e.g. numbers, characters. . . ) along one dimension which can be indexed:
+\begin{itemize}
+\item Vectors allow the organisation of entities (e.g. numbers, characters. . . ) along one dimension which can be indexed:
 
   <<defining heights, echo = T>>=
 height.girls <- c(178, 175, 159, 164, 183, 192)
@@ -296,7 +329,7 @@ my_factor2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% begin section dataframe
-\section{Data frames}
+\section{Data frames and tibbles}
 \subsection{what is a data frame}
 \begin{frame}[fragile]{Data frames}
 \begin{center}
