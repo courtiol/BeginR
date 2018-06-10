@@ -39,3 +39,4 @@ Optional:
 
 * run ```make clean``` to clean-up
 * run ```make check``` to check the package properly
+* run ```make drat``` to upload to the drat GitHub page
