@@ -23,7 +23,6 @@
 options(width = 60)
 library(knitr)
 opts_chunk$set("size" = "scriptsize")
-library(dplyr)
 @
 
 \AtBeginSection[]{
@@ -46,6 +45,8 @@ library(dplyr)
 
 \section{Introduction}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Handling data in \r}
 There are many types of objects designed to store data in \r.
 
@@ -55,41 +56,42 @@ We will focus on:
 \item vectors
 \item matrices (and arrays)
 \item data frames (and tibbles)
-\item list
+\item lists
 \end{itemize}
 \vfill
-Note: if you master those, we are pretty much all set!
+Note: if you master those, we are pretty much all set because most other objects derive from those!
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Handling data in \r}
 \begin{itemize}
-  \item vector
+  \item vectors
   \vfill
   \begin{itemize}
-    \item A single row of data
-    \item All elements have the same type (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+    \item a single row of data
+    \item all elements have the same type (e.g. \texttt{logical}, \texttt{integer}, \texttt{double}, \texttt{character}\dots)
   \end{itemize}
   \vfill
-  \item \texttt{matrix} \& \texttt{array}
+  \item matrices (and arrays)
   \vfill
   \begin{itemize}
-    \item All rows \& columns have same length
-    \item All rows \& columns have the same type (\texttt{numeric} or \texttt{character})
+    \item all rows \& columns have same length
+    \item all rows \& columns have the same type
   \end{itemize}
   \vfill
-  \item \texttt{data.frame} \& \texttt{tibble}
+  \item data frames (and tibbles)
   \vfill
   \begin{itemize}
-    \item All rows \& columns have same length
-    \item Each column can have its own type (\texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+    \item all rows \& columns have same length
+    \item each column can have its own type
   \end{itemize}
   \vfill
-  \item \texttt{list}
+  \item lists
   \vfill
   \begin{itemize}
-    \item Each element can have its own length
-    \item Each element can have its own type (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character}\dots)
+    \item each element can have its own length
+    \item each element can have its own type
   \end{itemize}
   \end{itemize}
   \vfill
@@ -98,161 +100,308 @@ Note: if you master those, we are pretty much all set!
 
 \section{Vectors}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Vector}
-The vector is the simplest way to store data in \r; it is a sequence of data elements of the same kind.
+\begin{center}
+The vector is the simplest way to store data in \r; it is a sequence of data elements of the same kind.%
+\end{center}
 \vfill
+Example of a vector:
+<<defining heights, echo = T>>=
+height_girls <- c(178, 175, 159, 164, 183, 192)
+height_girls
+@
+\end{frame}
+
+\subsection{general properties}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: general properties}
+They can be combined:
+
+\vfill
+<< combining heights, echo = T>>=
+height_boys <- c(181, 189, 174, 177)
+height <- c(height_boys, height_girls)
+height
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: general properties}
+Subsets can be made (with indexes, booleans or names):%
+
+\vfill
+<<printing indexes height, echo = T>>=
+height_girls[2]  ## returns element 2
+height_girls[-3] ## remove element 3
+@
+\vfill
+\pause
+<<boolean rep, echo = T>>=
+height_girls[c(1, 1, 2, 2, 2)]  ## open room for bootstraps and more
+@
+\vfill
+\pause
+<<boolean heights, echo = T>>=
+height_girls[height_girls > 168]
+height_girls[!(height_girls == min(height_girls))]
+height_girls[height_girls != min(height_girls)]
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{Vector: general properties}
+The elements of a vector can be named and those names can be used for subsetting:%
+
+\vfill
+<<>>=
+foo <- c(alex = 1, colin = 2)
+foo
+foo["colin"]
+@
+\vfill
+\pause
+But names tend to be dropped in sometimes unexpected ways:
+<<>>=
+foo[1] + foo[2]
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{Vector: general properties}
+Vectors can sometimes have metadata attached to them:
+\vfill
+<<>>=
+foo <- c(1, 2, 3)
+attr(foo, "whatever") <- "Learning to count"
+attr(foo, "something else?") <- "nope"
+@
+
+<<>>=
+foo
+@
+\pause
+<<>>=
+attr(foo, "whatever")
+@
+\pause
+<<>>=
+attributes(foo) ## this gives a list, see later!
+@
+\vfill
+Note: this is useful to know for handling outputs in certain packages (e.g. \texttt{spaMM}).
+\end{frame}
+
+
+\subsection{types \& classes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: types}
+Types refer to the internal representation of the objects:
+\begin{columns}
+\column{0.45\linewidth}
 \begin{itemize}
-\item Vectors allow the organisation of entities (e.g. numbers, characters. . . ) along one dimension which can be indexed:
-
-  <<defining heights, echo = T>>=
-height.girls <- c(178, 175, 159, 164, 183, 192)
-height.boys <- c(181, 189, 174, 177)
+\item logicals
+<<>>=
+(foo <- c(TRUE, FALSE, F, T))
+typeof(foo)
 @
-
-  <<printing indexes height, echo = T>>=
-height.girls[2]
-
-height.boys[3]
-
+\pause
+\item integers
+<<>>=
+(foo <- c(1L, 5L, 7L, 0L))
+typeof(foo)
 @
-
-  \end{itemize}
+\end{itemize}
+\pause
+\column{0.45\linewidth}
+\begin{itemize}
+\item doubles
+<<>>=
+(foo <- c(1, 1.2, pi))
+typeof(foo)
+@
+\pause
+\item characters
+<<>>=
+(foo <- c("bla", "bli", "blo"))
+typeof(foo)
+@
+\end{itemize}
+\end{columns}
+\vfill
+\pause
+Note: \r \ detects automatically the type of input and creates the right type of vector for you!
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Vector}
-  \begin{itemize}
-  \item They can be combined:
-
-  << combining heights, echo = T>>=
-(height <- c(height.boys, height.girls))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: classes}
+Classes refer to the how functions interact with the objects:
+\begin{columns}
+\column{0.45\linewidth}
+\begin{itemize}
+\item logicals
+<<>>=
+(foo <- c(TRUE, FALSE, F, T))
+class(foo)
 @
-
-  \end{itemize}
+\item integers
+<<>>=
+(foo <- c(1L, 5L, 7L, 0L))
+class(foo)
+@
+\end{itemize}
+\column{0.45\linewidth}
+\begin{itemize}
+\item numerics (from the type doubles)
+<<>>=
+(foo <- c(1, 1.2, pi))
+class(foo)
+@
+\item characters
+<<>>=
+(foo <- c("bla", "bli", "blo"))
+class(foo)
+@
+\end{itemize}
+\end{columns}
+\vfill
+Note: many don't make the distinction between types and classes explicit but it helps to understand some weird behaviours of \r.
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Vector continued}
-  \begin{itemize}
-  \item They can be indexed logically (i.e. indexed by anything leading to a vector of booleans):
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: classes}
+There are more classes than types:
+\begin{columns}[t]
+\column{0.45\linewidth}
+\begin{itemize}
+\item factors
+<<>>=
+(foo <- factor(c("bla", "bli", "blo")))
+class(foo)
+typeof(foo)
+levels(foo)
 
-  <<filtering heights, echo = T>>=
-(height > 168)
+levels(foo) <- c(levels(foo), "blu")  ## set extra level
+table(foo)
 @
+\end{itemize}
+\pause
+\column{0.45\linewidth}
+\begin{itemize}
+\item dates
+<<>>=
+(foo <- c(as.Date("2018/06/18"),
+          as.Date("19-06-18", format = "%d-%m-%y")))
+class(foo)
+typeof(foo)
 
-  <<boolean heights, echo = T>>=
-height[height > 168]
-height[!(height == min(height))]
-height[height != min(height)]
+foo + 50  ## you can do simple maths on dates!
 @
-
-  \end{itemize}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Types of vectors}
-  \begin{itemize}
-  \item character
-
-  <<vector character, echo = T>>=
-x <- c("bla", "1", "sf", "xx3")
-str(x)
-@
-  \item factor
-  <<vector factor, echo = T>>=
-x <- as.factor(c("bla", "1", "sf", "xx3"))
-str(x)
-@
-
-  \item logical
-  <<vector logical, echo = T>>=
-x <- c(TRUE, FALSE, T, F)
-str(x)
-@
-
-  \item Dates
-  <<vector dates, echo = T>>=
-x <- c(as.Date("1999-01-12"), lubridate::ymd("1999-03-12"))
-str(x)
-@
-
-  \end{itemize}
+\end{itemize}
+\end{columns}
+\vfill
+\pause
+Note: factors are heavily used in the context of linear models!
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{cool stuff with dates}
-  \begin{itemize}
-  \item Dates object
-  <<Date objects, echo = T>>=
-x
-@
-\item compute differences
-  <<difference in time, echo = T>>=
-x[1] - x[2]
-as.numeric(x[1] - x[2])
-@
-  \item logical
-  <<logical on dates, echo = T>>=
-x[1] > x[2]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: classes}
+Vectors must contain elements of the same class (otherwise errors or automatic coercion may occur):%
 
-x[x > as.Date("1999-02-12")]
+\vfill
+<<>>=
+foo <- 1
+
+bar <- "A"
+
+foo_bar <- c(foo, bar)
+foo_bar
 @
-  \end{itemize}
+\pause
+\vfill
+<<>>=
+foo + 1
+
+foo_bar[1] + 1
+@
+\pause
+\vfill
+Challenges:
+\begin{itemize}
+\item find out why the previous call produces an error.
+\item try to check how the automatic coercion occurs by mixing different classes in different ways (logical, integers, numeric, characters, factors).
+\item find out which date is internally stored as 0?
+\end{itemize}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Factors}
+
+\subsection{factors}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Factors}
-  \begin{itemize}
-  \item They work with other things than numbers:
-
-  << factors sex, echo = T>>=
+You can create them after in two steps:
+<< factors sex, echo = T>>=
 sex <- c("girl","girl","girl","girl","girl", "girl",
 "boy","boy","boy","boy")
+class(sex)
+@
+
+<<>>=
 sex <- factor(sex)
 sex
 @
-
-  <<factors sex other options,echo = T>>=
-# Or
+\vfill
+\pause
+Better code:
+<<factors sex other options,echo = T>>=
 sex <- factor(c(rep("girl", times = 6),
                 rep("boy", times = 4)))
-# Or
-
-sex <- factor(c(rep("girl", times = length(height.girls)),
-                rep("boy", times = length(height.boys))))
 @
-
-  \end{itemize}
+\vfill
+Even better code:
+<<>>=
+sex <- factor(c(rep("girl", times = length(height_girls)),
+                rep("boy", times = length(height_boys))))
+@
+\vfill
+Note: more on programming style later!
 \end{frame}
 
-\begin{frame}[fragile]{Changing the order of levels of a factor}
-  << changing levels order, echo = FALSE>>=
-  my_factor1 <- factor(c("A", "A", "B", "B", "C"))
-  my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Changing the order of levels of a factor}
+<< changing levels order, echo = FALSE>>=
+my_factor1 <- factor(c("A", "A", "B", "B", "C"))
+my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
+@
+
+\begin{columns} % create columns
+  \column{0.2\linewidth}
+  \begin{center}
+  You have:
+  <<displaying factor1>>=
+  my_factor1
   @
-
-  \begin{columns} % create columns
-    \column{0.2\linewidth}
-    \begin{center}
-    You have:
-    <<displaying factor1>>=
-    my_factor1
-    @
-    \end{center}
-
-    \column{0.2\linewidth}
-    \begin{center}
-    You want:
-    <<displaying factor2>>=
-    my_factor2
-    @
-    \end{center}
-  \end{columns}
+  \end{center}
+  \column{0.2\linewidth}
+  \begin{center}
+  You want:
+  <<displaying factor2>>=
+  my_factor2
+  @
+  \end{center}
+\end{columns}
 
 \pause
 
@@ -262,9 +411,14 @@ sex <- factor(c(rep("girl", times = length(height.girls)),
     \begin{center}
     You do:
     <<solutions factors order>>=
-    ## Using base:
     my_factor2 <- factor(my_factor1, levels(my_factor1)[c(3, 2, 1)])
     my_factor2
+    @
+    \pause
+    Or if you only care of the first level:
+    <<solutions factors order 2>>=
+    my_factor3 <- relevel(my_factor1, ref = "C")
+    my_factor3
     @
     \end{center}
   \end{columns}
@@ -272,12 +426,13 @@ sex <- factor(c(rep("girl", times = length(height.girls)),
 
 \pause
 
-  Note:
-  the order of levels influences the output of linear models and plotting functions (e.g. order in the legend of a ggplot) \dots
+Note:
+the order of levels influences the meaning of parameter estimates in linear models and some plotting functions (e.g. order in the legend of a ggplot) \dots
 \end{frame}
 
 
-\begin{frame}[fragile]{Changing the levels of a factor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Changing the levels of a factor}
 <<changing levels, echo = FALSE>>=
 my_factor1 <- factor(c("A", "A", "B", "B", "C"))
 my_factor2 <- factor(c("A", "A", "A", "A", "D"))
@@ -300,7 +455,7 @@ my_factor2
 @
 \end{center}
 \end{columns}
-
+\pause
 \begin{columns}
 \column{0.5\linewidth}
 
@@ -313,9 +468,10 @@ my_factor2 <- my_factor1
 levels(my_factor2) <- c("A", "A", "D") ## in same order!
 my_factor2
 @
-
-<<changing levels solutions dplyr>>=
+\pause
+<<changing levels solutions dplyr, message = FALSE>>=
 ## Using dplyr:
+library(dplyr)
 my_factor2 <- recode(my_factor1, A = "A", B = "A", C = "D")
 my_factor2
 @
@@ -324,13 +480,248 @@ my_factor2
 
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Some words about \texttt{dplyr} \& co.}
+\texttt{dplyr} is part of the growing \texttt{tidyverse} world (\url{https://www.tidyverse.org/}) developped by RStudio:
+
+\begin{center}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-dplyr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-ggplot2"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-forcats"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-purrr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-readr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-stringr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tibble"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tidyr"}
+\end{center}
+\pause
+\begin{columns}[t]
+\column{0.45\linewidth}
+\begin{block}{\R \ core team}
+\begin{itemize}
+\item build the core of \r
+\item backward compatibility is the priority
+\item limited man power (20 selected volunteers)
+\item not commercial (but Microsoft may creep in?)
+\end{itemize}
+\end{block}
+\column{0.45\linewidth}
+\begin{block}{RStudio}
+\begin{itemize}
+\item build RStudio \& the \texttt{tidyverse} packages
+\item different philosophy: 1 function = 1 behaviour
+\item backward compatibility is not the priority
+\item 1 leader (Hadley Wickham) + $\sim$ 70 full time employees + tons of volunteers
+\item free + commercial
+\end{itemize}
+\end{block}
+\end{columns}
+\pause
+Note 1: that has led to two quite distinct \r \ dialects
+
+Note 2: more and more users rely on \texttt{tidyverse}\dots
+
+Note 3: we will see a bit of both dialects
+\end{frame}
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for vectors}
+<<>>=
+foo <- c("bla", "bla", "bli")
+bar <- c(1, 1.2, pi, NA)
+@
+\begin{columns}
+\column{0.45\linewidth}
+<<>>=
+any(is.na(foo))
+unique(foo)
+length(foo)
+str(foo)
+summary(foo)
+@
+\pause
+\column{0.45\linewidth}
+<<>>=
+any(is.na(bar))
+unique(bar)
+length(bar)
+str(bar)
+summary(bar)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{sapply()}}
+\texttt{sapply()} is a function to apply a function on each element of a vector:
+<<>>=
+triple <- function(x) c(x, x, x)  ## let us create a sily function
+triple("a")
+@
+
+<<>>=
+sapply(X = bar, FUN = triple) ## here returns a matrix (automatic choice)
+@
+\pause
+<<>>=
+sapply(X = bar, FUN = triple, simplify = FALSE) ## same but always returns a list
+@
+\vfill
+\pause
+Note: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
+
+Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The \texttt{purrr} alternative to \texttt{sapply()}: \texttt{map()}}
+<<>>=
+library(purrr)
+map(.x = bar, .f = triple) ## always returns a list
+@
+\pause
+<<>>=
+map_dfc(.x = bar, .f = triple) ## always returns a tibble binding columns
+@
+\end{frame}
+
+
 \section{Matrices and arrays}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% begin section dataframe
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Matrices \& arrays}
+\begin{center}
+The matrices and arrays are direct extentions of vectors when there is more than one dimention \\ (1 or 2 dimensions for matrices, any for arrays).
+\end{center}
+\vfill
+Example of a matrix:
+<<>>=
+my_matrix <- matrix(1:12, ncol = 4, nrow = 3)
+my_matrix
+class(my_matrix)
+typeof(my_matrix) ## behind the curtain, matrices are stored as vectors!
+@
+\vfill
+\pause
+Note 1: since there are kind of vectors, same restriction: all elements must have the same class!
+
+Note 2: useful for bulding the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
+\end{frame}
+
+
+\subsection{general properties}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Matrices: general properties}
+They can be combined:
+
+\vfill
+<<>>=
+(my_2nd_matrix <- matrix(13:18, ncol = 2, nrow = 3))
+(my_3rd_matrix <- matrix(1:4, nrow = 1))
+@
+<<>>=
+cbind(my_matrix, my_2nd_matrix)  ## bind columns
+@
+<<>>=
+rbind(my_matrix, my_3rd_matrix)  ## bind rows
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: general properties}
+Subsets can be made (with indexes, booleans or names):%
+
+\vfill
+<<>>=
+my_matrix[2, ]
+my_matrix[, 1]
+my_matrix[3, , drop = FALSE]  ## to keep a matrix
+my_matrix[2, 1]
+my_matrix[c(1:2), c(1:2)]
+@
+\vfill
+\pause
+<<>>=
+colnames(my_matrix) <- c("A", "B", "C", "D")
+rownames(my_matrix) <- c("a", "b", "c")
+my_matrix
+my_matrix["b", ]
+@
+\end{frame}
+
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for matrices}
+\begin{columns}[t]
+\column{0.45\linewidth}
+Dimensions:
+<<>>=
+dim(my_matrix)
+ncol(my_matrix)
+nrow(my_matrix)
+length(my_matrix)
+@
+\vspace{1em}
+Names:
+<<>>=
+colnames(my_matrix)
+rownames(my_matrix)
+@
+\column{0.45\linewidth}
+Linear algebra:
+<<>>=
+t(my_matrix)  ## transpose
+my_matrix %*% c(1:4) ## matrix multiplication
+diag(my_matrix) ## extract diagonal
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{apply()}}
+\texttt{apply()} is a function to apply a function on each row or column of a matrix:
+<<>>=
+apply(X = my_matrix, MARGIN = 1, FUN = mean)  ## row means
+apply(X = my_matrix, MARGIN = 2, FUN = sd)  ## column SDs
+@
+\vfill
+Note: \texttt{tidyverse} alternatives require to turn the matrix into a data frame, so we keep this for later.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Arrays?}
+Arrays are very similar to matrices but allow for more dimensions:
+<<>>=
+foo <- array(1:8, dim = c(2, 2, 2))
+foo
+@
+\vfill
+<<>>=
+foo[1, 2, 2]
+apply(X = foo, MARGIN = 3, FUN = sum)
+@
+\vfill
+Note: only useful in some very specific situations.
+\end{frame}
+
+
 \section{Data frames and tibbles}
 \subsection{what is a data frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Data frames}
 \begin{center}
 Data frames allow the organisation of entities as a matrix-like structure whose columns have the same length:
@@ -854,7 +1245,7 @@ plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/che
 Lists allow the organisation of any set of entities into a single R object:
 \vspace{1em}
 <<>>=
-list.ht <- list(girls = height.girls, boys = height.boys)
+list.ht <- list(girls = height_girls, boys = height_boys)
 list.ht
 @
 \end{frame}
