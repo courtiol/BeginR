@@ -13,6 +13,7 @@ Imports:
   lattice,
   mosaic,
   profvis,
+  purrr,
   pryr,
   R6,
   spaMM
