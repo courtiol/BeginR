@@ -45,18 +45,44 @@ opts_chunk$set("size" = "scriptsize", "error" = TRUE)
 
 \maketitle
 
+\section{Before we start}
+
+\begin{frame}{About this course}
+I will:
+\begin{itemize}
+\item give you all the slides, so write only what is not being displayed
+\item show you what are the main principles of the \r \ language
+\item provide you with short examples on how to use some of the most useful functions in \r
+\item provide you with suggestions on how to learn more about \r
+\end{itemize}
+\vfill
+\pause
+You will not:
+\begin{itemize}
+\item be fluent in the \r \ language after one week
+\item be able to remember how to implement many of the things we will see
+\end{itemize}
+\pause
+\vfill
+You should:
+\begin{itemize}
+\item focus on the bigg picture (understand the logic, consider the long term gains)
+\item ask any silly question that pops up in your creative mind
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}{Who am I?}
 \begin{itemize}
 \item evolutionary biologist / statistician
 \item studies in France (Montpellier), postdoc in the UK (Sheffield)
-\item researcher at Leibniz IZW / lecturer at Freie University
+\item senior researcher at Leibniz IZW / lecturer at Freie University
 \item experience with \R:
   \begin{itemize}
-  \item 2003 --: study \r \ (still ongoing)
-  \item 2008 --: use \r \ most days
-  \item 2010 --: teach \r
-  \item 2016 --: develop \r \ packages
+  \item 2003 --: studying \r \ (still ongoing)
+  \item 2008 --: using \r \ most days
+  \item 2010 --: teaching \r
+  \item 2016 --: developing \r \ packages
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -333,9 +359,9 @@ one.plus.one <- 1 + 1
 \begin{frame}{The concept of an \R \ object}
 What is an object?
 \begin{itemize}
-\item everything in \r \ is an object (more on that later)
+\item everything in \r \ is an object
 \item objects have names
-\item objects allow astraction
+\item objects allow abstraction
 \item objects belongs to classes for which specific methods exist (and can be created)
 \end{itemize}
 \vfill
@@ -438,6 +464,18 @@ a
 `<-`(a, 1)
 a
 @
+\end{frame}
+
+
+\begin{frame}{Key principles of the \R \ language}
+\begin{itemize}
+\item Everything that exists in \r \ is an object
+\item Everything that happens in \r \ is a function call
+\end{itemize}
+
+\begin{flushright}
+John M. Chambers
+\end{flushright}
 \end{frame}
 
 
@@ -612,18 +650,10 @@ Books:
 \end{frame}
 
 
-\begin{comment}
-
-\begin{frame}[containsverbatim]{Key principles of the R language}
-\begin{itemize}
-\item Everything that exists in R is an object
-\item Everything that happens in R is a function call
-\end{itemize}
-
-\begin{flushright}
-John M. Chambers
-\end{flushright}
-
-\end{comment}
+\begin{frame}{Other way to learn}
+\begin{center}
+\huge{\huge{Afer having learned some basics, just open the console and test your understanding by performing experiments!}}
+\end{center}
+\end{frame}
 
 \end{document}
