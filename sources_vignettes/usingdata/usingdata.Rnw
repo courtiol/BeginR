@@ -166,7 +166,7 @@ foo["colin"]
 @
 \vfill
 \pause
-But names tend to be dropped in sometimes unexpected ways:
+But names behave sometimes somewhat unexpectedly:
 <<>>=
 foo[1] + foo[2]
 @
@@ -176,12 +176,12 @@ foo[1] + foo[2]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{Vector: general properties}
-Vectors can sometimes have metadata attached to them:
+Vectors (as any other object) can have metadata called `attributes' attached to them:
 \vfill
 <<>>=
 foo <- c(1, 2, 3)
-attr(foo, "whatever") <- "Learning to count"
-attr(foo, "something else?") <- "nope"
+attr(x = foo, which = "whatever") <- "Learning to count"
+attr(x = foo, which = "something else?") <- "nope"
 @
 
 <<>>=
@@ -189,7 +189,7 @@ foo
 @
 \pause
 <<>>=
-attr(foo, "whatever")
+attr(x = foo, which = "whatever")
 @
 \pause
 <<>>=
@@ -211,13 +211,13 @@ Types refer to the internal representation of the objects:
 \item logicals
 <<>>=
 (foo <- c(TRUE, FALSE, F, T))
-typeof(foo)
+typeof(x = foo)
 @
 \pause
 \item integers
 <<>>=
 (foo <- c(1L, 5L, 7L, 0L))
-typeof(foo)
+typeof(x = foo)
 @
 \end{itemize}
 \pause
@@ -226,19 +226,21 @@ typeof(foo)
 \item doubles
 <<>>=
 (foo <- c(1, 1.2, pi))
-typeof(foo)
+typeof(x = foo)
 @
 \pause
 \item characters
 <<>>=
 (foo <- c("bla", "bli", "blo"))
-typeof(foo)
+typeof(x = foo)
 @
 \end{itemize}
 \end{columns}
 \vfill
 \pause
 Note: \r \ detects automatically the type of input and creates the right type of vector for you!
+\vspace{1em}
+Challenge: compare \texttt{typeof()} with \texttt{mode()}. % mode is the same except that doubles and integers are called numerics (and a few other name changes)
 \end{frame}
 
 
@@ -251,12 +253,12 @@ Classes refer to the how functions interact with the objects:
 \item logicals
 <<>>=
 (foo <- c(TRUE, FALSE, F, T))
-class(foo)
+class(x = foo)
 @
 \item integers
 <<>>=
 (foo <- c(1L, 5L, 7L, 0L))
-class(foo)
+class(x = foo)
 @
 \end{itemize}
 \column{0.45\linewidth}
@@ -264,12 +266,12 @@ class(foo)
 \item numerics (from the type doubles)
 <<>>=
 (foo <- c(1, 1.2, pi))
-class(foo)
+class(x = foo)
 @
 \item characters
 <<>>=
 (foo <- c("bla", "bli", "blo"))
-class(foo)
+class(x = foo)
 @
 \end{itemize}
 \end{columns}
@@ -287,11 +289,11 @@ There are more classes than types:
 \item factors
 <<>>=
 (foo <- factor(c("bla", "bli", "blo")))
-class(foo)
-typeof(foo)
-levels(foo)
+class(x = foo)
+typeof(x = foo)
+levels(x = foo)
 
-levels(foo) <- c(levels(foo), "blu")  ## set extra level
+levels(x = foo) <- c(levels(x = foo), "blu")  ## set extra level
 table(foo)
 @
 \end{itemize}
@@ -300,10 +302,10 @@ table(foo)
 \begin{itemize}
 \item dates
 <<>>=
-(foo <- c(as.Date("2018/06/18"),
-          as.Date("19-06-18", format = "%d-%m-%y")))
-class(foo)
-typeof(foo)
+(foo <- c(as.Date(x = "2018/06/18"),
+          as.Date(x = "19-06-18", format = "%d-%m-%y")))
+class(x = foo)
+typeof(x = foo)
 
 foo + 50  ## you can do simple maths on dates!
 @
@@ -346,6 +348,36 @@ Challenges:
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Vector: classes}
+Some coercions are straightforward:
+<<>>=
+as.integer(x = 1.2)
+as.integer(x = 1.9)
+as.integer(x = -2.1)
+@
+\vfill
+<<>>=
+foo <- factor(x = 10:20)
+foo
+as.character(x = foo)
+@
+\vfill
+\pause
+But not all:
+<<>>=
+as.numeric(x = foo)
+as.numeric(as.character(x = foo))
+@
+\vfill
+<<>>=
+foo <- as.Date(x = "20180618", format = "%Y%m%d")
+as.integer(x = foo)
+as.integer(x = gsub(pattern = "-", replacement = "", x = as.character(foo)))
+@
+\end{frame}
+
+
 \subsection{factors}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,25 +386,25 @@ You can create them after in two steps:
 << factors sex, echo = T>>=
 sex <- c("girl","girl","girl","girl","girl", "girl",
 "boy","boy","boy","boy")
-class(sex)
+class(x = sex)
 @
 
 <<>>=
-sex <- factor(sex)
+sex <- factor(x = sex)
 sex
 @
 \vfill
 \pause
 Better code:
 <<factors sex other options,echo = T>>=
-sex <- factor(c(rep("girl", times = 6),
-                rep("boy", times = 4)))
+sex <- factor(x = c(rep(x = "girl", times = 6),
+                    rep(x = "boy", times = 4)))
 @
 \vfill
 Even better code:
 <<>>=
-sex <- factor(c(rep("girl", times = length(height_girls)),
-                rep("boy", times = length(height_boys))))
+sex <- factor(x = c(rep(x = "girl", times = length(x = height_girls)),
+                    rep(x = "boy", times = length(x = height_boys))))
 @
 \vfill
 Note: more on programming style later!
@@ -382,8 +414,8 @@ Note: more on programming style later!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Changing the order of levels of a factor}
 << changing levels order, echo = FALSE>>=
-my_factor1 <- factor(c("A", "A", "B", "B", "C"))
-my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
+my_factor1 <- factor(x = c("A", "A", "B", "B", "C"))
+my_factor2 <- factor(x = c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
 @
 
 \begin{columns} % create columns
@@ -411,13 +443,13 @@ my_factor2 <- factor(c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
     \begin{center}
     You do:
     <<solutions factors order>>=
-    my_factor2 <- factor(my_factor1, levels(my_factor1)[c(3, 2, 1)])
+    my_factor2 <- factor(x = my_factor1, levels = levels(my_factor1)[c(3, 2, 1)])
     my_factor2
     @
     \pause
-    Or if you only care of the first level:
+    Or if you only care about the first level:
     <<solutions factors order 2>>=
-    my_factor3 <- relevel(my_factor1, ref = "C")
+    my_factor3 <- relevel(x = my_factor1, ref = "C")
     my_factor3
     @
     \end{center}
@@ -434,8 +466,8 @@ the order of levels influences the meaning of parameter estimates in linear mode
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Changing the levels of a factor}
 <<changing levels, echo = FALSE>>=
-my_factor1 <- factor(c("A", "A", "B", "B", "C"))
-my_factor2 <- factor(c("A", "A", "A", "A", "D"))
+my_factor1 <- factor(x = c("A", "A", "B", "B", "C"))
+my_factor2 <- factor(x = c("A", "A", "A", "A", "D"))
 @
 
 \begin{columns}
@@ -463,16 +495,16 @@ my_factor2
 You do:
 <<changing levels solution>>=
 ## Using base:
-levels(my_factor1)
+levels(x = my_factor1)
 my_factor2 <- my_factor1
-levels(my_factor2) <- c("A", "A", "D") ## in same order!
+levels(x = my_factor2) <- c("A", "A", "D") ## in same order!
 my_factor2
 @
 \pause
 <<changing levels solutions dplyr, message = FALSE>>=
 ## Using dplyr:
 library(dplyr)
-my_factor2 <- recode(my_factor1, A = "A", B = "A", C = "D")
+my_factor2 <- recode(.x = my_factor1, A = "A", B = "A", C = "D")
 my_factor2
 @
 \end{center}
@@ -480,6 +512,442 @@ my_factor2
 
 \end{frame}
 
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for vectors}
+<<>>=
+foo <- c("bla", "bla", "bli")
+bar <- c(1, 1.2, pi, NA)
+@
+\begin{columns}
+\column{0.45\linewidth}
+<<>>=
+any(is.na(x = foo))
+unique(x = foo)
+length(x = foo)
+str(object = foo)
+summary(object = foo)
+@
+\pause
+\column{0.45\linewidth}
+<<>>=
+any(is.na(x = bar))
+unique(x = bar)
+length(x = bar)
+str(object = bar)
+summary(object = bar)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{sapply()}}
+\texttt{sapply()} is a function to apply a function on each element of a vector:
+<<>>=
+triple <- function(x) c(x, x, x)  ## let us create a sily function
+triple(x = "a")
+@
+
+<<>>=
+sapply(X = bar, FUN = triple) ## here returns a matrix (automatic choice)
+@
+\pause
+<<>>=
+sapply(X = bar, FUN = triple, simplify = FALSE) ## same but always returns a list
+@
+\vfill
+\pause
+Note: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
+\vfill
+Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The \texttt{purrr} alternative to \texttt{sapply()}: \texttt{purrr::map()}}
+<<>>=
+library(purrr)
+map(.x = bar, .f = triple) ## always returns a list
+@
+\pause
+<<>>=
+map_dfc(.x = bar, .f = triple) ## always returns a tibble binding columns
+@
+\end{frame}
+
+
+\section{Matrices and arrays}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Matrices \& arrays}
+\begin{center}
+The matrices and arrays are direct extentions of vectors when there is more than one dimension \\ (1 or 2 dimensions for matrices, any for arrays).
+\end{center}
+\vfill
+Example of a matrix:
+<<>>=
+my_matrix <- matrix(data = 1:12, ncol = 4, nrow = 3)
+my_matrix
+class(x = my_matrix)
+typeof(x = my_matrix) ## behind the curtain, matrices are stored as vectors!
+@
+\vfill
+\pause
+Note 1: since there are a kind of vectors, the same restrictions apply: all elements must have the same class!
+
+Note 2: useful for bulding the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
+\end{frame}
+
+
+\subsection{general properties}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Matrices: general properties}
+They can be combined:
+
+\vfill
+<<>>=
+(my_2nd_matrix <- matrix(data = 13:18, ncol = 2, nrow = 3))
+(my_3rd_matrix <- matrix(data = 1:4, nrow = 1))
+@
+\vfill
+\pause
+<<>>=
+cbind(my_matrix, my_2nd_matrix)  ## bind columns
+@
+\pause
+\vfill
+<<>>=
+rbind(my_matrix, my_3rd_matrix)  ## bind rows
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Matrices: general properties}
+Subsets can be made (with indexes, booleans or names):%
+
+\vfill
+<<>>=
+my_matrix[2, ]
+my_matrix[, 1]
+my_matrix[3, , drop = FALSE]  ## to keep a matrix
+my_matrix[2, 1]
+my_matrix[c(1:2), c(1:2)]
+@
+\vfill
+\pause
+<<>>=
+colnames(x = my_matrix) <- c("A", "B", "C", "D")
+rownames(x = my_matrix) <- c("a", "b", "c")
+my_matrix
+my_matrix["b", ]
+@
+\end{frame}
+
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for matrices}
+\begin{columns}[t]
+\column{0.45\linewidth}
+Dimensions:
+<<>>=
+dim(x = my_matrix)
+ncol(x = my_matrix)
+nrow(x = my_matrix)
+length(x = my_matrix)
+@
+\vspace{1em}
+Names:
+<<>>=
+colnames(x = my_matrix)
+rownames(x = my_matrix)
+@
+\column{0.45\linewidth}
+Linear algebra:
+<<>>=
+t(x = my_matrix)  ## transpose
+my_matrix %*% c(1:4) ## matrix multiplication
+diag(x = my_matrix) ## extract diagonal
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{apply()}}
+\texttt{apply()} is a function to apply a function on each row or column of a matrix:
+<<>>=
+apply(X = my_matrix, MARGIN = 1, FUN = mean)  ## row means
+apply(X = my_matrix, MARGIN = 2, FUN = sd)  ## column SDs
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Arrays?}
+Arrays are very similar to matrices but allow for more dimensions:
+<<>>=
+foo <- array(data = 1:8, dim = c(2, 2, 2))
+foo
+@
+\vfill
+<<>>=
+foo[1, 2, 2]
+apply(X = foo, MARGIN = 3, FUN = sum)
+@
+\vfill
+Note: only useful in some very specific situations.
+\end{frame}
+
+
+\section{List}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Lists}
+\begin{center}
+Lists allow the organisation of any set of entities into a single \r \ object.
+\end{center}
+\vfill
+Example of a list:
+<<>>=
+list_height <- list(height_girls, height_boys)
+list_height
+class(x = list_height)
+typeof(x = list_height)
+@
+\vfill
+Note 1: list elements can be anything!\\
+\vspace{1em}
+Note 2: lists are very important because no function can output more than one object!
+\end{frame}
+
+
+\subsection{general properties}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Lists: general properties}
+They can be combined:
+\vfill
+<<>>=
+list_full <- c(list_height, list(my_matrix))
+list_full
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Lists: general properties}
+Subsets can be made (with indexes, booleans or names):%
+\vfill
+<<>>=
+list_height <- list(girls = height_girls, boys = height_boys)  ## create a list with names
+list_height
+@
+\vfill
+<<>>=
+list_height$girls
+@
+<<>>=
+list_height["boys"] ## still a list
+@
+<<>>=
+list_height[["boys"]] ## vector
+@
+<<>>=
+list_height[[2]][3]
+@
+\vfill
+\end{frame}
+
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for lists}
+<<>>=
+length(x = list_full) ## number of elements
+@
+<<>>=
+str(object = list_full)  ## this function is really useful!
+@
+\vfill
+Challenge: run the examples from \texttt{lm()} and explore the list \texttt{lm.D9}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{lapply()}}
+\texttt{lapply()} is a function to apply a function on each element of a list:
+<<>>=
+lapply(X = list_full, FUN = mean)
+@
+\end{frame}
+
+
+
+\section{Data frames and tibbles}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames}
+\begin{center}
+Data frames allow the organisation of vectors of the same length as a matrix-like structure:
+\end{center}
+\vfill
+Example:
+<<create Data frame>>=
+dataframe_ht <- data.frame(Height = height, Sex = sex)
+dataframe_ht
+class(dataframe_ht)
+typeof(dataframe_ht)
+@
+\pause
+\vfill
+Note 1: this is the best choice of representation for datasets!\\
+\vspace{1em}
+Note 2: it is safer to work on data frames than on floating vectors!
+\end{frame}
+
+
+\subsection{general properties}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Data frames: general properties}
+They borough from both matrices and lists:
+\vfill
+\begin{columns}[t]
+\column{0.45\linewidth}
+As for matrices:
+<<>>=
+(dataframe_ht_double <- cbind(dataframe_ht, newcol = 1:10))
+@
+\pause
+<<>>=
+dataframe_ht[, "Sex"]
+dataframe_ht[2, 2]
+@
+\pause
+\column{0.45\linewidth}
+As for lists:
+<<>>=
+dataframe_ht$Height
+str(dataframe_ht)
+@
+
+\end{columns}
+\end{frame}
+
+
+\subsection{challenge}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames: challenge}
+The \texttt{iris} data set:
+<<>>=
+head(iris) ## this function displays the first 6 rows
+@
+\vfill
+Using the \texttt{iris} data frame, find out:
+\begin{itemize}
+\item what is the average sepal length across all flowers?
+\item what is the median sepal length across \emph{Iris versicolor}?
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Data frames: general properties}
+Data frames can easily be edited:
+<<edit df>>=
+backup <- dataframe_ht[1, 1]
+dataframe_ht[1, 1] <- 171.3
+dataframe_ht[1, 1]
+dataframe_ht[1, 1] <- backup
+dataframe_ht[1, 1]
+@
+\pause
+<<>>=
+dataframe_ht$linenumber <- 1:nrow(x = dataframe_ht)  # add column
+head(x = dataframe_ht)
+@
+\pause
+<<>>=
+dataframe_ht$linenumber <- NULL  # remove column
+head(x = dataframe_ht)
+@
+\end{frame}
+
+
+\subsection{functions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Some simple functions for data frames}
+\begin{columns}[t]
+\column{0.45\linewidth}
+<<summary df>>=
+head(x = iris)  ## try also tail()
+summary(object = iris)
+@
+\column{0.45\linewidth}
+<<>>=
+dim(x = iris)
+ncol(x = iris)
+nrow(x = iris)
+length(x = iris) ## not as in matrix!!
+rownames(x = iris)[1:10]
+colnames(x = iris)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A more complex function: \texttt{tapply()}}
+\texttt{tapply()} is a function to apply a function on subsets of a given column from the data frame:
+<<>>=
+tapply(X = iris$Sepal.Length, INDEX = iris$Species, FUN = mean)
+@
+\vfill
+\pause
+Or similarly:
+<<>>=
+with(data = iris, tapply(X = Sepal.Length, INDEX = Species, FUN = mean))
+@
+\vfill
+\pause
+Or similarly:
+<<>>=
+by(data = iris, INDICES = iris$Species, FUN = function(x) mean(x$Sepal.Length))
+@
+\vfill
+Note: \texttt{by()} is more powerful but more complex than \texttt{tapply()}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The \texttt{dyplr} alternative to \texttt{tapply()}}
+The same operation in \texttt{dyplr} looks very different:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  summarize(mean_sepal_length = mean(Sepal.Length),
+            mean_sepal_width = mean(Sepal.Width)) %>%
+  as.data.frame()  ## optional but otherwise tibble and not data frame
+@
+\vfill
+Note: this replaces two \texttt{tapply()} calls and remains easy to read.\\
+\end{frame}
+
+
+\subsection{\texttt{dplyr}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Some words about \texttt{dplyr} \& co.}
@@ -500,7 +968,8 @@ my_factor2
 \column{0.45\linewidth}
 \begin{block}{\R \ core team}
 \begin{itemize}
-\item build the core of \r
+\item build the core of \r \ and the original \r \ GUI
+\item maintain CRAN
 \item backward compatibility is the priority
 \item limited man power (20 selected volunteers)
 \item not commercial (but Microsoft may creep in?)
@@ -509,8 +978,8 @@ my_factor2
 \column{0.45\linewidth}
 \begin{block}{RStudio}
 \begin{itemize}
-\item build RStudio \& the \texttt{tidyverse} packages
-\item different philosophy: 1 function = 1 behaviour
+\item build RStudio IDE, \texttt{tidyverse} and more
+\item \texttt{tidyverse} philosophy: 1 function = 1 action
 \item backward compatibility is not the priority
 \item 1 leader (Hadley Wickham) + $\sim$ 70 full time employees + tons of volunteers
 \item free + commercial
@@ -525,399 +994,118 @@ Note 2: more and more users rely on \texttt{tidyverse}\dots
 Note 3: we will see a bit of both dialects
 \end{frame}
 
-\subsection{functions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Some simple functions for vectors}
-<<>>=
-foo <- c("bla", "bla", "bli")
-bar <- c(1, 1.2, pi, NA)
-@
-\begin{columns}
-\column{0.45\linewidth}
-<<>>=
-any(is.na(foo))
-unique(foo)
-length(foo)
-str(foo)
-summary(foo)
-@
-\pause
-\column{0.45\linewidth}
-<<>>=
-any(is.na(bar))
-unique(bar)
-length(bar)
-str(bar)
-summary(bar)
-@
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A more complex function: \texttt{sapply()}}
-\texttt{sapply()} is a function to apply a function on each element of a vector:
-<<>>=
-triple <- function(x) c(x, x, x)  ## let us create a sily function
-triple("a")
-@
-
-<<>>=
-sapply(X = bar, FUN = triple) ## here returns a matrix (automatic choice)
-@
-\pause
-<<>>=
-sapply(X = bar, FUN = triple, simplify = FALSE) ## same but always returns a list
-@
-\vfill
-\pause
-Note: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
-
-Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The \texttt{purrr} alternative to \texttt{sapply()}: \texttt{map()}}
-<<>>=
-library(purrr)
-map(.x = bar, .f = triple) ## always returns a list
-@
-\pause
-<<>>=
-map_dfc(.x = bar, .f = triple) ## always returns a tibble binding columns
-@
-\end{frame}
-
-
-\section{Matrices and arrays}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Matrices \& arrays}
+\begin{frame}{Some words about \texttt{dplyr} \& co.}
 \begin{center}
-The matrices and arrays are direct extentions of vectors when there is more than one dimention \\ (1 or 2 dimensions for matrices, any for arrays).
+\includegraphics[height = 0.8\textheight]{../figures/Wickham_r4ds}
 \end{center}
-\vfill
-Example of a matrix:
-<<>>=
-my_matrix <- matrix(1:12, ncol = 4, nrow = 3)
-my_matrix
-class(my_matrix)
-typeof(my_matrix) ## behind the curtain, matrices are stored as vectors!
-@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\texttt{dplyr}}
+\begin{itemize}
+\item in \texttt{dplyr} one verb = one operation (\texttt{tidyverse} philosophy)
+\item operations can be chained with the pipe operator \texttt{\%>\%} (from package \texttt{magrittr}), which considers the output from one function as the input of the next function
+\end{itemize}
 \vfill
 \pause
-Note 1: since there are kind of vectors, same restriction: all elements must have the same class!
-
-Note 2: useful for bulding the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
-\end{frame}
-
-
-\subsection{general properties}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Matrices: general properties}
-They can be combined:
-
-\vfill
-<<>>=
-(my_2nd_matrix <- matrix(13:18, ncol = 2, nrow = 3))
-(my_3rd_matrix <- matrix(1:4, nrow = 1))
-@
-<<>>=
-cbind(my_matrix, my_2nd_matrix)  ## bind columns
-@
-<<>>=
-rbind(my_matrix, my_3rd_matrix)  ## bind rows
-@
-\vfill
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Vector: general properties}
-Subsets can be made (with indexes, booleans or names):%
-
-\vfill
-<<>>=
-my_matrix[2, ]
-my_matrix[, 1]
-my_matrix[3, , drop = FALSE]  ## to keep a matrix
-my_matrix[2, 1]
-my_matrix[c(1:2), c(1:2)]
-@
-\vfill
-\pause
-<<>>=
-colnames(my_matrix) <- c("A", "B", "C", "D")
-rownames(my_matrix) <- c("a", "b", "c")
-my_matrix
-my_matrix["b", ]
-@
-\end{frame}
-
-
-\subsection{functions}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Some simple functions for matrices}
 \begin{columns}[t]
 \column{0.45\linewidth}
-Dimensions:
-<<>>=
-dim(my_matrix)
-ncol(my_matrix)
-nrow(my_matrix)
-length(my_matrix)
-@
-\vspace{1em}
-Names:
-<<>>=
-colnames(my_matrix)
-rownames(my_matrix)
-@
+\begin{block}{Pros}
+\begin{itemize}
+\item clear code
+\item consistent
+\item powerful
+\item fast
+\item many tutorials
+\end{itemize}
+\end{block}
+\pause
 \column{0.45\linewidth}
-Linear algebra:
-<<>>=
-t(my_matrix)  ## transpose
-my_matrix %*% c(1:4) ## matrix multiplication
-diag(my_matrix) ## extract diagonal
-@
+\begin{block}{Cons}
+\begin{itemize}
+\item different \& redundant
+\item buggy (but less \& less so)
+\item poor help within \r
+\item lead to bad habits (e.g. arguments not named, help not looked at)
+\item broaden the gap between users and programmers
+\end{itemize}
+\end{block}
 \end{columns}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A more complex function: \texttt{apply()}}
-\texttt{apply()} is a function to apply a function on each row or column of a matrix:
-<<>>=
-apply(X = my_matrix, MARGIN = 1, FUN = mean)  ## row means
-apply(X = my_matrix, MARGIN = 2, FUN = sd)  ## column SDs
-@
-\vfill
-Note: \texttt{tidyverse} alternatives require to turn the matrix into a data frame, so we keep this for later.
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Arrays?}
-Arrays are very similar to matrices but allow for more dimensions:
-<<>>=
-foo <- array(1:8, dim = c(2, 2, 2))
-foo
-@
-\vfill
-<<>>=
-foo[1, 2, 2]
-apply(X = foo, MARGIN = 3, FUN = sum)
-@
-\vfill
-Note: only useful in some very specific situations.
-\end{frame}
-
-
-\section{Data frames and tibbles}
-\subsection{what is a data frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-\begin{center}
-Data frames allow the organisation of entities as a matrix-like structure whose columns have the same length:
-\end{center}
-\vfill
-<<create Data frame>>=
-
-dataframe.ht <- data.frame(Height = height, Sex = sex)
-dataframe.ht
-
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-\begin{center}
-It is good practice to always check their structure:
-\end{center}
-<<str data frame, echo = T>>=
-str(dataframe.ht)
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-\begin{center}
-You access the columns by means of the extractor  \texttt{\$}
-\vspace{1em}
-\end{center}
-<<access column df>>=
-height
-rm(list = c("height", "sex")) # removing original vectors
-height
-dataframe.ht$Height #Or: with(data = dataframe.ht, Height)
-@
-\vfill
-\begin{center}
-\textcolor{purple}{$\Rightarrow$ What is the average height?}
-\end{center}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-Some functions can take a data frame as an input:
-\vfill
-<<summary df>>=
-summary(dataframe.ht)
-@
-\vfill
-Note: this will be the case of a lot of functions performing statistical tests!
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
-\begin{frame}[fragile]{Data frames}
-How to compute the average height per sex?
+\begin{frame}[fragile]{\texttt{dplyr} verbs}
+Useful \texttt{dplyr} functions:\\
 \vfill
 \begin{itemize}
-\item simple
-<<mean col df>>=
-mean(dataframe.ht$Height[dataframe.ht$Sex == "boy"])
-@
-\item more elegant
-<<mean col df2>>=
-tapply(X = dataframe.ht$Height, INDEX = dataframe.ht$Sex,
-       FUN = mean)
-# Or: with(data = dataframe.ht, tapply(X = Height,
-#   INDEX = Sex, FUN = mean))
-@
-\item even more elegant but dangerous
-<<mean col df3>>=
-library(dplyr)
-dataframe.ht %>% group_by(Sex) %>% summarize(mean = mean(Height))  ## be aware of the rounding
-@
-
-\end{itemize}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
-\begin{frame}[fragile]{Data frames}
-They can also be indexed:
-\vspace{1em}
-<<index df>>=
-dataframe.ht[1, ]
-dataframe.ht[, 1]  # Or: dataframe.ht[, "Sex"]
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-They can be edited:
-\vspace{1em}
-<<edit df>>=
-dataframe.ht[1, 1]
-dataframe.ht[1, 1] <- 171.3
-dataframe.ht[1, 1]
-dataframe.ht$linenumber <- 1:nrow(dataframe.ht)  # add column
-ncol(dataframe.ht) # try dim()
-dataframe.ht$linenumber <- NULL  # remove column
-ncol(dataframe.ht)
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{dplyr}
-\begin{frame}{dplyr}
-\begin{itemize}
-\item \texttt{dplyr} is a useful package for data manipulation
-\vfill
-\pause
-\item \texttt{dplyr} is a grammar of data manipulation: one verb = one operation
-\vfill
-\pause
-\item operations can be chained with the pipe operator \texttt{\%>\%}
-\vfill
-\pause
-\item the pipe operator \texttt{\%>\%} takes the output from one function as input of another function.
-\end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames}
-Useful \texttt{dplyr} verbs
-
-\vspace{1em}
-add column with \texttt{mutate()}
+\item add column with \texttt{mutate()}
 <<edit df dplyr>>=
-dataframe.ht <- dataframe.ht %>% mutate(ID = 1:nrow(dataframe.ht))
-head(dataframe.ht, n= 3)
+dataframe_ht <- dataframe_ht %>% mutate(ID = 1:nrow(dataframe_ht))  ## transmute() is similar but only keeps new columns
+head(x = dataframe_ht, n = 3)
 @
-\vspace{1em}
-
+\vfill
 \pause
-
-select columns with \texttt{select()}
+\item select columns with \texttt{select()}
 <<select dplyr>>=
-dataframe.ht.sex <- dataframe.ht %>% select(Sex)
-head(dataframe.ht.sex, n= 3)
+dataframe_ht_sex <- dataframe_ht %>% select(Sex)
+head(x = dataframe_ht_sex, n = 3)
 @
-\vspace{1em}
-
+\vfill
 \pause
-
-select rows with \texttt{filter()}
+\item select rows with \texttt{filter()}
 <<filter dplyr>>=
-dataframe.ht.female <- dataframe.ht %>% filter(Sex == "girl")
-head(dataframe.ht.female, n= 3)
+dataframe_ht_female <- dataframe_ht %>% filter(Sex == "girl")
+head(dataframe_ht_female, n = 3)
 @
+\end{itemize}
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{mutate\_if()}
-you want to change all numeric variables into character variables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Around \texttt{dplyr} verbs}
+All these functions have many derivatives and some of them can be useful:\\
+e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
 \vfill
 \begin{columns}
-\column{0.4\linewidth}
+\column{0.45\linewidth}
 you have:
 <<mutate if, echo = F >>=
-x <- dataframe.ht %>%
-  group_by(Sex) %>%
-  mutate(mean_H = round(mean(Height, na.rm = T),2),
-            median_H = round(median(Height, na.rm = T),2),
-            n = n()) %>% ungroup() %>% mutate(Sex = as.character(Sex))
+str(iris)
 @
-<<mutate if head, echo = F >>=
-str(as.data.frame(x))
-@
-\column{0.5\linewidth}
-you want
+\column{0.45\linewidth}
+you want:
 <<mutate if out, echo = F >>=
-
-str(as.data.frame(x %>% mutate_if(is.numeric, ~ as.character(.))))
+str(as.data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
 @
 \end{columns}
 \vfill
 you do:
 <<mutate if solution, echo = T>>=
-
-x_numeric <- x %>% mutate_if(is.numeric, ~ as.character(.))
+iris_numeric <- iris %>% mutate_if(is.numeric, ~ as.character(.))
 @
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{group\_by()}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\texttt{group\_by()}}
+The \texttt{group\_by()} function allows you to perform operation on gouped data.\\
+\vfill
+\pause
+It is very powerful when combined to:
 \begin{itemize}
-\item  \texttt{group\_by()} allow you to perform operation on gouped data.
+\item \texttt{summarize()} $\rightarrow$ one value per group
 \vfill
 \pause
-\item  it is mostly used with \texttt{summarize()} \texttt{->} one value per group
-\vfill
-\pause
-\item  or with \texttt{mutate()} \texttt{->} one value per observation
+\item \texttt{mutate()} or \texttt{transmute()} $\rightarrow$ one value per observation
 \end{itemize}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{group\_by() with summarize()}
 \begin{center}
 You want the mean height of males and females, the median height and the number in
@@ -941,7 +1129,7 @@ as.data.frame(x)
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{group\_by() with mutate()}
 \begin{center}
 You want the mean height of males and females, the median height and the number in
@@ -964,7 +1152,7 @@ as.data.frame(x)
 
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame}
 
  << merging df: creating df2, echo = F>>=
@@ -1002,7 +1190,8 @@ You want to merge the two data frames
 \end{center}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame with base R}
 \begin{center}
 You can use \texttt{merge()}
@@ -1025,7 +1214,7 @@ You can use \texttt{merge()}
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame with dpylr join()}
 \begin{center}
 or use \texttt{inner\_join()}
@@ -1048,7 +1237,8 @@ or use \texttt{inner\_join()}
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame with left\_join()}
 \begin{center}
 \texttt{left\_join() or right\_join()} keep all the rows of the data frame on the left (or right)
@@ -1074,7 +1264,8 @@ my_df3
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{joining data frame with full\_join()}
 \begin{center}
 \texttt{full\_join()} keep all the rows of the two data frame
@@ -1100,7 +1291,8 @@ adds NA when no data are present
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{tidyr}
 \begin{frame}[fragile]{reshaping data frame}
 \begin{itemize}
@@ -1115,7 +1307,7 @@ adds NA when no data are present
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{reshaping data frame}
  << reshaping data frame, echo = FALSE>>=
 library(dplyr)
@@ -1172,7 +1364,8 @@ or:
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{reshaping data frame}
 The reverse is done with \texttt{spread()}
 \vfill
@@ -1209,7 +1402,8 @@ you do:
 \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{some other useful functions}
 
 \texttt{unite()} merges 2 columns of a data frame
@@ -1226,8 +1420,7 @@ my_df3 %>% separate(New_col, c("ID", "Sex"))
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{cheating data frame}
 \begin{center}
 plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/cheatsheets/}
@@ -1236,44 +1429,7 @@ plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/che
 \end{frame}
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin section list
-\section{List}
-\begin{frame}[fragile]{Lists}
-Lists allow the organisation of any set of entities into a single R object:
-\vspace{1em}
-<<>>=
-list.ht <- list(girls = height_girls, boys = height_boys)
-list.ht
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Lists}
-Lists can also be indexed and their elements extracted:
-\vspace{1em}
-<<>>=
-list.ht$girls
-list.ht["boys"]  # still a list
-list.ht[["boys"]]  # vector
-list.ht[[2]][3]
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Lists}
-Some functions can take a list as an input:
-\vspace{1em}
-<<>>=
-lapply(list.ht, FUN = mean)
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Summary}
 \begin{columns}
 \column[t]{0.3\linewidth}
@@ -1288,9 +1444,7 @@ list.ht
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Summary}
   \begin{itemize}
   \item \texttt{data.frame}
@@ -1313,6 +1467,7 @@ list.ht
 \section{Importing \& exporting data}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Working directory}
 <<>>=
 getwd()  # to change, use setwd()
@@ -1322,6 +1477,7 @@ dir(pattern = "*.csv")
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Exporting and importing data in R}
 <<tidy=F, eval = FALSE>>=
 write.csv(dataframe.ht,
@@ -1345,6 +1501,7 @@ Excel can read and write \*.csv files!\\
 \vfill
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Challenge \#2}
 \begin{large}
 \begin{center}
@@ -1353,5 +1510,4 @@ Create a dataframe using your favorite spreadsheet software\\ and import it in R
 \end{large}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
