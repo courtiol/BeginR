@@ -53,7 +53,7 @@ I will:
 \item give you all the slides, so write only what is not being displayed
 \item show you what are the main principles of the \r \ language
 \item provide you with short examples on how to use some of the most useful functions in \r
-\item provide you with suggestions on how to learn more about \r
+\item provide you with suggestions on how to learn more about \r \ on your own
 \end{itemize}
 \vfill
 \pause
@@ -66,7 +66,8 @@ You will not:
 \vfill
 You should:
 \begin{itemize}
-\item focus on the bigg picture (understand the logic, consider the long term gains)
+\item accept that at the beginning it will be a little too abstract
+\item focus on the big picture (understand the logic, consider the long term gains)
 \item ask any silly question that pops up in your creative mind
 \end{itemize}
 \end{frame}
