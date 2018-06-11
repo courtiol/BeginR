@@ -95,7 +95,7 @@ my_function(input2 = 1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{My first function}
-You can pass optional arguments to another function via ``\dots":
+You can pass optional arguments to another function via ``\dots'':
 <<>>=
 my_function <- function(input1, ...) {
   output <- mean(input1, ...)
@@ -150,7 +150,7 @@ Note: you can also use a vector, a matrix, a data frame\dots
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{My first function}
-You can return the output ``invisibly":
+You can return the output ``invisibly'':
 <<>>=
 my_function <- function(input1) {
   output <- min(input1)
@@ -777,7 +777,7 @@ all_pairwise2 <- function(proba, groups){
   groups_id <- unique(groups)
   to_do <- expand.grid(groups_id, groups_id)
 
-  OR <- apply(to_do, 1, function(gr) {
+  OR <- apply(to_do, 1, function(gr) { ## define anonymous function
     odds_ratio(p1 = proba[groups == gr[1]], p2 = proba[groups == gr[2]])
     })
 
