@@ -6,14 +6,12 @@ Maintainer: Alexandre Courtiol <alexandre.courtiol@gmail.com>
 Description: An introductory course about R.
 Depends: R (>= 3.5.0)
 Imports:
-  dplyr,
-  ggplot2,
+  tidyverse,
   gridExtra,
   knitr,
   lattice,
   mosaic,
   profvis,
-  purrr,
   pryr,
   R6,
   spaMM
