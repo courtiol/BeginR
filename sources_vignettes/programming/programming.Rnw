@@ -939,6 +939,8 @@ dnorm
 \vfill
 In these cases, the easiest is to use the read-only mirror for \r \ (\url{https://github.com/wch/r-source}) or the relevant package on Github!
 (here, the answer lies in r-source/src/nmath/dnorm.c)
+\vfill
+For more info, check: \url{https://stackoverflow.com/questions/19226816/how-can-i-view-the-source-code-for-a-function}.
 \end{frame}
 
 
