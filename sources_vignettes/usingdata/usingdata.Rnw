@@ -20,7 +20,7 @@
 \begin{document}
 \setlength{\topsep}{1pt}%space between input and output
 <<echo = FALSE, message = FALSE>>=
-options(width = 60)
+options(width = 120)
 library(knitr)
 opts_chunk$set("size" = "scriptsize")
 @
@@ -1453,6 +1453,108 @@ my_df3 %>% separate(New_col, c("ID", "Sex"))
 \pause
 Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but they are a bit more tedious to use.
 \end{frame}
+
+\subsection{tibbles}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{What are tibbles?}
+Tibbles are modified data frames that are automatically created by \texttt{tidyverse} packages:
+<<>>=
+iris_tbl <- iris %>%
+  group_by(Species) %>%
+  mutate(Sepal.Length.meam = mean(Sepal.Length))
+iris_tbl
+@
+\vfill
+Note: most of what works on objects of class \texttt{data.frame} works on objects of class \texttt{tbl} (but not all as they don't consider row names).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{From tibbles to data frames and back}
+You can easily convert one into the other:
+<<>>=
+head(as.data.frame(iris_tbl))
+@
+\vfill
+\pause
+<<>>=
+as_tibble(as.data.frame(iris_tbl))  ## no need for head as tibble!
+@
+\vfill
+\pause
+Note: for linear models, it is safer to convert everything into data frames!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to influence the display of tibbles?}
+You can change the number of rows being displayed:
+\vfill
+<<>>=
+print(iris_tbl, n = 2)
+@
+<<>>=
+print(iris_tbl, n = 8)
+@
+\vfill
+\pause
+Note: to always display all row you can set \texttt{options(dplyr.print\_min = Inf)}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to influence the display of tibbles?}
+You can change the number of digits being displayed:
+\vfill
+Default:
+<<>>=
+x <- as_tibble(data.frame(pi = pi))
+x
+@
+\vfill
+\pause
+Changing setting:
+<<>>=
+old_opt <- options(pillar.sigfig = 10)
+x
+@
+\vfill
+\pause
+Reseting setting:
+<<>>=
+options(old_opt)
+x
+@
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{How to influence the display of tibbles?}
+Sometimes the default is a little too dangerous!
+\vfill
+<<>>=
+foo <- c(178, 175, 159, 164, 183, 160, 181, 189, 174, 177)
+level <- c(rep("A", 6), rep("B", 4))
+@
+\vfill
+<<>>=
+d <- data.frame(foo, level)
+d %>%
+     group_by(level) %>%
+     summarize(Mean = mean(foo))
+@
+\vfill
+\pause
+Compare to base \r:
+<<>>=
+c(mean(foo[level == "A"]), mean(foo[level == "B"]))
+@
+\vfill
+Note: but at least they have recently added the "." suggesting there are more number out there!
+\end{frame}
+
 
 
 \section{Importing \& exporting data}
