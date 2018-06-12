@@ -412,6 +412,69 @@ Note: more on programming style later!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Combining vectors with different levels}
+We want to merge the two following vectors:
+\vspace{1em}
+<<>>=
+foo <- factor(c("a", "b"))
+foo
+@
+<<>>=
+bar <- factor(c("b", "c"))
+bar
+@
+\vfill
+\pause
+\begin{columns}[t]
+\column{0.45\linewidth}
+Problem:
+<<>>=
+foo_bar <- c(foo, bar)
+foo_bar
+class(foo_bar)
+@
+\pause
+\column{0.45\linewidth}
+Solution:
+<<>>=
+foo_bar <- factor(c(as.character(foo), as.character(bar)))
+foo_bar
+class(foo_bar)
+@
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Dropping unused levels}
+By default \r \ keeps unused levels:
+<<>>=
+foo <- factor(c("a", "a", "b", "c"))
+foo
+@
+<<>>=
+table(foo)
+@
+<<>>=
+bar <- foo[-4]
+table(bar)
+@
+\vfill
+\pause
+If you want to update the levels you need to use the function \texttt{droplevels}:
+<<>>=
+new_bar <- droplevels(bar)
+table(new_bar)
+@
+Or use the argument \texttt{drop}:
+<<>>=
+bar <- foo[-4, drop = TRUE]
+table(bar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Changing the order of levels of a factor}
 << changing levels order, echo = FALSE>>=
 my_factor1 <- factor(x = c("A", "A", "B", "B", "C"))
@@ -509,7 +572,9 @@ my_factor2
 @
 \end{center}
 \end{columns}
-
+\vfill
+\pause
+Note: if you want more modern functions to manipulate factors, look at the package \texttt{forcats} from \texttt{tidyverse}.
 \end{frame}
 
 
@@ -560,22 +625,13 @@ sapply(X = bar, FUN = triple, simplify = FALSE) ## same but always returns a lis
 @
 \vfill
 \pause
-Note: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
+Note 1: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
 \vfill
-Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The \texttt{purrr} alternative to \texttt{sapply()}: \texttt{purrr::map()}}
-<<>>=
-library(purrr)
-map(.x = bar, .f = triple) ## always returns a list
-@
 \pause
-<<>>=
-map_dfc(.x = bar, .f = triple) ## always returns a tibble binding columns
-@
+Note 2: if you want more modern functions more consistent than the \texttt{*apply()} ones, look at the package \texttt{purrr} from \texttt{tidyverse}.
+\vfill
+\pause
+Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
 \end{frame}
 
 
@@ -1006,7 +1062,7 @@ Note 3: we will see a bit of both dialects
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{\texttt{dplyr}}
 \begin{itemize}
-\item in \texttt{dplyr} one verb = one operation (\texttt{tidyverse} philosophy)
+\item in \texttt{dplyr} one verb = one action = one function (\texttt{tidyverse} philosophy)
 \item operations can be chained with the pipe operator \texttt{\%>\%} (from package \texttt{magrittr}), which considers the output from one function as the input of the next function
 \end{itemize}
 \vfill
@@ -1028,7 +1084,7 @@ Note 3: we will see a bit of both dialects
 \begin{itemize}
 \item different \& redundant
 \item buggy (but less \& less so)
-\item poor help within \r
+\item poor traditional documentation
 \item lead to bad habits (e.g. arguments not named, help not looked at)
 \item broaden the gap between users and programmers
 \end{itemize}
@@ -1044,11 +1100,25 @@ Useful \texttt{dplyr} functions:\\
 \begin{itemize}
 \item add column with \texttt{mutate()}
 <<edit df dplyr>>=
-dataframe_ht <- dataframe_ht %>% mutate(ID = 1:nrow(dataframe_ht))  ## transmute() is similar but only keeps new columns
+dataframe_ht <- dataframe_ht %>% mutate(ID = 1:nrow(dataframe_ht))
 head(x = dataframe_ht, n = 3)
 @
 \vfill
 \pause
+\item change column with \texttt{transmute()}
+<<edit df dplyr2>>=
+dataframe_ht2 <- dataframe_ht %>% transmute(double_height = 2*height)
+head(x = dataframe_ht2, n = 3)
+@
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\texttt{dplyr} verbs}
+Useful \texttt{dplyr} functions:\\
+\vfill
+\begin{itemize}
 \item select columns with \texttt{select()}
 <<select dplyr>>=
 dataframe_ht_sex <- dataframe_ht %>% select(Sex)
@@ -1061,13 +1131,20 @@ head(x = dataframe_ht_sex, n = 3)
 dataframe_ht_female <- dataframe_ht %>% filter(Sex == "girl")
 head(dataframe_ht_female, n = 3)
 @
+\vfill
+\pause
+\item sort rows with \texttt{arrange()}
+<<sort dplyr>>=
+dataframe_ht_sorted <- dataframe_ht %>% arrange(Height)  ## add arrange(desc(Height)) for the other direction
+head(dataframe_ht_sorted, n = 3)
+@
 \end{itemize}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Around \texttt{dplyr} verbs}
-All these functions have many derivatives and some of them can be useful:\\
+These main \texttt{dplr} functions have derivatives and some of them can be useful:\\
 e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
 \vfill
 \begin{columns}
@@ -1085,7 +1162,8 @@ str(as.data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
 \vfill
 you do:
 <<mutate if solution, echo = T>>=
-iris_numeric <- iris %>% mutate_if(is.numeric, ~ as.character(.))
+iris_numeric <- iris %>%
+  mutate_if(is.numeric, ~ as.character(.))
 @
 \end{frame}
 
@@ -1101,230 +1179,179 @@ It is very powerful when combined to:
 \vfill
 \pause
 \item \texttt{mutate()} or \texttt{transmute()} $\rightarrow$ one value per observation
+\vfill
+\pause
+\item \texttt{slice()} $\rightarrow$ select some rows for each "group"
+\end{itemize}
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{summarize()}}
+Example: you want the mean height of males and females, the median height and the number in
+each group:
+<<group_by summarize dplyr>>=
+dataframe_ht %>%
+  group_by(Sex) %>%
+  summarize(mean_height = mean(Height),
+            median_height = median(Height),
+            n = n()) %>%
+  as.data.frame()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{mutate()}}
+Same as before, but we want to repeat the value for each individual:
+<<group_by mutate dplyr>>=
+dataframe_ht %>%
+  group_by(Sex) %>%
+  mutate(mean_height = mean(Height),
+            median_height = median(Height),
+            n = n()) %>%
+  as.data.frame()
+@
+\vfill
+Note: many other functions than \texttt{n()} can be used, see \texttt{?summarise} \ !
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{slice()}}
+Example: you want the first two rows of each species of irices:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  slice(1:2) %>%
+  as.data.frame()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+Use the dataset called \texttt{population\_UK} and compute the total population size for:
+\begin{itemize}
+\item 1915
+\item 2015
+\item all years in the dataset
+\item all years between 1915 and 2015
+\end{itemize}
+\vfill
+Use the dataset called \texttt{deaths\_UK} and figure out:
+\begin{itemize}
+\item which were the top 3 detailed causes of death before 1930 for each of the 21 broader categories
+\item the death toll for all individuals below 15 yrs for each year
 \end{itemize}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{group\_by() with summarize()}
-\begin{center}
-You want the mean height of males and females, the median height and the number in
-each group:
-\end{center}
-\vfill
-you do:
-<<group_by summarize dplyr>>=
-x <- dataframe.ht %>%
-  group_by(Sex) %>%
-  summarize(mean_H = mean(Height, na.rm = T),
-            median_H = median(Height, na.rm = T),
-            n = n())
-@
-\vfill
-you get:
-<<group_by summarize out>>=
-as.data.frame(x)
-@
-
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{group\_by() with mutate()}
-\begin{center}
-You want the mean height of males and females, the median height and the number in
-each group but get the value for each individual
-\end{center}
-\vfill
-you do:
-<<group_by mutate dplyr>>=
-x <- dataframe.ht %>%
-  group_by(Sex) %>%
-  mutate(mean_H = mean(Height, na.rm = T),
-            median_H = median(Height, na.rm = T),
-            n = n())
-@
-\vfill
-you get:
-<<group_by mutate out>>=
-as.data.frame(x)
-@
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame}
-
- << merging df: creating df2, echo = F>>=
-  set.seed(1)
-   my_df1 <- data.frame(ID = paste("ID", 1:12, sep = "-"),
-                        age = rnorm(12, mean = 15, sd = 4))
-
-  my_df2 <- data.frame(ID = sample(my_df1$ID),
-                       school = rep(c("Youhou", "bababa", "genius"), 4),
-                       grade = round(rnorm(12, mean = 60, sd = 20), 2),
-                       origin = sample(rep(c("Swiss", "French", "German"), 4)))
-
-  my_df2 <- my_df2[1:10, ]
-  my_df1 <- my_df1[c(1:6, 11), ]
-  @
+\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
 \begin{columns}
-\column{0.3\linewidth}
+\column{0.45\linewidth}
 \begin{center}
-you have df1:
- << merging df df1, echo = T>>=
-  my_df1
-  @
+Data frame \#1:
+<<>>=
+my_df1 <- iris %>%
+  filter(Species == "setosa") %>%
+  select(Sepal.Length, Petal.Length, Species) %>%
+  slice(1:4)
+my_df1[4, 1] <- NA
+my_df1
+@
 \end{center}
-\column{0.3\linewidth}
+\column{0.45\linewidth}
 \begin{center}
-you have df2:
- << merging df df2, echo = T>>=
-  my_df2
-  @
+Data frame \#2:
+<<>>=
+my_df2 <- iris %>%
+  filter(Species == "virginica") %>%
+  select(Sepal.Length, Petal.Width, Species) %>%
+  slice(1:4)
+my_df2[3, 2] <- NA
+my_df2
+@
 \end{center}
 \end{columns}
 \vfill
 \begin{center}
-You want to merge the two data frames
+We will see how to merge these two data frames!
 \end{center}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with base R}
-\begin{center}
-You can use \texttt{merge()}
-\end{center}
+\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+There are several options but \texttt{full\_join()} is the most effective one: it keeps all the rows of the two data frames and adds NA when no data are present!
 \vfill
-\begin{columns}
-\column{0.3\linewidth}
-\begin{center}
-   << merging df with merge, echo = T>>=
-  my_df3 <- merge(my_df1, my_df2)
-  @
-\end{center}
-\column{0.3\linewidth}
-\begin{center}
-   << merging df with merge output, echo = T>>=
-  my_df3
-    @
-\end{center}
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with dpylr join()}
-\begin{center}
-or use \texttt{inner\_join()}
-\end{center}
-\vfill
-\begin{columns}
-\column{0.3\linewidth}
-\begin{center}
-   << merging df with dplyr join, echo = T>>=
-  library(dplyr)
-  my_df3 <- inner_join(my_df1, my_df2)
-  @
-\end{center}
-\column{0.3\linewidth}
-\begin{center}
-   << merging df with merge dplyr join out, echo = T>>=
-  my_df3
-    @
-\end{center}
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with left\_join()}
-\begin{center}
-\texttt{left\_join() or right\_join()} keep all the rows of the data frame on the left (or right)
-\end{center}
-\begin{center}
-adds NA when no data are present
-\end{center}
-\vfill
-\begin{columns}
-\column{0.3\linewidth}
-\begin{center}
-<< left join, echo = T>>=
-library(dplyr)
-my_df3 <- left_join(my_df1, my_df2)
-@
-\end{center}
-\column{0.3\linewidth}
-\begin{center}
-<< left join out, echo = T>>=
+<<full join>>=
+my_df3 <- full_join(my_df1, my_df2)
 my_df3
 @
-\end{center}
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{joining data frame with full\_join()}
-\begin{center}
-\texttt{full\_join()} keep all the rows of the two data frame
-\end{center}
-\begin{center}
-adds NA when no data are present
-\end{center}
 \vfill
-\begin{columns}
-\column{0.3\linewidth}
-\begin{center}
-   << full join, echo = T>>=
-  library(dplyr)
-  my_df3 <- full_join(my_df1, my_df2)
-  @
-\end{center}
-\column{0.3\linewidth}
-\begin{center}
-   << full join out, echo = T>>=
-  my_df3
-    @
-\end{center}
-\end{columns}
+Note: you can also do that without \texttt{dplyr} but the outcome is a bit more messy:
+<<eval = FALSE>>=
+merge(my_df1, my_df2, all = TRUE)
+@
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{tidyr}
-\begin{frame}[fragile]{reshaping data frame}
+\begin{frame}[fragile]{Challenge}
+Use the datasets called \texttt{population\_UK} and  \texttt{deaths\_UK} to compute yearly mortality rates for:
 \begin{itemize}
-\item one row = one observation, one column = one variable
-\pause
+\item all individuals
+\item individuals below 15 yrs only
+\end{itemize}
+\end{frame}
+
+
+\subsection{tidyr}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Reshaping data frame}
+For most data analyses, you need:
+\begin{center}
+\begin{minipage}{0.3\linewidth}
+\begin{block}{}
+\begin{itemize}
+\item one row = one observation
+\item one column = one variable
+\end{itemize}
+\end{block}
+\end{minipage}
+\end{center}
 \vfill
+Unfortunatelly, it is often not the way people input data!
+\vfill
+\pause
+The \texttt{tidyverse} package \texttt{tidyr} offers solutions:
+\begin{itemize}
 \item \texttt{gather()} turns wide data into long
-\pause
-\vfill
 \item \texttt{spread()} turns long data into wide
 \end{itemize}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{reshaping data frame}
+\begin{frame}[fragile]{From wide to long}
  << reshaping data frame, echo = FALSE>>=
-library(dplyr)
-library(tidyr)
-  my_df1 <- dataframe.ht %>%
+  my_df1 <- dataframe_ht %>%
     mutate(age1 = Height -100, age2 = Height -25, age3 = Height -10) %>%
     rename(age4 = Height) %>% select(ID, Sex, age1, age2, age3, age4) %>%
     filter(ID == 1)
 
-  my_df2 <- my_df1 %>% gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
+  my_df2 <- my_df1 %>% tidyr::gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
 
   @
 \vfill
-\begin{columns}
+\begin{columns}[t]
 \column{0.3\linewidth}
 \begin{center}
-you have wide data:
+you have:
  << reshaping df1, echo = T>>=
   head(my_df1)
   dim(my_df1)
@@ -1333,7 +1360,7 @@ you have wide data:
 
 \column{0.3\linewidth}
 \begin{center}
-you want long data:
+you want:
  << reshaping df2, echo = T>>=
   head(my_df2)
   dim(my_df2)
@@ -1348,8 +1375,11 @@ you want long data:
 \begin{center}
 you do:
  << reshaping solution, echo = T>>=
- my_df2 <- my_df1 %>% gather("Age", "Height", -Sex, -ID) %>% arrange(ID, Age)
-  @
+library(tidyr)
+my_df2 <- my_df1 %>%
+  gather("Age", "Height", -Sex, -ID) %>%
+  arrange(ID, Age)
+@
 \end{center}
 \end{columns}
 \pause
@@ -1357,155 +1387,163 @@ you do:
 \column{0.5\linewidth}
 \begin{center}
 or:
- << reshaping solution bis, echo = T>>=
- my_df2 <- my_df1 %>% gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
-  @
+<< reshaping solution bis, echo = T>>=
+my_df2 <- my_df1 %>%
+  gather("Age", "Height", 3:ncol(my_df1)) %>%
+  arrange(ID, Age)
+@
 \end{center}
 \end{columns}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{reshaping data frame}
-The reverse is done with \texttt{spread()}
-\vfill
-\begin{columns}
+\begin{frame}[fragile]{From long to wide}
+\begin{columns}[t]
 \column{0.3\linewidth}
 \begin{center}
-you have wide data:
- << reshaping df1 spread, echo = T>>=
-  head(my_df2)
-  dim(my_df2)
-  @
+you have:
+<< reshaping df1 spread, echo = T>>=
+head(my_df2)
+dim(my_df2)
+@
 \end{center}
 
 \column{0.3\linewidth}
 \begin{center}
-you want long data:
- << reshaping df2 spread, echo = T>>=
-  head(my_df1)
-  dim(my_df1)
-  @
+you want:
+<< reshaping df2 spread, echo = T>>=
+head(my_df1)
+dim(my_df1)
+@
 \end{center}
 \end{columns}
-
 \vfill
 \pause
 \begin{columns}
 \column{0.5\linewidth}
 \begin{center}
 you do:
- << reshaping solution spread, echo = T>>=
- my_df2 %>% spread(-Sex, -ID)
-  @
+<< reshaping solution spread, echo = T>>=
+my_df2 %>%
+  spread(-Sex, -ID)
+@
 \end{center}
 \end{columns}
+\vfill
+Note: but why on Earth would you need that?!
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{some other useful functions}
+\begin{frame}[fragile]{Some other useful functions from \texttt{tidyr}}
 
-\texttt{unite()} merges 2 columns of a data frame
+\texttt{unite()} merges 2 columns of a data frame:
  << unite, echo = T>>=
 my_df3 <- my_df2 %>% unite(New_col, ID, Sex)
 head(my_df3)
-  @
+@
 \pause
 \vfill
-\texttt{separate()} separate 2 columns of a data frame
- << separate, echo = T>>=
+\texttt{separate()} splits 2 columns of a data frame:
+<< separate, echo = T>>=
 my_df3 %>% separate(New_col, c("ID", "Sex"))
-  @
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{cheating data frame}
-\begin{center}
-plenty of informative cheatsheets on: \url{https://www.rstudio.com/resources/cheatsheets/}
-% \includegraphics[width=0.9\linewidth]{../figures/data-transformation.pdf}
-\end{center}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Summary}
-\begin{columns}
-\column[t]{0.3\linewidth}
-<<>>=
-dataframe.ht
 @
-\column[t]{0.3\linewidth}
-<<>>=
-list.ht
-@
-\end{columns}
+\vfill
+\pause
+Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but they are a bit more tedious to use.
 \end{frame}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Summary}
-  \begin{itemize}
-  \item \texttt{data.frame}
-  \vfill
-  \begin{itemize}
-    \item All columns have same length
-    \item Each column can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
-  \end{itemize}
-  \vfill
-  \item \texttt{list}
-  \vfill
-  \begin{itemize}
-    \item Each element can have its own length
-    \item Each element can have its own class (e.g. \texttt{numeric}, \texttt{factor}, \texttt{character})
-  \end{itemize}
-  \vfill
-  \end{itemize}
-\end{frame}
 
 \section{Importing \& exporting data}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Working directory}
+Before anything, you must know where you read \& write on your hard drive!
 <<>>=
-getwd()  # to change, use setwd()
-dir() # listing all files in the working directory
-dir(pattern = "*.csv")
+getwd() ## get the working directory, to change it use setwd()
+dir() ## list all files in the working directory
+dir(pattern = "*.csv")  ## list all files with the extension csv
 @
+\vfill
+Note: you can also set this up with RStudio but it won't be saved unless you set up a project file.
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Exporting and importing data in R}
-<<tidy=F, eval = FALSE>>=
-write.csv(dataframe.ht,
-    file = "my.first.R.dataframe.csv", row.names = FALSE)
-
-rm(list = ls())  # deleting everything in R
-
-dataframe.ht <- read.csv("my.first.R.dataframe.csv")
+\begin{frame}[fragile]{Exporting and importing data in the \R \ binary format}
+\r \ can write and read binary formats that take by convention the extensions *.rda or *.RData.
+\vfill
+Example:
+<<>>=
+my_iris <- iris
+save(my_iris, file = "my_iris.rda") ## check the help for compression
 @
+\vfill
+\pause
+<<>>=
+rm(list = ls()) ## removes everything!
+head(my_iris)
+@
+\pause
+\vfill
+<<>>=
+load(file = "my_iris.rda")
+head(my_iris)
+@
+<<echo = FALSE>>=
+system("rm my_iris.rda")
+@
+\vfill
+Note: this is useful and best for \r \ to \r \ exchanges (but it is useless without \r).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Exporting and importing data sets in plain text}
 \begin{center}
 \begin{minipage}{0.8\linewidth}
 \begin{block}{}
-\begin{center}
-R cannot read/write \*.xls files out of the box\\
-Packages can do that but it is safer to use \*.csv files\\
-Excel can read and write \*.csv files!\\
-\end{center}
+\begin{itemize}
+\item \r \ cannot read/write \*.xls(x) files out of the box\\
+\item Several packages can do that, but it is safer to use \*.csv or \*.txt files\\
+\item Excel can read and write \*.csv \& \*.txt files!\\
+\end{itemize}
 \end{block}
 \end{minipage}
 \end{center}
 \vfill
+Writing a data set:
+<<tidy=F>>=
+write.csv(my_iris, file = "my_iris.csv", row.names = FALSE)
+@
+\vfill
+\pause
+Reading a data set:
+<<>>=
+rm(my_iris) ## delete the object my_iris
+my_iris <- read.csv("my_iris.csv")
+head(my_iris)
+@
+<<echo = FALSE>>=
+system("rm my_iris.csv")
+@
+\vfill
+\pause
+Note 1: always check your file in a text editor before importing it or use RStudio "File/Import Datasets GUI".
+\vfill
+Note 2: you will have often to change the arguments \texttt{sep} (and \texttt{dec} if you are german).
+\vfill
+Note 3: setting \texttt{stringsAsFactors = FALSE} can avoid a lot of troubles!
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Challenge \#2}
+\begin{frame}{Challenge}
 \begin{large}
 \begin{center}
-Create a dataframe using your favorite spreadsheet software\\ and import it in R!
+Create a data frame using your favorite spreadsheet software (or choose an existing one)\\ and import it in \R.
 \end{center}
 \end{large}
 \end{frame}
