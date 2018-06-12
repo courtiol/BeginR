@@ -50,9 +50,10 @@ opts_chunk$set("size" = "scriptsize", "error" = TRUE)
 \begin{frame}{About this course}
 I will:
 \begin{itemize}
-\item give you all the slides, so write only what is not being displayed
-\item show you what are the main principles of the \r \ language
+\item give you all the slide (so write only what is not being displayed)
+\item explain the main principles of the \r \ language, so to give you good basics
 \item provide you with short examples on how to use some of the most useful functions in \r
+\item sometimes show you different ways of doing the same things
 \item provide you with suggestions on how to learn more about \r \ on your own
 \end{itemize}
 \vfill
@@ -66,8 +67,8 @@ You will not:
 \vfill
 You should:
 \begin{itemize}
-\item accept that at the beginning it will be a little too abstract
-\item focus on the big picture (understand the logic, consider the long term gains)
+\item accept that at the beginning it will be a little abstract
+\item focus on the big picture (try to understand the logic, consider the long term gains)
 \item ask any silly question that pops up in your creative mind
 \end{itemize}
 \end{frame}
@@ -76,14 +77,26 @@ You should:
 \begin{frame}{Who am I?}
 \begin{itemize}
 \item evolutionary biologist / statistician
+\vfill
 \item studies in France (Montpellier), postdoc in the UK (Sheffield)
+\vfill
 \item senior researcher at Leibniz IZW / lecturer at Freie University
+\vfill
+\pause
 \item experience with \R:
+\vfill
   \begin{itemize}
-  \item 2003 --: studying \r \ (still ongoing)
-  \item 2008 --: using \r \ most days
-  \item 2010 --: teaching \r
-  \item 2016 --: developing \r \ packages
+  \item 2003 -- : studying \r \ (still ongoing)
+  \vfill
+  \item 2008 -- : using \r \ most days
+  \vfill
+  \item 2010 -- : teaching \r
+  \vfill
+  \item 2013 -- : debugging \r \ packages
+  \vfill
+  \item 2016 -- : developing \r \ packages
+  \vfill
+  \item 2018 -- : debugging \r
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -654,6 +667,8 @@ Books:
 \begin{frame}{Other way to learn}
 \begin{center}
 \huge{\huge{Afer having learned some basics, just open the console and test your understanding by performing experiments!}}
+\vfill
+\huge{\huge{Do not copy and paste stuff from internet without trying to understand!!!}}
 \end{center}
 \end{frame}
 
