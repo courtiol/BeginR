@@ -646,27 +646,105 @@ Note 2: also update RStudio for full compatibility with \r.
 
 \subsection{Learning \r \ on your own}
 
-\begin{frame}{Useful resources}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Official documentation:
 \begin{itemize}
-\item the help files and official documentation (boring but thorough \url{https://cran.r-project.org/manuals.html})
-\item a nice blog: \url{http://www.r-bloggers.com/}
-\item 2 \r \ local meetup groups: \url{https://www.meetup.com/Berlin-R-Users-Group/} \& \url{https://www.meetup.com/rladies-berlin/}
+\item the help files: every single (exported) function has an help file associated to it!
+\item official manuals (boring but very thorough \url{https://cran.r-project.org/manuals.html})
 \end{itemize}
 \vfill
+\pause
 Books:
 \begin{center}
-\includegraphics[height=3cm]{../figures/bookBecksi}
-\includegraphics[height=3cm]{../figures/Chambers_book1}
-\includegraphics[height=3cm]{../figures/book}
-\includegraphics[height=3cm]{../figures/Rbook2}
-\includegraphics[height=3cm]{../figures/Rbook}
+\includegraphics[height=3.5cm]{../figures/bookBecksi}
+\includegraphics[height=3.5cm]{../figures/Rcookbook}
+\includegraphics[height=3.5cm]{../figures/Chambers_book1}
+\includegraphics[height=3.5cm]{../figures/book}
+\includegraphics[height=3.5cm]{../figures/Rbook2}
+\includegraphics[height=3.5cm]{../figures/Rbook}
 \end{center}
+\vfill
+\pause
+Journals:
+\begin{itemize}
+\item Journal of Statistical Software (\url{https://www.jstatsoft.org/index})
+\item The \r \ Journal (\url{https://journal.r-project.org})
+\end{itemize}
 \end{frame}
 
 
-\begin{frame}{Other way to learn}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Useful resources}
+RStudio cheatsheets (\url{https://www.rstudio.com/resources/cheatsheets/}):
 \begin{center}
-\huge{\huge{Afer having learned some basics, just open the console and test your understanding by performing experiments!}}
+\includegraphics[width=0.5\linewidth]{../figures/base-r.pdf}
+\end{center}
+\vfill
+Note: there are many cheatsheets covering many aspects of \r \ and several \texttt{tidyverse} packages!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Blogs:
+\begin{itemize}
+\item \url{http://www.r-bloggers.com}
+\item \url{https://rweekly.org}
+\item \url{http://blog.revolutionanalytics.com}
+\end{itemize}
+\vfill
+\pause
+Forum:
+\begin{itemize}
+\item \url{https://stackoverflow.com/questions/tagged/r}
+\item \url{https://stats.stackexchange.com/questions/tagged/r}
+\end{itemize}
+\vfill
+\pause
+Mailing lists:
+\begin{itemize}
+\item \url{https://www.r-project.org/mail.html}
+\end{itemize}
+\vfill
+\pause
+Twitter:
+\begin{itemize}
+\item \#rstats
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Meetup groups:
+\begin{itemize}
+\item \url{https://www.meetup.com/Berlin-R-Users-Group/}
+\item \url{https://www.meetup.com/rladies-berlin/}
+\end{itemize}
+\vfill
+\pause
+Courses \& Workshop:
+\begin{itemize}
+\item Physalia (\url{https://www.physalia-courses.org})
+\item PR statistics (\url{https://www.prstatistics.com})
+\item DataCamp (online: \url{https://www.datacamp.com/courses/tech:r})
+\end{itemize}
+\vfill
+\pause
+Conferences:
+\begin{itemize}
+\item useR (\url{https://user2018.r-project.org})
+\item European R User meetings (\url{https://erum.io})
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The best person who can teach you? YOU!}
+\begin{center}
+\huge{\huge{After having learned some basics, just open the console and test your understanding by performing experiments!}}
 \vfill
 \huge{\huge{Do not copy and paste stuff from internet without trying to understand!!!}}
 \end{center}
