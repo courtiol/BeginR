@@ -319,7 +319,7 @@ Note: factors are heavily used in the context of linear models!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Vector: classes}
-Vectors must contain elements of the same class (otherwise errors or automatic coercion may occur):%
+Vectors must contain elements of the same type (otherwise errors or automatic coercion may occur):%
 
 \vfill
 <<>>=
@@ -707,6 +707,31 @@ my_matrix["b", ]
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Matrices: general properties}
+In the background, a matrix is a vector with dimension attributes (i.e. number of columns and rows)%
+
+\vfill
+<<>>=
+attributes(my_matrix)
+str(my_matrix)
+@
+\vfill
+\pause
+<<>>=
+## You can subset the data using this dimension attributes or not.
+my_matrix[5]
+my_matrix[2, 2]
+@
+\vfill
+\pause
+<<>>=
+#A matrix will be filled from top - bottom, left - right.
+(my_matrix4 <- matrix(data = c(1:3, NA, 5:10), ncol = 2, nrow = 5))
+@
+\end{frame}
+
+
 \subsection{functions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -786,7 +811,7 @@ Note 2: lists are very important because no function can output more than one ob
 \end{frame}
 
 
-\subsection{general properties}
+\subsection{General properties}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1300,8 +1325,21 @@ merge(my_df1, my_df2, all = TRUE)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+You can also use \texttt{left\_join()} to merge datasets sampled at different scales (e.g. daily and annual level; species and individual level).
+\vfill
+<<left join>>=
+flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+                             Quality = c("High", "Medium", "Low"))
+my_df4 <- left_join(my_df3, flower_quality, by = "Species")
+my_df4
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Challenge}
-Use the datasets called \texttt{population\_UK} and  \texttt{deaths\_UK} to compute yearly mortality rates for:
+Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for:
 \begin{itemize}
 \item all individuals
 \item individuals below 15 yrs only
