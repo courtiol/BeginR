@@ -1,6 +1,7 @@
 #' Access the vignettes
 #'
-#' This function allows to access to the vignettes directly in their folder.
+#' This function allows to access to the vignettes directly in their folder and
+#' open the file index.html in the browser.
 #'
 #' @export
 #'
@@ -8,8 +9,12 @@
 #' get_vignettes()
 #'
 get_vignettes <- function() {
-  utils::browseURL(paste0(find.package("BeginR"), "/doc/")) ## for installed
-  utils::browseURL(paste0(find.package("BeginR"), "/inst/doc/")) ## for development
+  ## for installed library
+  utils::browseURL(paste0(find.package("BeginR"), "/doc/index.html"))
+  utils::browseURL(paste0(find.package("BeginR"), "/doc/"))
+
+  ## for development (index.html not build at development stage so cannot display it)
+  utils::browseURL(paste0(find.package("BeginR"), "/inst/doc/"))
   return(invisible(NULL))
 }
 
