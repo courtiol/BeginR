@@ -1,9 +1,27 @@
+#' Access the vignettes
+#'
+#' This function allows to access to the vignettes directly in their folder.
+#'
+#' @export
+#'
+#' @examples
+#' get_vignettes()
+#'
+get_vignettes <- function() {
+  utils::browseURL(paste0(find.package("BeginR"), "/doc/")) ## for installed
+  utils::browseURL(paste0(find.package("BeginR"), "/inst/doc/")) ## for development
+  return(invisible(NULL))
+}
+
+
 #' Test Unicode characters
 #'
 #' This function test for the ability of R to draw certain unicode characters.
-#' It was slightly adapted for the function communicated by Ben Bolker for R-bloggers (\url{https://www.r-bloggers.com/unicode-symbols-in-r/}).
-#' If some unicode are missing (shown as squares), you may have to install the necessary typefaces.
-#' If you struggle with unicode, you may consider using the Hershey font system.
+#' It was slightly adapted for the function communicated by Ben Bolker for
+#' R-bloggers (\url{https://www.r-bloggers.com/unicode-symbols-in-r/}). If some
+#' unicode characters are missing (shown as squares), you may have to install
+#' the necessary typefaces. If you struggle with unicode characters, you may
+#' consider using the Hershey font system.
 #'
 #' @param start The first unicode to draw
 #' @param end The last unicode to draw
