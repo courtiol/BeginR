@@ -61,6 +61,16 @@ opts_chunk$set("size" = "scriptsize")
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Preparing data for (G)LM(M)}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Useful resources}
+\end{frame}
+
+
 \section{Linear Models}
 
 \subsection{inputs}
