@@ -12,7 +12,7 @@
 \def\s{{\bf S}}
 
 \title{Getting to fit models in \r}
-\author[Alexandre Courtiol \& Colin Vullioud]{Alexandre Courtiol}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \date[June 2018]{\small June 2018}%
 
@@ -43,5 +43,47 @@ opts_chunk$set("size" = "scriptsize")
 
 % first slide of the doc
 \maketitle
+
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{What is a linear model?}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Types of linear models?}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{A selection of packages fitting linear models in \R}
+\end{frame}
+
+
+\section{Linear Models}
+
+\subsection{inputs}
+\subsection{outputs}
+\subsection{tests}
+\subsection{predictions}
+\subsection{assumptions}
+
+\section{Generalised Linear Models}
+
+\subsection{inputs}
+\subsection{outputs}
+\subsection{tests}
+\subsection{predictions}
+\subsection{assumptions}
+
+\section{Mixed Models}
+
+\subsection{inputs}
+\subsection{outputs}
+\subsection{tests}
+\subsection{predictions}
+\subsection{assumptions}
+\subsection{advanced MM}
 
 \end{document}
