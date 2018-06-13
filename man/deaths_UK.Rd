@@ -13,7 +13,7 @@ This dataset contains numbers and causes of death for England and Wales over the
 The causes of deaths have been classified using the International Classification of Diseases (ICD).
 }
 \note{
-These data have been prepared for use in the paper "The transition to modernity and chronic disease: mismatch and natural selection" by Stephen Corbett, Alexandre Courtiol, Virpi Lummaa, Jacob Moorad & Stephen Stearns published in Nature Reviews Genetics (2018): \url{https://www.nature.com/articles/s41576-018-0012-3}
+These data have been prepared for use in the paper "The transition to modernity and chronic disease: mismatch and natural selection" by Stephen Corbett, Alexandre Courtiol, Virpi Lummaa, Jacob Moorad & Stephen Stearns published in Nature Reviews Genetics (2018): \url{https://www.nature.com/articles/s41576-018-0012-3}.
 }
 \examples{
 head(deaths_UK)
