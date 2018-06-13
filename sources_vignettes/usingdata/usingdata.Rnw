@@ -104,7 +104,7 @@ Note: if you master those, we are pretty much all set because most other objects
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Vector}
 \begin{center}
-The vector is the simplest way to store data in \r; it is a sequence of data elements of the same kind.%
+The vector is the simplest way to store data in \r; it is a sequence of data elements of the same type.%
 \end{center}
 \vfill
 Example of a vector:
@@ -612,7 +612,7 @@ summary(object = bar)
 \begin{frame}[fragile]{A more complex function: \texttt{sapply()}}
 \texttt{sapply()} is a function to apply a function on each element of a vector:
 <<>>=
-triple <- function(x) c(x, x, x)  ## let us create a sily function
+triple <- function(x) c(x, x, x)  ## let us create a silly function
 triple(x = "a")
 @
 
@@ -655,7 +655,7 @@ typeof(x = my_matrix) ## behind the curtain, matrices are stored as vectors!
 \pause
 Note 1: since there are a kind of vectors, the same restrictions apply: all elements must have the same class!
 
-Note 2: useful for bulding the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
+Note 2: useful for building the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
 \end{frame}
 
 
@@ -877,7 +877,7 @@ Note 2: it is safer to work on data frames than on floating vectors!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Data frames: general properties}
-They borough from both matrices and lists:
+They borrow from both matrices and lists:
 \vfill
 \begin{columns}[t]
 \column{0.45\linewidth}
@@ -1144,7 +1144,7 @@ head(dataframe_ht_sorted, n = 3)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Around \texttt{dplyr} verbs}
-These main \texttt{dplr} functions have derivatives and some of them can be useful:\\
+These main \texttt{dplyr} functions have derivatives and some of them can be useful:\\
 e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
 \vfill
 \begin{columns}
@@ -1170,7 +1170,7 @@ iris_numeric <- iris %>%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{\texttt{group\_by()}}
-The \texttt{group\_by()} function allows you to perform operation on gouped data.\\
+The \texttt{group\_by()} function allows you to perform operation on grouped data.\\
 \vfill
 \pause
 It is very powerful when combined to:
