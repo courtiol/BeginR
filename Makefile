@@ -7,7 +7,8 @@ build: clean
 	mkdir vignettes
 	cp sources_vignettes/introduction/*.pdf* sources_vignettes/usingdata/*.pdf* sources_vignettes/plotting/*.pdf* sources_vignettes/programming/*.pdf* sources_vignettes/cheatsheets/*.pdf* vignettes ## for linux add -u after cp
 	cp sources_vignettes/introduction/*.Rnw sources_vignettes/usingdata/*.Rnw sources_vignettes/plotting/*.Rnw sources_vignettes/programming/*.Rnw inst/doc ## for linux add -u after cp
-	(cd inst/doc/; for f in *.Rnw; do mv "$$f" "$${f%.Rnw}.txt"; done;)
+	(cd inst/doc/; for f in *.Rnw; do mv "$$f" "$${f%.Rnw}_source.txt"; done;)
+	Rscript -e "tools::compactPDF(paths = 'vignettes', gs_quality = 'printer')"
 	Rscript -e "devtools::build()"
 
 checkcode: install
