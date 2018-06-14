@@ -14,7 +14,7 @@
 \def\r{{\bf R}}
 \def\s{{\bf S}}
 
-\title{Getting starting with \r}
+\title{Getting started with \r}
 \author[Alexandre Courtiol]{Alexandre Courtiol}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \date[June 2018]{\small June 2018}%
@@ -134,7 +134,7 @@ Key points about \R:
 
 
 
-\subsection{The history and pre-history of \r}
+\subsection{the history and pre-history of \r}
 
 
 \begin{frame}{A short history of \S/\R}
@@ -159,13 +159,13 @@ Key points about \R:
 \begin{itemize}
 \item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
 \item 23/04/1997: first version of \r \ archieved on The Comprehensive R Archive Network (CRAN) %and creation of CRAN
-\item 05/12/1997: \r \ version 0.6 is part of GNU project (``freedom to share, freedom to chang'')
+\item 05/12/1997: \r \ version 0.6 is part of GNU project (``freedom to share, freedom to change'')
 \item 29/02/2000: \r \ version 1.0 (judged stable enough for production use by the R Development Core Team)
 \end{itemize}
 \end{frame}
 
 
-\subsection{Why using \r?}
+\subsection{why using \r?}
 
 
 \begin{frame}{Is \R \ good for you?}
@@ -192,7 +192,7 @@ Key points about \R:
 \end{frame}
 
 
-\subsection{Who uses \r?}
+\subsection{who uses \r?}
 
 
 \begin{frame}{Who uses \R?}
@@ -231,7 +231,7 @@ Some examples:
 \item Twitter (data visualization and semantic clustering)
 \item The City of Chicago (food poisoning monitoring)
 \item The New York Times (interactive features such as the Dialect Quiz and the Election Forecast)
-\item Microsoft (Xbox matchmaking)
+\item Microsoft (Xbox matchmaking + plus much more these days!!)
 \item The Human Rights Data Analysis Group (counts of casualties in war zones)
 \item ANZ Bank (credit risk analysis)
 \item The FDA (regulatory drug approvals process)
@@ -247,7 +247,7 @@ Some examples:
 \section{First steps in \r}
 
 
-\subsection{Installing \r}
+\subsection{installing \r}
 
 
 \begin{frame}{Installation steps}
@@ -276,7 +276,7 @@ Note: we will use RStudio but you don't have to (RStudio is free but \underline{
 \end{center}
 \end{frame}
 
-\subsection{Arithmetic}
+\subsection{arithmetic}
 
 
 \begin{frame}[fragile]{Basic arithmetic}
@@ -296,7 +296,7 @@ Conclusion: you may never need a hand calculator anymore!
 \end{frame}
 
 
-\subsection{Script}
+\subsection{script}
 
 
 \begin{frame}{The concept of an \R \ script}
@@ -308,6 +308,7 @@ All instructions must be written as a computer script!
 \end{itemize}
 
 \vfill
+\pause
 Why bother?
 \begin{itemize}
 \item transparent \& reproducible
@@ -326,7 +327,7 @@ Why bother?
 \end{frame}
 
 
-\subsection{Objects}
+\subsection{objects}
 
 
 \begin{frame}[fragile]{Creating objects}
@@ -334,7 +335,7 @@ Objects are being assigned using the ``arrow'' operator:
 <<one plus one>>=
 one.plus.one <- 1 + 1 # storing the result
 @
-
+\pause
 \vfill
 
 Objects are being used through their name (that is the whole point):
@@ -344,7 +345,7 @@ one.plus.one # displaying the result
 one.plus.one.plus.one <- one.plus.one + 1
 one.plus.one.plus.one
 @
-
+\pause
 \vfill
 
 Tip:
@@ -352,6 +353,7 @@ Tip:
 (one.times.two <- 1 * 2) # storing and displaying the result
 @
 \vfill
+\pause
 Note 1: avoid spaces \& weird characters in object names to avoid troubles.
 
 Note 2: names are case sensitive.
@@ -395,7 +397,7 @@ a
 \end{frame}
 
 
-\subsection{Functions}
+\subsection{functions}
 
 
 \begin{frame}[fragile]{Functions}
@@ -451,6 +453,7 @@ sign(y = -5)
 @
 
 \vfill
+\pause
 
 Equal signs and arrows are not the same:
 <<equal vs arrows>>=
@@ -468,7 +471,7 @@ sign
 @
 
 \vfill
-
+\pause
 All functions need parentheses and exceptions correspond to syntactic sugar:
 <<syntactic sugar>>=
 1 + 1
@@ -507,7 +510,7 @@ help.search(pattern = "linear model", package = "stats")  # if you know where to
 \end{frame}
 
 
-\subsection{Packages}
+\subsection{packages}
 
 
 \begin{frame}[fragile]{The concept of an \R \ package}
@@ -520,7 +523,7 @@ Packages extend \r \ functionalities:
 \end{itemize}
 
 \vfill
-
+\pause
 Key facts about packages:
 \begin{itemize}
 \item a package is a folder (often compressed) containing \r \ functions, data \& documentation
@@ -535,7 +538,7 @@ Key facts about packages:
 \end{itemize}
 
 \vfill
-
+\pause
 Note: packages can be used to create research compendia!
 
 \end{frame}
@@ -549,7 +552,7 @@ install.packages("dpylr")
 @
 
 \vfill
-
+\pause
 In general, the installation procedure depends on:
 \begin{itemize}
 \item where the package is being hosted (local, CRAN, bioconductor, GitHub, other)
@@ -557,7 +560,7 @@ In general, the installation procedure depends on:
 \end{itemize}
 
 \vfill
-
+\pause
 In order to be able to install packages that require compilation (and thus have access to more or newer version of packages), you need to install:
 
 \begin{itemize}
@@ -596,7 +599,7 @@ library(BeginR)
 \end{frame}
 
 
-\subsection{Housekeeping}
+\subsection{housekeeping}
 
 
 \begin{frame}[fragile]{Updating \R \ packages}
@@ -607,6 +610,7 @@ Some things to know:
 \item packages are not reviewed
 \end{itemize}
 \vfill
+\pause
 Good practice:
 \begin{itemize}
 \item update your \r \ packages daily
@@ -629,7 +633,7 @@ Some things to know:
 \end{itemize}
 
 \vfill
-
+\pause
 What to do?
 \begin{itemize}
 \item check for \r \ new versions on CRAN
@@ -639,12 +643,13 @@ What to do?
 \end{itemize}
 
 \vfill
+\pause
 Note 1: some packages can help to do this: \verb+InstallR+ on Windows and \verb+UpdateR+ on macOS.
 
 Note 2: also update RStudio for full compatibility with \r.
 \end{frame}
 
-\subsection{Learning \r \ on your own}
+\subsection{learning \r \ on your own}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
