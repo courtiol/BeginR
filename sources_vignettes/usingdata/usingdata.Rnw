@@ -381,7 +381,7 @@ as.integer(x = gsub(pattern = "-", replacement = "", x = as.character(foo)))
 \subsection{factors}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Factors}
+\begin{frame}[fragile, t]{Factors}
 You can create them after in two steps:
 << factors sex, echo = T>>=
 sex <- c("girl","girl","girl","girl","girl", "girl",
@@ -412,7 +412,7 @@ Note: more on programming style later!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Combining vectors with different levels}
+\begin{frame}[fragile, t]{Combining vectors with different levels}
 We want to merge the two following vectors:
 \vspace{1em}
 <<>>=
@@ -709,7 +709,7 @@ my_matrix["b", ]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Matrices: general properties}
-In the background, a matrix is a vector with dimension attributes (i.e. number of columns and rows)%
+In the background, a matrix is a vector with dimension attributes (i.e. number of columns and rows).%
 
 \vfill
 <<>>=
@@ -718,16 +718,16 @@ str(my_matrix)
 @
 \vfill
 \pause
+You can subset the data using this dimension attributes or not:
 <<>>=
-## You can subset the data using this dimension attributes or not.
 my_matrix[5]
 my_matrix[2, 2]
 @
 \vfill
 \pause
+A matrix will be filled from top - bottom, left - right:
 <<>>=
-#A matrix will be filled from top - bottom, left - right.
-(my_matrix4 <- matrix(data = c(1:3, NA, 5:10), ncol = 2, nrow = 5))
+(my_matrix4 <- matrix(data = 1:4, ncol = 2, nrow = 2)) ## but try byrow = TRUE
 @
 \end{frame}
 
@@ -773,7 +773,7 @@ apply(X = my_matrix, MARGIN = 2, FUN = sd)  ## column SDs
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Arrays?}
+\begin{frame}[fragile, t]{Arrays?}
 Arrays are very similar to matrices but allow for more dimensions:
 <<>>=
 foo <- array(data = 1:8, dim = c(2, 2, 2))
@@ -811,7 +811,7 @@ Note 2: lists are very important because no function can output more than one ob
 \end{frame}
 
 
-\subsection{General properties}
+\subsection{general properties}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -930,8 +930,9 @@ str(dataframe_ht)
 \subsection{challenge}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Data frames: challenge}
+\begin{frame}[fragile, t]{Data frames: challenge}
 The \texttt{iris} data set:
+\vfill
 <<>>=
 head(iris) ## this function displays the first 6 rows
 @
@@ -1014,8 +1015,9 @@ Note: \texttt{by()} is more powerful but more complex than \texttt{tapply()}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The \texttt{dyplr} alternative to \texttt{tapply()}}
-The same operation in \texttt{dyplr} looks very different:
+\begin{frame}[fragile, t]{The \texttt{dplyr} alternative to \texttt{tapply()}}
+The same operation in \texttt{dplyr} looks very different:
+\vfill
 <<>>=
 iris %>%
   group_by(Species) %>%
@@ -1119,7 +1121,7 @@ Note 3: we will see a bit of both dialects
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\texttt{dplyr} verbs}
+\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
 Useful \texttt{dplyr} functions:\\
 \vfill
 \begin{itemize}
@@ -1140,7 +1142,7 @@ head(x = dataframe_ht2, n = 3)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\texttt{dplyr} verbs}
+\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
 Useful \texttt{dplyr} functions:\\
 \vfill
 \begin{itemize}
@@ -1168,7 +1170,7 @@ head(dataframe_ht_sorted, n = 3)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Around \texttt{dplyr} verbs}
+\begin{frame}[fragile, t]{Around \texttt{dplyr} verbs}
 These main \texttt{dplyr} functions have derivatives and some of them can be useful:\\
 e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
 \vfill
@@ -1194,7 +1196,7 @@ iris_numeric <- iris %>%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\texttt{group\_by()}}
+\begin{frame}[fragile, t]{\texttt{group\_by()}}
 The \texttt{group\_by()} function allows you to perform operation on grouped data.\\
 \vfill
 \pause
@@ -1309,7 +1311,7 @@ We will see how to merge these two data frames!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+\begin{frame}[fragile, t]{Using \texttt{dplyr} to merge datasets}
 There are several options but \texttt{full\_join()} is the most effective one: it keeps all the rows of the two data frames and adds NA when no data are present!
 \vfill
 <<full join>>=
@@ -1326,13 +1328,19 @@ merge(my_df1, my_df2, all = TRUE)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
-You can also use \texttt{left\_join()} to merge datasets sampled at different scales (e.g. daily and annual level; species and individual level).
+You can also use \texttt{left\_join()} to keep all data from the first dataset and keep only the new data from the second data set that fit in:
 \vfill
 <<left join>>=
-flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
-                             Quality = c("High", "Medium", "Low"))
-my_df4 <- left_join(my_df3, flower_quality, by = "Species")
-my_df4
+(flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+                              Quality = c("High", "Medium", "Low")))
+@
+\pause
+<<>>=
+left_join(my_df3, flower_quality, by = "Species")
+@
+\pause
+<<>>=
+full_join(my_df3, flower_quality, by = "Species")
 @
 \end{frame}
 
@@ -1350,8 +1358,9 @@ Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compu
 \subsection{tidyr}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Reshaping data frame}
+\begin{frame}[fragile, t]{Reshaping data frame}
 For most data analyses, you need:
+\vfill
 \begin{center}
 \begin{minipage}{0.3\linewidth}
 \begin{block}{}
@@ -1495,7 +1504,7 @@ Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but 
 \subsection{tibbles}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{What are tibbles?}
+\begin{frame}[fragile, t]{What are tibbles?}
 Tibbles are modified data frames that are automatically created by \texttt{tidyverse} packages:
 <<>>=
 iris_tbl <- iris %>%
@@ -1509,7 +1518,7 @@ Note: most of what works on objects of class \texttt{data.frame} works on object
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{From tibbles to data frames and back}
+\begin{frame}[fragile, t]{From tibbles to data frames and back}
 You can easily convert one into the other:
 <<>>=
 head(as.data.frame(iris_tbl))
@@ -1526,7 +1535,7 @@ Note: for linear models, it is safer to convert everything into data frames!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{How to influence the display of tibbles?}
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
 You can change the number of rows being displayed:
 \vfill
 <<>>=
@@ -1542,7 +1551,7 @@ Note: to always display all row you can set \texttt{options(dplyr.print\_min = I
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{How to influence the display of tibbles?}
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
 You can change the number of digits being displayed:
 \vfill
 Default:
@@ -1569,7 +1578,7 @@ x
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{How to influence the display of tibbles?}
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
 Sometimes the default is a little too dangerous!
 \vfill
 <<>>=
@@ -1599,12 +1608,12 @@ Note: but at least they have recently added the "." suggesting there are more nu
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Working directory}
+\begin{frame}[fragile, t]{Working directory}
 Before anything, you must know where you read \& write on your hard drive!
 <<>>=
 getwd() ## get the working directory, to change it use setwd()
 dir() ## list all files in the working directory
-dir(pattern = "*.csv")  ## list all files with the extension csv
+dir(pattern = "*.csv")  ## list all ffiles with the extension csv
 @
 \vfill
 Note: you can also set this up with RStudio but it won't be saved unless you set up a project file.
@@ -1612,8 +1621,8 @@ Note: you can also set this up with RStudio but it won't be saved unless you set
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Exporting and importing data in the \R \ binary format}
-\r \ can write and read binary formats that take by convention the extensions *.rda or *.RData.
+\begin{frame}[fragile, t]{Exporting and importing data in the \R \ binary format}
+\r \ can write and read binary formats that take by convention the extensions \texttt{.rda} or \texttt{.RData}.
 \vfill
 Example:
 <<>>=
@@ -1646,9 +1655,9 @@ Note: this is useful and best for \r \ to \r \ exchanges (but it is useless with
 \begin{minipage}{0.8\linewidth}
 \begin{block}{}
 \begin{itemize}
-\item \r \ cannot read/write \*.xls(x) files out of the box\\
-\item Several packages can do that, but it is safer to use \*.csv or \*.txt files\\
-\item Excel can read and write \*.csv \& \*.txt files!\\
+\item \r \ cannot read/write \texttt{.xls(x)} files out of the box\\
+\item Several packages can do that, but it is safer to use \texttt{.csv} or \texttt{.txt} files\\
+\item Excel can read and write \texttt{.csv} \& \texttt{.txt} files!\\
 \end{itemize}
 \end{block}
 \end{minipage}
@@ -1663,7 +1672,7 @@ write.csv(my_iris, file = "my_iris.csv", row.names = FALSE)
 Reading a data set:
 <<>>=
 rm(my_iris) ## delete the object my_iris
-my_iris <- read.csv("my_iris.csv")
+my_iris <- read.csv("my_iris.csv") ## or read.table() with adequate options!
 head(my_iris)
 @
 <<echo = FALSE>>=
