@@ -7,7 +7,8 @@
 get_vignettes()
 }
 \description{
-This function allows to access to the vignettes directly in their folder.
+This function allows to access to the vignettes directly in their folder and
+open the file index.html in the browser.
 }
 \examples{
 get_vignettes()
