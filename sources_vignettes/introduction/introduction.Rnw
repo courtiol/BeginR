@@ -255,11 +255,11 @@ Some examples:
   %\item set the internet proxy: 192.168.2.2:3128
   \item check that you do get internet access
   \item install \r: \url{https://cran.r-project.org/}
-  \item install RStudio: \url{https://www.rstudio.com/products/rstudio/download/}
+  \item install the RStudio IDE: \url{https://www.rstudio.com/products/rstudio/download/}
   \item open RStudio
   \end{enumerate}
 \vfill
-Note: we will use RStudio but you don't have to (RStudio is free but \underline{not for all}).
+Note: we will use RStudio but you don't have to (the RStudio IDE is free and open source).
 \end{frame}
 
 
