@@ -761,11 +761,13 @@ Note: there are a few other ones, but they do not seem very interesting\dots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{You can create home-made \r \ graphics too}
 \begin{center}
-  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot5}
+  \includegraphics[height=4cm, keepaspectratio]{../figures/plot10}
   \hspace{0.1cm}
-  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot9}
+  \includegraphics[height=4cm, keepaspectratio]{../figures/plot5}
+  \hspace{0.1cm}\\
+  \includegraphics[height=4cm, keepaspectratio]{../figures/plot9}
   \hspace{0.1cm}
-  \includegraphics[width=0.3\linewidth, keepaspectratio]{../figures/plot8}
+  \includegraphics[height=4cm, keepaspectratio]{../figures/plot8}
 \end{center}
 \end{frame}
 
