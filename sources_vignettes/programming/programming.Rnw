@@ -1831,7 +1831,7 @@ Cons
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{A more advanced simulation model using R6}
 <<eval = FALSE>>=
-?load_butterfly_example
+?Butterfly
 @
 \end{frame}
 
