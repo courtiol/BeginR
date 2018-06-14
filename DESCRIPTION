@@ -1,8 +1,11 @@
 Package: BeginR
 Title: Getting Started with R
 Version: 0.0.0.9000
-Author: Alexandre Courtiol [aut, cre], Liam Bailey [aut] and Colin Vullioud [aut]
-Maintainer: Alexandre Courtiol <alexandre.courtiol@gmail.com>
+Authors@R: c(
+    person("Alexandre", "Courtiol", email = "courtiol@izw-berlin.de", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0637-2959")),
+    person("Liam", "Bailey", role = "aut", comment = c(ORCID = "0000-0002-8226-9454")),
+    person("Colin", "Vullioud", role = "aut")
+    )
 Description: An introductory course about R.
 Depends: R (>= 3.5.0)
 Imports:
