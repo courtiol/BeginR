@@ -803,10 +803,12 @@ It has pros and cons.
 \begin{frame}[fragile, t]{ggplot: An introduction}
 Unlike traditional graphics, ggplot works around a single function:
 <<scatter_gg_2,>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length))
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))+ #We specify the source of data and the x and y variables
+  geom_point()+ #geom functions specify the format of the graph (e.g. scatterplot, histogram). A geom is required to make any plot.
+  scale_x_continuous(limits = c(0, 10))+ #Scale functions adjust the axes, colouration etc.
+  theme(axis.title = element_text(size = 22)) #Theme functions are used to change things like legends, font size etc.
 @
 \vfill
-Note: we will then use different functions to add layers on top.
 \end{frame}
 
 
