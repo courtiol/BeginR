@@ -48,32 +48,94 @@ opts_chunk$set("size" = "scriptsize")
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{What is a linear model?}
+
+A statistical model represents, often in considerably idealized form, the data-generating process (\url{https://en.wikipedia.org/wiki/Statistical_model}).
+
+\pause
+\vfill
+In a linear model, the data-generating process is assumed to be a linear function: it is constructed from a set of terms by multiplying each term by a constant (a model parameter) and adding the results.
+\pause
+\vfill
+\r \ allows to fit efficiently and easily all main kinds of linear models:
+\begin{itemize}
+\item classical linear models (t-test, correlation, linear regression, ANOVA, ANCOVA): LM
+\item generalized linear models (logistic regression, Poisson regression\dots): GLM
+\item linear mixed-effects models: LMM
+\item generalized linear mixed-effects models: GLMM
+\item general additive models \& general additive mixed models: GAM \& GAMM
+\end{itemize}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Types of linear models?}
+\begin{frame}[fragile]{Linear models in \R}
+\r \ is very rich in terms of capabilities to fit linear models due to an increasing number of dedicated packages!
+\vfill
+For now, no other software seems to be remotely as good (prognostic: only \texttt{Julia} or \texttt{Python} may change that within a decade but I find it unlikely).
+\vfill
+\pause
+\begin{center}
+\begin{tabular}{|l|c|c|}%
+\hline
+Models & Packages for fitting & Helper packages\\
+\hline
+LM & none; \texttt{spaMM} & \texttt{car}; \texttt{visreg}\\
+GLM & none; \texttt{spaMM} & \texttt{car}; \texttt{DHARMa}; \texttt{visreg}\\
+LMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}\\
+GLMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}\\
+GAM & \texttt{mgcv} & \texttt{visreg}\\
+GAMM & \texttt{mgcv} &\\
+\hline
+\end{tabular}
+\end{center}
+\vfill
+Note: those are my personal favorite ones but they are plenty more out there.
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{A selection of packages fitting linear models in \R}
+\begin{frame}{Useful books dealing with linear models in \R}
+\begin{center}
+\includegraphics[height=4cm]{../figures/Rbook}
+\includegraphics[height=4cm]{../figures/PinheiroBates}
+\includegraphics[height=4cm]{../figures/Gelman}
+\includegraphics[height=4cm]{../figures/Zuur_MM}
+\includegraphics[height=4cm]{../figures/Wood}
+\end{center}
+\vfill
+Note: it is also useful to look at books not focussed on \r!
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Preparing data for (G)LM(M)}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Useful resources}
+\begin{frame}{Preparing data for (G)LM(M) \& GA(M)}
+To maximize the chances of success prepare your data as follow:
+\begin{itemize}
+\item one row = one observation (if repeated measures, use several rows!)
+\item qualitative variables of class \texttt{factor} (check the levels, drop unused ones, set the reference properly)
+\item no \texttt{NA} (models can somewhat deal with them but it is a major source of headackes)
+\end{itemize}
 \end{frame}
 
 
 \section{Linear Models}
+\subsection{introduction \& inputs}
 
-\subsection{inputs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The linear model}
+
+$y_i = \hat{\beta_0} + \hat{\beta_1} \times x_{1,i} + \hat{\beta_2} \times x_{2,i} + \dots + \hat{\beta_p} \times x_{p,i} + \varepsilon_i$
+
+\begin{itemize}
+\item $y_i$ = the observations to explain / response variable / dependent variable
+\item $x_{j,i}$ = constants derived from the predictors / explanatory variables / independent variables
+\item $\hat{\beta_j}$ = the (model parameter / regression coefficient) estimates
+\item $\varepsilon_i$ = the residuals (i.e. the estimates for the errors)
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{outputs}
 \subsection{tests}
 \subsection{predictions}
@@ -81,7 +143,7 @@ opts_chunk$set("size" = "scriptsize")
 
 \section{Generalised Linear Models}
 
-\subsection{inputs}
+\subsection{introduction \& inputs}
 \subsection{outputs}
 \subsection{tests}
 \subsection{predictions}
@@ -89,12 +151,13 @@ opts_chunk$set("size" = "scriptsize")
 
 \section{Mixed Models}
 
-\subsection{inputs}
+\subsection{introduction \& inputs}
 \subsection{outputs}
 \subsection{tests}
 \subsection{predictions}
 \subsection{assumptions}
 \subsection{advanced MM}
-%GAM(M)?
+
+\section{General Additive (Mixed) Models}
 
 \end{document}
