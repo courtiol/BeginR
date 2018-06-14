@@ -95,5 +95,6 @@ opts_chunk$set("size" = "scriptsize")
 \subsection{predictions}
 \subsection{assumptions}
 \subsection{advanced MM}
+%GAM(M)?
 
 \end{document}
