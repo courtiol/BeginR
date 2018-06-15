@@ -7,7 +7,7 @@ Authors@R: c(
     person("Colin", "Vullioud", role = "aut")
     )
 Description: An introductory course about R.
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.0)
 Imports:
   gridExtra,
   knitr,
