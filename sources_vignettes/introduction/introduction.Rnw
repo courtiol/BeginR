@@ -17,6 +17,16 @@
 \title{Getting started with \r}
 \author[Alexandre Courtiol]{Alexandre Courtiol}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\titlegraphic{
+\vspace{0cm}
+\hspace{1cm}
+\includegraphics[height=2cm]{../figures/izw_logo}
+\hspace{0.7cm}
+\includegraphics[height=3cm]{../figures/physalia}
+\hspace{1.3cm}
+\includegraphics[height=2cm]{../figures/FU}
+\hspace{1cm}
+}
 \date[June 2018]{\small June 2018}%
 
 \begin{document}
@@ -733,7 +743,6 @@ Meetup groups:
 Courses \& Workshop:
 \begin{itemize}
 \item Physalia (\url{https://www.physalia-courses.org})
-\item PR statistics (\url{https://www.prstatistics.com})
 \item DataCamp (online: \url{https://www.datacamp.com/courses/tech:r})
 \end{itemize}
 \vfill
