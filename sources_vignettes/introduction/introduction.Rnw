@@ -152,7 +152,7 @@ Key points about \R:
 \begin{itemize}
 \item 1976-1980: version 1: interactive statistical system, Fortran based (Becker, Chambers, \& al. at Bell Labs)
 %Bells Labs is now owned by NOKIA
-\item 1980-1988: version 2: portable version (thanks to Unix) %unix was conceived one floor upstair at Bell Labs, C and C++ are also coming from Bells Labs (New Jersey)
+\item 1980-1988: version 2: portable version (thanks to Unix) %Unix was conceived one floor upstairs at Bell Labs, C and C++ are also coming from Bells Labs (New Jersey)
 \item 1988: version 3 (\s3): ``everything is an object'' paradigm, C-based (very much like R)
 \item 1991: a large statistical modeling toolbox is added to \s3
 \item 1993: \s+ exclusive license (to StatSci, later MathSoft, later SolutionMetrics)
@@ -163,7 +163,7 @@ Key points about \R:
 
 \pause
 %Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
-%developper of S try to keep it non commercial as much they could!
+%developer of S try to keep it non commercial as much they could!
 
 \R \ (\url{https://www.r-project.org/about.html})
 \begin{itemize}

@@ -201,7 +201,7 @@ plot(Petal.Length ~ Petal.Width, data = iris)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: scatter plots}
 You can choose what type of scatter plot to display with argument type:
-% mind that only prevent to correct display of dollar signs, and tildas...
+% mind that using only<>{} prevents to correctly display dollar signs, and tildes...
 <<scatter_base_2a>>=
 plot(Petal.Length ~ Petal.Width, data = iris, type = "p")
 @

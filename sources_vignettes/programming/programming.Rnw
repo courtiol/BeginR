@@ -826,9 +826,9 @@ The t-test and the Mann-Whitney U tests are two tests aiming at comparing 2 grou
 We want to compare the risk of false positives and true positives of these two tests in the following conditions:
 
 \begin{itemize}
-\item assuming that height of males is gaussian with mean 180 cm and SD 6 cm and that the height of females is gaussian with mean 170 cm and SD 5 cm, how many individuals (sex-ratio = 1) do I need to get a power of 80\% (risk of false negative = 20\%)?
+\item assuming that height of males is Gaussian with mean 180 cm and SD 6 cm and that the height of females is Gaussian with mean 170 cm and SD 5 cm, how many individuals (sex-ratio = 1) do I need to get a power of 80\% (risk of false negative = 20\%)?
 
-\item assuming that the null hyptohesis is true and that you have sampled 20 males and 20 females, what is the probability of false positives for the threshold alpha = 0.05? (And for any threshold between 0 and 1\%?)
+\item assuming that the null hypothesis is true and that you have sampled 20 males and 20 females, what is the probability of false positives for the threshold alpha = 0.05? (And for any threshold between 0 and 1\%?)
 \end{itemize}
 \end{minipage}
 \end{center}
@@ -843,7 +843,7 @@ We want to compare the risk of false positives and true positives of these two t
 \begin{frame}{Learning by mimicking}
 \begin{center}
 \begin{minipage}{0.7\linewidth}
-Looking at code writen by others will teach you
+Looking at code written by others will teach you
 \begin{itemize}
 \item how their functions work
 \item how to code
@@ -873,7 +873,7 @@ mosaic::orrr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-Sometimes, the code is not directly displayed\dots e.g. \r \  methods (S3):
+Sometimes, the code is not directly displayed\dots e.g. \r \  methods (\texttt{S3}):
 \vspace{1em}
 <<size="scriptsize">>==
 residuals
@@ -891,7 +891,7 @@ The methods with a \texttt{*} are not exported from their package namespace!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-Add the \verb`class` at the end of the function name to get the code for exported \r \ (S3) methods:
+Add the \verb`class` at the end of the function name to get the code for exported \r \ (\texttt{S3}) methods:
 \vspace{1em}
 <<size="scriptsize">>==
 residuals.lm
@@ -905,7 +905,7 @@ You can use \verb`class()` on your input to figure this out.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the code behind a function?}
-It is also possible to get the code of non-exported \r \ methods (S3):
+It is also possible to get the code of non-exported \r \ methods (\texttt{S3}):
 \vspace{1em}
 <<size="scriptsize">>=
 residuals.nls
@@ -1066,7 +1066,7 @@ Donald Knuth, Computing Surveys, Vol 6, No 4, December 1974
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Profilling}
+\begin{frame}[fragile]{Profiling}
 You can time functions:
 <<message=FALSE, eval = do_slow>>=
 library(spaMM)
@@ -1406,8 +1406,8 @@ Note: as we will see, the address behind a reference can change during computati
 
 Native class systems:
 \begin{itemize}
-\item S3 (legacy from S version 3, in \emph{base})
-\item S4 (legacy from S version 4, in core package \emph{methods})
+\item \texttt{S3} (legacy from S version 3, in \emph{base})
+\item \texttt{S4} (legacy from S version 4, in core package \emph{methods})
 \item Reference Class (sometimes referred to as R5, in \emph{methods})
 \end{itemize}
 
@@ -1416,7 +1416,7 @@ Native class systems:
 
 Additional class systems:
 \begin{itemize}
-\item R6 (in the package \emph{R6}, one of the most downloaded package on CRAN!)
+\item \texttt{R6} (in the package \texttt{R6}, one of the most downloaded package on CRAN!)
 \item ggproto (in the package \emph{ggplot2})
 \item others (proto, \dots)
 \end{itemize}
@@ -1433,7 +1433,7 @@ Note: the objects created with one system can contain objects created with anoth
 Functional (Object Oriented) Programming
 \begin{itemize}
 \item suitable for analytical workflows
-\item S3, S4
+\item \texttt{S3}, \texttt{S4}
 \item methods defined outside the objects
 \item objects are not mutable
 \item a $\xrightarrow[]{\text{fn}}$ b $\xrightarrow[]{\text{fn}}$ c $\xrightarrow[]{\text{fn}}$\dots
@@ -1442,8 +1442,8 @@ Functional (Object Oriented) Programming
 \column{0.5\linewidth}
 Encapsulated Object Oriented Programming (aka OOP)
 \begin{itemize}
-\item suitable for data that evolve over time (modularity and reusability)
-\item RC, R6
+\item suitable for data that evolve over time (modularity and re-usability)
+\item \texttt{RC}, \texttt{R6}
 \item methods defined inside the objects
 \item objects are mutable
 \item a $\xrightarrow[]{\text{fn}}$ b \& a $\xrightarrow[]{\text{fn}} \varnothing$
@@ -1455,7 +1455,7 @@ Note: actual programming can borrow from multiple paradigms (pure form is diffic
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A simple example using S3}
+\begin{frame}[fragile]{A simple example using \texttt{S3}}
 <<>>=
 addone <- function(x) res + 1
 res <- 1
@@ -1465,7 +1465,7 @@ addone(res)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A simple example using S4}
+\begin{frame}[fragile]{A simple example using \texttt{S4}}
 <<>>=
 setClass(Class = "S4_obj", slots = list(value = "numeric"))
 setGeneric(name = "addone", def = function(object) stop("only for S4_obj")) ## set generic with default behaviour
@@ -1484,7 +1484,7 @@ addone(resS4)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A simple example using RC}
+\begin{frame}[fragile]{A simple example using \texttt{RC}}
 <<>>=
 RC_obj <- setRefClass(Class   = "RC_obj",
                       fields  = list(value = "numeric"),
@@ -1502,7 +1502,7 @@ resRC
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A simple example using R6}
+\begin{frame}[fragile]{A simple example using \texttt{R6}}
 <<>>=
 library(R6)
 R6_obj <- R6Class(
@@ -1530,7 +1530,7 @@ resR6$value
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Encapsulated OOP requires mutability}
-S3 objects are (generally) not mutable (same for S4):
+\texttt{S3} objects are (generally) not mutable (same for \texttt{S4}):
 \begin{columns}[t]
 \column{0.3\linewidth}
 <<>>=
@@ -1566,7 +1566,7 @@ a
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Encapsulated OOP requires mutability}
-R6 objects are mutable (same for RC):
+\texttt{R6} objects are mutable (same for \texttt{RC}):
 
 \begin{columns}[t]
 \column{0.3\linewidth}
@@ -1604,7 +1604,7 @@ Note: mutability can be prevented if necessary.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Example: An simple Individual Based Models (IBM)}
-Setup:
+Context:
 \begin{itemize}
   \item two age classes: children (0--14 yrs), adults (15+ yrs)
   \item children die at an average rate of 15 deaths per 1000 per year
@@ -1622,7 +1622,7 @@ Starting with 1000 individuals (with age following a uniform distribution betwee
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Functional way using S3: functions}
+\begin{frame}[fragile]{Functional way using \texttt{S3}: functions}
 <<>>=
 death <- function(pop) {
   death_children <- rbinom(n = length(pop), size = 1, prob = 15/1000)
@@ -1648,7 +1648,7 @@ age <- function(pop) pop <- pop + 1
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Functional way using S3: run}
+\begin{frame}[fragile]{Functional way using \texttt{S3}: run}
 <<>>=
 pop <- round(runif(1000, min = 0, max = 40))
 
@@ -1663,7 +1663,7 @@ table(pop > 14)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: definition of the class \texttt{individual}}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: definition of the class \texttt{individual}}
 <<>>=
 individual <- R6Class(
   public  = list(
@@ -1687,7 +1687,7 @@ individual <- R6Class(
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: test}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: test}
 You can test things before creating the population!
 \begin{columns}[t]
 \column{0.5\linewidth}
@@ -1705,7 +1705,7 @@ alex
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: definition of the class \texttt{population}}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: definition of the class \texttt{population}}
 <<size = "scriptsize">>=
 population <- R6Class(
   public  = list(
@@ -1735,7 +1735,7 @@ population <- R6Class(
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: run}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: run}
 <<>>=
 pop <- population$new()
 for (i in 1:50) pop$year()
@@ -1767,7 +1767,7 @@ Starting with 1000 individuals (with age following a uniform distribution betwee
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: re-definition of the class \texttt{individual}}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: re-definition of the class \texttt{individual}}
 <<size = "scriptsize">>=
 individual <- R6Class(
   public  = list(
@@ -1799,7 +1799,7 @@ Note: there is no need to redefine the class \texttt{population}!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{OOP way using R6: re-run}
+\begin{frame}[fragile]{OOP way using \texttt{R6}: re-run}
 <<>>=
 pop <- population$new()
 for (i in 1:50) pop$year()
@@ -1809,13 +1809,13 @@ pop$count()
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Functional way using S3: re-defining functions}
+\begin{frame}{Functional way using \texttt{S3}: re-defining functions}
 We would have to recode everything \dots
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Pros and cons of R6 for IBM}
+\begin{frame}[fragile]{Pros and cons of \texttt{R6} for IBM}
 
 \begin{columns}[t]
 \column{0.5\linewidth}
@@ -1830,7 +1830,7 @@ Pros
 \column{0.5\linewidth}
 Cons
 \begin{itemize}
-  \item initially difficult for those knowing mostly S3
+  \item initially difficult for those knowing mostly \texttt{S3}
   \item much slower (cost can somewhat be reduced with some tweaks)
   \item additional issues to take care (e.g. side effects)
 \end{itemize}
@@ -1839,7 +1839,7 @@ Cons
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{A more advanced simulation model using R6}
+\begin{frame}[fragile]{A more advanced simulation model using \texttt{R6}}
 <<eval = FALSE>>=
 ?Butterfly
 @
