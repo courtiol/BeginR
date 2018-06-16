@@ -800,19 +800,15 @@ The idea was to create a grammar of graphics for \r.
 \vfill
 It is inspired from the seminal Leland Wilkson's book \textbf{The Grammar of Graphics}:
 \justifying
-\emph{"This book [...] presents a unique foundation for producing almost every quantitative graphic found in scientific journals, newspapers, statistical packages, and data visualization systems. This foundation was designed for a distributed computing environment (Internet, Intranet, client-server), with special attention given to conserving computer code and system resources."}
+\emph{"This book [...] presents a unique foundation for producing almost every quantitative graphic found in scientific journals, newspapers, statistical packages, and data visualization systems."}
 \vfill
 \pause
-In plain english, that means that the graphics are build by considering successive layers.
-\vfill
-The originality is that the user directly handles different functions corresponding to each layer.
-\vfill
-Other graphics systems do use layers too, but only behind the curtain.
-\vfill
-The conceptual unit is thus shifted from the type of plot to the type of layer!
+In Wickham's words:\\
+\emph{"The grammar of graphics is an answer to a question: what is a statistical graphic? [\dots] In brief, the grammar tells us that a statistical graphic is a
+mapping from data to aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also contain statistical transformations of the data and is drawn on a specific coordinate system. Facetting can be used to generate the same plot for different subsets of the dataset. It is the combination of these independent components that make up a graphic."} (Wickham ggplot2 book)
 \vfill
 \pause
-It has pros and cons.
+In plain english, that means that the graphics are build by considering building blocs or layers. The originality is that the user directly handles different functions corresponding to each layer and can combine them freely.
 \end{frame}
 
 
@@ -1341,6 +1337,7 @@ A few random examples of \texttt{ggplot} extensions:
 % to be completed!
 \end{itemize}
 \vfill
+Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incomplete).
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
