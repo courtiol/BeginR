@@ -1058,7 +1058,7 @@ iris %>%
   group_by(Species) %>%
   summarize(mean_sepal_length = mean(Sepal.Length),
             mean_sepal_width = mean(Sepal.Width)) %>%
-  as.data.frame()  ## optional but otherwise tibble and not data frame
+  data.frame()  ## optional but otherwise tibble and not data frame
 @
 \vfill
 Note: this replaces two \texttt{tapply()} calls and remains easy to read.\\
@@ -1220,7 +1220,7 @@ str(iris)
 \column{0.45\linewidth}
 you want:
 <<mutate if out, echo = F >>=
-str(as.data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
+str(data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
 @
 \end{columns}
 \vfill
@@ -1264,7 +1264,7 @@ dataframe_ht %>%
   summarize(mean_height = mean(Height),
             median_height = median(Height),
             n = n()) %>%
-  as.data.frame()
+  data.frame()
 @
 \end{frame}
 
@@ -1278,7 +1278,7 @@ dataframe_ht %>%
   mutate(mean_height = mean(Height),
             median_height = median(Height),
             n = n()) %>%
-  as.data.frame()
+  data.frame()
 @
 \vfill
 Note: many other functions than \texttt{n()} can be used, see \texttt{?summarise} \ !
@@ -1292,7 +1292,7 @@ Example: you want the first two rows of each species of irices:
 iris %>%
   group_by(Species) %>%
   slice(1:2) %>%
-  as.data.frame()
+  data.frame()
 @
 \end{frame}
 
@@ -1322,30 +1322,34 @@ Advanced: you want to apply a function that returns several elements, such as th
 iris %>%
   group_by(Species) %>%
   do(tibble(range = range(.$Petal.Length))) %>% ## must be turned into a tibble or data.frame to work
-  as.data.frame()
+  data.frame()
 @
 \vfill
 \pause
 More sophisticated alternative:
 <<>>=
-library(purrr) ## part of tidyverse
+Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but output a named vector!
 iris %>%
-  split(.$Species) %>%
-  map_df(., function(df) c(as.character(df$Species[1]), range(df$Petal.Length))) %>%
-  t %>%
-  as.data.frame(., row.names = 1:nrow(.)) %>%
-  rename(Species = V1, min = V2, max = V3)
+  group_by(Species) %>%
+  do(data.frame(as.list(Range(.$Petal.Length)))) %>%
+  data.frame()
 @
 \vfill
 \pause
-%Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but with names!
-%iris %>%
+% Alternatives:
+% iris %>%
 %   group_by(Species) %>%
 %   do(tidy(Range(.$Petal.Length))) %>%
 %   spread(key = names, value = x) %>% ## spread the lists
 %   select(Species, min, max) %>% ## reorder columns
-%   as.data.frame()
+%   data.frame()
 %
+% iris %>%
+%   split(.$Species) %>%
+%   map_df(., function(df) c(as.character(df$Species[1]), range(df$Petal.Length))) %>%
+%   t %>%
+%   data.frame(., row.names = 1:nrow(.)) %>%
+%   rename(Species = V1, min = V2, max = V3)
 Alternatively, stick to standard \r \ and the function \texttt{tapply()}.
 %list_range <- with(data = iris, tapply(X = Petal.Length, INDEX = Species, FUN = Range))
 %data.frame(Species = levels(iris$Species), do.call(what = "rbind", args = list_range), %row.names = NULL)
@@ -1599,12 +1603,12 @@ Note: most of what works on objects of class \texttt{data.frame} works on object
 \begin{frame}[fragile, t]{From tibbles to data frames and back}
 You can easily convert one into the other:
 <<>>=
-head(as.data.frame(iris_tbl))
+head(data.frame(iris_tbl))
 @
 \vfill
 \pause
 <<>>=
-as_tibble(as.data.frame(iris_tbl))  ## no need for head as tibble!
+as_tibble(data.frame(iris_tbl))  ## no need for head as tibble!
 @
 \vfill
 \pause
