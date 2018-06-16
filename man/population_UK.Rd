@@ -8,6 +8,9 @@
 \source{
 These data were derived files freely available from the Office for National Statistics (\url{http://webarchive.nationalarchives.gov.uk}).
 }
+\usage{
+population_UK
+}
 \description{
 This dataset contains the total population count (per age classes) for England and Wales over the period 1901-2016.
 }
