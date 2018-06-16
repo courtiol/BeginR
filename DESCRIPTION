@@ -9,16 +9,19 @@ Authors@R: c(
 Description: An introductory course about R.
 Depends: R (>= 3.0)
 Imports:
+  car,
   gridExtra,
   knitr,
   lattice,
+  lmtest,
   mosaic,
   profvis,
   pryr,
   R6,
   spaMM,
   tidyverse,
-  utils
+  utils,
+  visreg
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
