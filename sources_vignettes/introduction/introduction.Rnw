@@ -606,6 +606,12 @@ Example:
 <<library BeginR>>=
 library(BeginR)
 @
+\vfill
+\pause
+You can simply check the (exported) content of a package:
+<<eval = FALSE>>=
+library(help = "BeginR")
+@
 \end{frame}
 
 
