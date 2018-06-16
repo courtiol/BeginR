@@ -4,6 +4,7 @@
 \usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
 \usepackage[UKenglish]{babel}
 \usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\usepackage{subcaption}
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
 
@@ -939,14 +940,38 @@ str(dataframe_ht)
 
 \subsection{challenge}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Data frames: challenge}
-The \texttt{iris} data set:
+The \texttt{iris} data set (\url{https://en.wikipedia.org/wiki/Iris_flower_data_set}):
+\vfill
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \begin{center}
+        \includegraphics[height=3cm]{"../figures/Iris_setosa"}
+        \caption*{\emph{Iris setosa}\\ \textcopyright Miya.m}
+        \end{center}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \begin{center}
+        \includegraphics[height=3cm]{"../figures/Iris_versicolor"}
+        \caption*{\emph{Iris versicolor}\\ \textcopyright D.G.E. Robertson}
+        \end{center}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \begin{center}
+        \includegraphics[height=3cm]{"../figures/Iris_virginica"}
+        \caption*{\emph{Iris virginica}\\ \textcopyright F. Mayfield}
+        \end{center}
+    \end{subfigure}
+\end{figure}
 \vfill
 <<>>=
-head(iris) ## this function displays the first 6 rows
+head(x = iris, n = 2L) ## this function displays by default the first 6 rows
 @
 \vfill
+\pause
 Using the \texttt{iris} data frame, find out:
 \begin{itemize}
 \item what is the average sepal length across all flowers?
