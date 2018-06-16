@@ -10,6 +10,7 @@ Description: An introductory course about R.
 Depends: R (>= 3.0)
 Imports:
   car,
+  carData,
   gridExtra,
   knitr,
   lattice,
