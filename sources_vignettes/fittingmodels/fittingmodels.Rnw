@@ -32,6 +32,7 @@
 <<echo = FALSE, message = FALSE>>=
 options(width = 120)
 library(knitr)
+library(BeginR)
 opts_chunk$set("size" = "scriptsize",
                "fig.width" = 5,
                "fig.height" = 5,
@@ -637,8 +638,8 @@ The most difficult step is to create the data frame defining the predictor value
 library(dplyr)
 data_for_predictions <- iris %>%
                             group_by(Species) %>%
-                            do(tibble(Petal.Width = seq(min(.$Petal.Width), max(.$Petal.Width), length.out = 30))) %>%
-                            as.data.frame()
+                            do(data.frame(Petal.Width = seq(min(.$Petal.Width), max(.$Petal.Width), length.out = 30))) %>%
+                            data.frame()
 @
 \begin{columns}
 \column{0.4\linewidth}
@@ -1076,39 +1077,160 @@ This is identical to the LM if:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
-\r \ formula notation:\\
+\begin{frame}[fragile, t]{The generalised linear model: the \texttt{Challenger} dataset}
+\begin{center}
+\includegraphics[height = 5cm]{../figures/Challenger}
+\end{center}
 <<>>=
-mod <- lm(Petal.Length ~ Petal.Width, data = iris)
+head(Challenger, n = 3L)
 @
 \vfill
-\pause
+Note: we will study both the probability that one oring fails (binary event) or that at least one oring fails (binomial event) as a function of the temperature.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The generalised linear model: the \texttt{VonBort} dataset}
+\begin{center}
+\includegraphics[height = 5cm]{../figures/prussians}
+\end{center}
 <<>>=
-formula(mod)  ## the formula
+head(VonBort, n = 3L)
 @
 \vfill
-\pause
+Note: we will compare the number of deaths caused by horse (or mule) kicks between the 14 corps of the Prussian army.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The generalised linear model: specifications}
+In \r \ notation:\\
+\vspace{1em}
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+Challenger$issue <- Challenger$oring_dt > 0
+
+mod_challenger_binar <- glm(issue ~ temp, family = binomial(link = "logit"), data = Challenger)
 @
-\vfill
+\vspace{1em}
 \pause
 <<>>=
-head(model.response(model_frame))  ## the response variable
+Challenger$oring_ok <- Challenger$oring_tot - Challenger$oring_dt
+
+mod_challenger_binom <- glm(cbind(oring_dt, oring_ok) ~ temp, family = binomial(link = "logit"), data = Challenger)
 @
-\vfill
+\vspace{1em}
 \pause
 <<>>=
-head(model.matrix(mod))  ## the model matrix
+mod_horsekick <- glm(deaths ~ corps, family = poisson(link = "log"), data = VonBort)
 @
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The generalised linear model: specifications}
+The \texttt{family} object contains all kinds of useful information required for the fitting procedure:
+<<>>=
+names(binomial(link = "logit"))
+@
+\vfill
+\pause
+The link function:
+<<>>=
+probs <- seq(0.1, 0.9, by = 0.1)
+logits <- binomial(link = "logit")$linkfun(mu = probs)
+logits
+@
+\vfill
+\pause
+The inverse link function:
+<<>>=
+binomial(link = "logit")$linkinv(eta = logits)
+@
+\vfill
+\pause
+The variance function:
+<<>>=
+binomial(link = "logit")$variance(mu = probs)
+@
+\vfill
+\pause
+Note: you can use these functions to better understand GLM or when you need them to process some outputs.
+\end{frame}
+
 
 \subsection{outputs}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+<<>>=
+mod_challenger_binar
+confint(mod_challenger_binar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+<<>>=
+mod_challenger_binom
+confint(mod_challenger_binom)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+<<>>=
+mod_horsekick
+head(confint(mod_horsekick))
+@
+\vfill
+\pause
+Note: \alert{but the interpretation of the parameters is very different since they are expressed on the scale of the linear predictor!!}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Interpreting estimates}
+There is no general receipe, it all depends on the link function used\dots
+\vfill
+\pause
+\begin{itemize}
+\item For logistic regressions (\texttt{link = "logit"}; not for all binomial models), use odd-ratios:
+\end{itemize}
+<<>>=
+exp(coef(mod_challenger_binar)["temp"])
+1/exp(coef(mod_challenger_binar)["temp"])
+@
+Every decrease by one degree increases the odd of failure for at least one oring by \Sexpr{round(1/exp(coef(mod_challenger_binar)["temp"]), 1)} time!
+\vfill
+<<>>=
+exp(coef(mod_challenger_binom)["temp"])
+1/exp(coef(mod_challenger_binom)["temp"])
+@
+Every decrease by one degree increases the odd of failure for exactly one oring by \Sexpr{round(1/exp(coef(mod_challenger_binom)["temp"]), 1)} time!
+\end{frame}
+
+
+
+
 \subsection{tests}
 \subsection{predictions}
 \subsection{assumptions}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{The generalised linear model: challenge}
+Try to understand what influenced survival (i.e. access to lifeboats) during the Titanic disaster.
+\begin{center}
+\includegraphics[height = 5cm]{../figures/Titanic}
+\end{center}
+<<>>=
+head(TitanicSurvival)
+@
+\end{frame}
+
 
 \section{Mixed Models}
 
