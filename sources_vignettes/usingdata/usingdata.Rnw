@@ -1114,10 +1114,12 @@ Note 3: we will see a bit of both dialects
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Some words about \texttt{dplyr} \& co.}
+\begin{frame}{Getting started with \texttt{tidyverse}}
 \begin{center}
 \includegraphics[height = 0.8\textheight]{../figures/Wickham_r4ds}
 \end{center}
+\vfill
+Note: there are also mutliple tutorial on the web\\ (e.g. \url{https://www.r-bloggers.com/lesser-known-dplyr-tricks/}).
 \end{frame}
 
 
@@ -1244,6 +1246,9 @@ It is very powerful when combined to:
 \vfill
 \pause
 \item \texttt{slice()} $\rightarrow$ select some rows for each "group"
+\vfill
+\pause
+\item \texttt{do()} $\rightarrow$ for applying custom functions on each "group"
 \end{itemize}
 \vfill
 \end{frame}
@@ -1308,6 +1313,38 @@ Use the dataset called \texttt{deaths\_UK} and figure out:
 \item the death toll for all individuals below 15 yrs for each year
 \end{itemize}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{do()}}
+Advanced: you want to apply a function that returns several elements, such as the range of \texttt{Petal.Length} for each species of iris:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  do(tibble(range = range(.$Petal.Length))) %>% ## must be turned into a tibble or data.frame to work
+  as.data.frame()
+@
+\vfill
+\pause
+More sophisticated alternative:
+<<>>=
+library(broom) ## part of tidyverse
+library(tidyr) ## part of tidyverse
+Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but with names!
+iris %>%
+   group_by(Species) %>%
+   do(tidy(Range(.$Petal.Length))) %>%
+   spread(key = names, value = x) %>% ## spread the lists
+   select(Species, min, max) %>% ## reorder columns
+   as.data.frame()
+@
+\vfill
+\pause
+Alternatively, stick to standard \r \ and the function \texttt{tapply()}.
+%list_range <- with(data = iris, tapply(X = Petal.Length, INDEX = Species, FUN = Range))
+%data.frame(Species = levels(iris$Species), do.call(what = "rbind", args = list_range), %row.names = NULL)
+\end{frame}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
