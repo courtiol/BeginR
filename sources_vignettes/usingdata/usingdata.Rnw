@@ -1328,18 +1328,24 @@ iris %>%
 \pause
 More sophisticated alternative:
 <<>>=
-library(broom) ## part of tidyverse
-library(tidyr) ## part of tidyverse
-Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but with names!
+library(purrr) ## part of tidyverse
 iris %>%
-   group_by(Species) %>%
-   do(tidy(Range(.$Petal.Length))) %>%
-   spread(key = names, value = x) %>% ## spread the lists
-   select(Species, min, max) %>% ## reorder columns
-   as.data.frame()
+  split(.$Species) %>%
+  map_df(., function(df) c(as.character(df$Species[1]), range(df$Petal.Length))) %>%
+  t %>%
+  as.data.frame(., row.names = 1:nrow(.)) %>%
+  rename(Species = V1, min = V2, max = V3)
 @
 \vfill
 \pause
+%Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but with names!
+%iris %>%
+%   group_by(Species) %>%
+%   do(tidy(Range(.$Petal.Length))) %>%
+%   spread(key = names, value = x) %>% ## spread the lists
+%   select(Species, min, max) %>% ## reorder columns
+%   as.data.frame()
+%
 Alternatively, stick to standard \r \ and the function \texttt{tapply()}.
 %list_range <- with(data = iris, tapply(X = Petal.Length, INDEX = Species, FUN = Range))
 %data.frame(Species = levels(iris$Species), do.call(what = "rbind", args = list_range), %row.names = NULL)
