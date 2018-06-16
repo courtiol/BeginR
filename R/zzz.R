@@ -9,4 +9,8 @@
     "\n where you can find more information on how to use this package",
     "\n and where you can also leave comments (under 'Issues').",
     "\n")
+  ## preload data from other packages:
+  if (requireNamespace(package = "carData", quietly = TRUE)) {
+    data(TitanicSurvival, package = "carData")
+    }
 }
