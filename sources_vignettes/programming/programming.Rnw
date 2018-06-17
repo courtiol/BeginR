@@ -692,7 +692,7 @@ as.integer(2^31)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{\r \ has the same numerical issues as most programming languages}
-Solution: beware of floats and use adequate functions, not boolean tests, when performing comparisons!
+Solution: beware of \texttt{double}s and use adequate functions, not boolean tests, when performing comparisons!
 <<eval=T>>=
 ??"equality"
 @
@@ -791,9 +791,7 @@ all_pairwise2 <- function(proba, groups){
     odds_ratio(p1 = proba[groups == gr[1]], p2 = proba[groups == gr[2]])
     })
 
-  return(data.frame(group1 = to_do[, 1],
-                    group2 = to_do[, 2],
-                    OR = OR))
+  return(data.frame(group1 = to_do[, 1], group2 = to_do[, 2], OR = OR))
 }
 
 all_pairwise2(proba = d$proba, groups = d$group)
@@ -856,7 +854,8 @@ Looking at code written by others will teach you
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{How to get the code behind a function?}
-Start by simply typing the function name (without brackets):
+Start by simply typing the function name without brackets and here with the namespace as prefix to avoid loading it:
+\vspace{1cm}
 <<size="scriptsize">>==
 mosaic::oddsRatio
 @
