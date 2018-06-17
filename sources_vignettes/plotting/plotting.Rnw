@@ -167,12 +167,11 @@ browseVignettes(package = "ggplot2")
 3. Read books:
 \vfill
 \begin{center}
-\includegraphics[height=6cm]{../figures/Murrell_Rgraphics.jpg} % R core member who created grid
-\includegraphics[height=6cm]{../figures/Deepayan_lattice.jpg}
-\includegraphics[height=6cm]{../figures/Wickham_ggplot2.jpg}
+\includegraphics[height=5cm]{../figures/Murrell_Rgraphics.jpg} % R core member who created grid
+\includegraphics[height=5cm]{../figures/Deepayan_lattice.jpg}
+\includegraphics[height=5cm]{../figures/Wickham_ggplot2.jpg}
+\includegraphics[height=5cm]{../figures/Chang_RGraphics.jpg}
 \end{center}
-\vfill
-Note: Wickham's books are (all?) free and open source!
 \end{frame}
 
 
@@ -792,7 +791,7 @@ Note: there are a few other ones, but they do not seem very interesting\dots
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Example of solution}
+\begin{frame}[fragile]{Possible solution}
 <<children, echo = FALSE, message = FALSE, dev='cairo_pdf', out.width="0.55\\linewidth", fig.width=7, out.height="0.5\\linewidth", fig.height=6.5>>=
 library(dplyr)
 deaths_processed <- deaths_UK %>%
@@ -828,7 +827,7 @@ box()
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Example of solution}
+\begin{frame}[fragile]{Possible solution}
 <<eval = FALSE>>=
 library(dplyr)
 deaths_processed <- deaths_UK %>%
@@ -901,6 +900,24 @@ mapping from data to aesthetic attributes (colour, shape, size) of geometric obj
 \vfill
 \pause
 In plain english, that means that the graphics are build by considering building blocs or layers. The originality is that the user directly handles different functions corresponding to each layer and can combine them freely.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to learn \texttt{ggplot} on your own?}
+\begin{itemize}
+\item forum: \url{https://community.rstudio.com}
+\item reference:\url{http://ggplot2.tidyverse.org/reference/}
+\item the RStudio cheatsheet
+\item the books:
+\end{itemize}
+\begin{center}
+\includegraphics[height=4.5cm]{../figures/Wickham_ggplot2.jpg}
+\hspace{1cm}
+\includegraphics[height=4.5cm]{../figures/Chang_RGraphics.jpg}
+\end{center}
+\vfill
+Note: Wickham's books (or their sources) are free and open source!
 \end{frame}
 
 
@@ -1391,7 +1408,7 @@ You can create your own theme once for all!
 theme_pink <- theme_classic() %+replace% theme(panel.background = element_rect(fill = "pink"))
 
 ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point()+
+  geom_point() +
   theme_pink
 @
 \vfill
@@ -1461,16 +1478,77 @@ Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incom
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Challenge}
 \begin{center}
-\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{below 15 yrs only} and make a really nice plot of the outcome using \texttt{ggplot2}!}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{below 15 yrs only} and make a nice plot of the outcome using \texttt{ggplot2}!}
 \end{center}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Simple solution}
+<<>>=
+ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) + geom_area()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{More complex solution}
+<<dev='cairo_pdf', echo = FALSE>>=
+ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
+  geom_area(fill = "darkgreen") +
+  ylab("Mortality rate (\u2030)") +
+  labs(title = paste0("Children mortality (", min(data_processed$Year), "-", max(data_processed$Year), ")")) +
+  scale_x_continuous(breaks = seq(min(data_processed$Year), max(data_processed$Year), by = 5),
+                     minor_breaks = min(data_processed$Year):max(data_processed$Year)) +
+  scale_y_continuous(breaks = 0:ceiling(max(data_processed$Year)),
+                     minor_breaks = NULL) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5),
+        panel.grid.minor = element_line(colour = "lightgrey"),
+        panel.grid.major = element_line(colour = "lightgrey"),
+        panel.border = element_rect(colour = "black", fill = NA))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{More complex solution}
+<<eval = FALSE>>=
+ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
+  geom_area(fill = "darkgreen") +
+  ylab("Mortality rate (\u2030)") +
+  labs(title = paste0("Children mortality (", min(data_processed$Year), "-", max(data_processed$Year), ")")) +
+  scale_x_continuous(breaks = seq(min(data_processed$Year), max(data_processed$Year), by = 5),
+                     minor_breaks = min(data_processed$Year):max(data_processed$Year)) +
+  scale_y_continuous(breaks = 0:ceiling(max(data_processed$Year)),
+                     minor_breaks = NULL) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5),
+        panel.grid.minor = element_line(colour = "lightgrey"),
+        panel.grid.major = element_line(colour = "lightgrey"),
+        panel.border = element_rect(colour = "black", fill = NA))
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Challenge}
 \begin{center}
-\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{of each age class} and make a really nice plot of the outcome using \texttt{ggplot2}!}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{of each age class} and make a quick plot of the outcome using \texttt{ggplot2}!}
 \end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Possible solution}
+<<out.width="0.55\\linewidth", fig.width=8>>=
+deaths_processed_all <- deaths_UK %>% group_by(Year, Age_cat) %>% summarize(tot_Deaths = sum(Deaths))
+pop_processed <- population_UK %>% group_by(Year) %>% summarize(tot_Pop = sum(Pop)) ## as before
+data_processed_all <- full_join(deaths_processed_all, pop_processed) %>% mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+
+ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill = Age_cat)) + geom_area()
+@
 \end{frame}
 
 
@@ -1514,7 +1592,9 @@ Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incom
 \end{columns}
 \vfill
 \pause
-$\rightarrow$ It may be useful to know both!!
+\begin{center}
+\large{$\rightarrow$ It may be useful to know both!!}
+\end{center}
 \end{frame}
 
 \end{document}
