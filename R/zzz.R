@@ -11,9 +11,9 @@
     "\n")
   ## preload data from other packages:
   if (requireNamespace(package = "carData", quietly = TRUE)) {
-    data(TitanicSurvival, package = "carData")
+    utils::data(TitanicSurvival, package = "carData")
   }
   if (requireNamespace(package = "vcd", quietly = TRUE)) {
-    data(VonBort, package = "vcd")
+    utils::data(VonBort, package = "vcd")
   }
 }
