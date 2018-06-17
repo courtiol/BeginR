@@ -34,7 +34,7 @@
 <<knitr options, echo = FALSE, message = FALSE>>=
 options(width = 60)
 library(knitr)
-library(ggplot2)
+library(BeginR)
 opts_chunk$set("size" = "scriptsize",
                "fig.width" = 5,
                "fig.height" = 5,
@@ -94,8 +94,8 @@ Note:
 \begin{itemize}
 \item \verb`graphics` and \verb`grid` are part of any basic installation of \r
 \item \verb`lattice` is part of the so-called list of CRAN recommended packages
-\item \verb`ggplot2` is part of the tidyverse universe (from RStudio)
-\item we will focus on traditional graphics and \verb`ggplot2`, but \verb`lattice` is excellent too!
+\item \verb`ggplot2` is part of the \texttt{tidyverse} universe (from RStudio)
+\item we will focus on traditional graphics and \verb`ggplot2` (\verb`lattice` is excellent but a bit more difficult)
 \item some other packages are sometimes useful too (e.g. \verb`rgl`, \verb`plotly`)
 \end{itemize}
 \end{frame}
@@ -106,18 +106,18 @@ Note:
 \begin{columns}
 \column[b]{0.32\linewidth}
 <<baseplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
-plot(Petal.Length ~ Petal.Width,
-     data = iris)
+plot(Petal.Length ~ Petal.Width, data = iris)
 @
 \column[b]{0.32\linewidth}
 <<lattice_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
 library(lattice)
-xyplot(Petal.Length ~ Petal.Width,
-       data = iris)
+
+xyplot(Petal.Length ~ Petal.Width, data = iris)
 @
 \column[b]{0.32\linewidth}
 <<ggplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
 library(ggplot2)
+
 ggplot(data = iris,
   aes(x = Petal.Width, y = Petal.Length)) +
   geom_point()
@@ -167,11 +167,12 @@ browseVignettes(package = "ggplot2")
 3. Read books:
 \vfill
 \begin{center}
-\includegraphics[height=6cm]{../figures/Murrell_Rgraphics.jpg} % R core member
+\includegraphics[height=6cm]{../figures/Murrell_Rgraphics.jpg} % R core member who created grid
 \includegraphics[height=6cm]{../figures/Deepayan_lattice.jpg}
 \includegraphics[height=6cm]{../figures/Wickham_ggplot2.jpg}
 \end{center}
 \vfill
+Note: Wickham's books are (all?) free and open source!
 \end{frame}
 
 
@@ -272,7 +273,7 @@ You can change point shapes (pch) and colour (col):
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 16, col = 4)
 @
 \vfill
-Note: you can use number of basic colours.
+Note: you can use numbers to describe basic colours.
 \end{frame}
 
 
@@ -318,7 +319,7 @@ Note:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: scatter plots}
-For many elements you can set both an outline colour (col) and background colour (bg):
+For some point shapes you can set both an outline colour (col) and background colour (bg):
 \begin{columns}
 \column[t]{0.48\linewidth}
 <<scatter_base_4a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
@@ -339,7 +340,7 @@ plot(Petal.Length ~ Petal.Width, data = iris, cex = 2,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: scatter plots}
-Add a legend to make colours understandable:
+You can add a legend to the plot:
 <<scatter_base_5>>=
 palette(c("red", "blue", "green"))
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = iris$Species)
@@ -595,7 +596,7 @@ You can easily combine multiple traditional graphics using global parameters:
 oldpar <- par(mfrow = c(1, 2))
 plot(Petal.Length ~ Petal.Width, data = iris)
 boxplot(Petal.Length ~ Species, data = iris, col = "grey")
-par(oldpar) ## or par(mfrow = c(1, 1))
+par(oldpar) ## restore default values
 @
 \vfill
 Note: if you want to combine graphics of different sizes it is a bit more complex (see \verb`?layout`).
@@ -614,7 +615,7 @@ plot(Petal.Length ~ Petal.Width, data = split_data$virginica, main = "Virginica"
      bg = "blue", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
 plot(Petal.Length ~ Petal.Width, data = split_data$versicolor, main = "Versicolor", pch = 21,
      bg = "green", col = "black", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \end{frame}
 
@@ -634,7 +635,7 @@ Global parameters can also be used to change the background colour:
 <<aes_9>>=
 oldpar <- par(bg = "pink")
 plot(Petal.Length ~ Petal.Width, data = iris)
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \vfill
 Note: you can also plot a background image but you need to use specific packages for that.
@@ -649,24 +650,24 @@ oldpar <- par(family = "serif")
 plot(Petal.Length ~ Petal.Width, data = iris,
      xlab = "Petal Width (cm)", ylab = "Petal Length (cm)",
      cex.lab = 1.25, cex.axis = 1.25, col.axis = "red")
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Special characters}
-You can use weird characters:
-<<aes_8, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth">>=
+You can use weird characters:%png device below to render the unicode!
+<<aes_8, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth", dev='png'>>=
 foo <- round(pi, 3)
 plot(Petal.Length ~ Petal.Width, data = iris,
      xlab = expression(beta^2 + 2[alpha]), ylab = expression(paste(italic("bla bla bla"))),
      main = paste("Plot number", foo))
-#text(0.4, 4, "\u2640", cex = 3) ## require font with unicode installed (try it!)
+text(0.4, 4, "\u2640", cex = 3) ## requires font with unicode installed (try it!)
 text(0.6, 4, "\\VE", vfont = c("serif", "plain"), cex = 3)
 @
 \vfill
-Note: unicode characters are nice but source of problems, it may appear on the screen but not necessarily in pdf if the postscript font is missing. How to get the font and how to make it work depends on the OS.
+Note: unicode characters are nice but source of problems. How to make it work depends on both the OS, graphical device and typefaces installed on your computer.
 \end{frame}
 
 
@@ -682,7 +683,7 @@ boxplot(Petal.Length ~ Species, data = iris, col = "grey",
         cex.lab = 0.75, cex.axis = 1.25, col.axis = "red")
 box('figure', col = 'blue', lty = "dashed")
 box('outer', col = 'green', lwd = 5)
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \end{frame}
 
@@ -704,7 +705,7 @@ You can change the position of the axes:
 <<aes_6>>=
 oldpar <- par(mgp = c(0.4, 2, 1.5))
 plot(Petal.Length ~ Petal.Width, data = iris)
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \vfill
 Note: check \verb`?par` for a huge list of the things you can easily change!
@@ -722,7 +723,7 @@ axis(side = 1)
 axis(side = 4, at = seq(1, 7, 0.25), labels =  seq(1, 7, 0.25), col.ticks = "red", las = 1)
 mtext("Petal Length (cm)", side = 4, line = 3)
 box()
-par(oldpar)
+par(oldpar) ## restore default values
 @
 \end{frame}
 
@@ -781,11 +782,102 @@ Note: there are a few other ones, but they do not seem very interesting\dots
 \end{center}
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Challenge}
+\begin{center}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals below 15 yrs only and make a really nice plot of the outcome!}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of solution}
+<<children, echo = FALSE, message = FALSE, dev='cairo_pdf', out.width="0.55\\linewidth", fig.width=7, out.height="0.5\\linewidth", fig.height=6.5>>=
+library(dplyr)
+deaths_processed <- deaths_UK %>%
+  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+  group_by(Year) %>%
+  summarize(tot_Deaths = sum(Deaths))
+
+pop_processed <- population_UK %>%
+  group_by(Year) %>%
+  summarize(tot_Pop = sum(Pop))
+
+data_processed <- full_join(deaths_processed, pop_processed) %>%
+  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+
+par(mgp = c(3.2, 1, 0), mar = c(5, 5, 1, 1))
+
+plot(rel_Deaths ~ Year, data = data_processed, col = NULL, axes = FALSE,
+     ylab = "Mortality rate (\u2030)", xlab = "Years",
+     main = paste0("Children mortality (", min(data_processed$Year), "-", max(data_processed$Year), ")"))
+
+abline(v = seq(min(data_processed$Year), max(data_processed$Year), by = 1), col = "lightgrey", lwd = 0.5)
+abline(h = 0:ceiling(max(data_processed$rel_Deaths)), col = "lightgrey", lwd = 0.5)
+
+polygon(x = c(data_processed$Year, rev(x = data_processed$Year)),
+        y = c(data_processed$rel_Deaths, rep(x = 0, times = nrow(data_processed))),
+        col = "darkgreen")
+
+axis(side = 1, at = seq(min(data_processed$Year), max(data_processed$Year), by = 5), las = 2)
+axis(side = 2)
+box()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of solution}
+<<eval = FALSE>>=
+library(dplyr)
+deaths_processed <- deaths_UK %>%
+  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+  group_by(Year) %>%
+  summarize(tot_Deaths = sum(Deaths))
+
+pop_processed <- population_UK %>%
+  group_by(Year) %>%
+  summarize(tot_Pop = sum(Pop))
+
+data_processed <- full_join(deaths_processed, pop_processed) %>%
+  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+
+par(mgp = c(3.2, 1, 0), mar = c(5, 5, 1, 1))
+
+plot(rel_Deaths ~ Year, data = data_processed, col = NULL, axes = FALSE,
+     ylab = "Mortality rate (\u2030)", xlab = "Years",
+     main = paste0("Children mortality (", min(data_processed$Year), "-", max(data_processed$Year), ")"))
+
+abline(v = seq(min(data_processed$Year), max(data_processed$Year), by = 1), col = "lightgrey", lwd = 0.5)
+abline(h = 0:ceiling(max(data_processed$rel_Deaths)), col = "lightgrey", lwd = 0.5)
+
+polygon(x = c(data_processed$Year, rev(x = data_processed$Year)),
+        y = c(data_processed$rel_Deaths, rep(x = 0, times = nrow(data_processed))),
+        col = "darkgreen")
+
+axis(side = 1, at = seq(min(data_processed$Year), max(data_processed$Year), by = 5), las = 2)
+axis(side = 2)
+box()
+@
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % START GGPLOT SECTION %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<knitr options 2, echo = FALSE, message = FALSE>>=
+opts_chunk$set("size" = "scriptsize",
+               "fig.width" = 6,
+               "fig.height" = 5,
+               "out.width" = "0.4\\linewidth",
+               "out.height" = "0.35\\linewidth",
+               "fig.align" = "center")
+opts_knit$set(global.par = TRUE)
+@
 
 \section{Plotting with \texttt{ggplot}}
 \subsection{introduction}
@@ -816,9 +908,11 @@ In plain english, that means that the graphics are build by considering building
 \begin{frame}[fragile, t]{\texttt{ggplot}: introduction}
 Overall structure of a \texttt{ggplot} call:
 <<scatter_gg_2, fig.width = 4, fig.height = 4, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth">>=
+library(ggplot2)
+
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + ## we specify the source of data and map the variables
   geom_point() + ## we use a function that specifies the type of plot (e.g. scatterplot, histogram). A geom_* function is always required!
-  scale_x_continuous(limits = c(0, 10)) + ## we can fiddle with the scale_*_* functions to adjust the axes, colouration etc.
+  scale_x_continuous(limits = c(0, 5)) + ## we can fiddle with the scale_*_* functions to adjust the axes, colouration etc.
   theme(axis.title = element_text(size = 22)) # we can use one of the theme_* functions to change things like legends, font size etc.
 @
 \vfill
@@ -835,10 +929,17 @@ Note: to better understand, execute the code progressively adding one command at
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+We start by preparing the data:
+<<scatter_0>>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 We add points on the empty plot:
 <<scatter_gg_3>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point()
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + geom_point()
 @
 \end{frame}
 
@@ -847,8 +948,8 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 You can change point shapes \verb`shape` (= \verb`pch` in traditional graphics) and \verb`colour` (= \verb`col` in traditional graphics):
 <<scatter_gg_4>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), shape = 16, size = 3)
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, colour = Species)) +
+  geom_point(shape = 16, size = 3)
 @
 \vfill
 Note: everytime we want to create a connection between the data and some elements of the plot, we use the same function: \verb`aes()`!
@@ -858,9 +959,9 @@ Note: everytime we want to create a connection between the data and some element
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 In ggplot the legend is included by default but you can remove it:
-<<scatter_gg_5>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), shape = 16, size = 3) +
+<<scatter_gg_5, fig.width = 5, out.width = "0.35\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, colour = Species)) +
+  geom_point(shape = 16, size = 3) +
   theme(legend.position = "none")
 @
 \end{frame}
@@ -875,13 +976,15 @@ If you specify an aesthetic argument inside \verb`aes()`, it will give each poin
 If you specify the same aesthetic argument outside \verb`aes()`, it will give all data points the same aesthetic:
 \begin{columns}
 \column[t]{0.48\linewidth}
-<<scatter_gg_6a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), shape = 16, size = 3)
+<<scatter_gg_6a, out.width="0.7\\linewidth", out.height="0.6\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
+                                  colour = Species)) +
+  geom_point(shape = 16, size = 3)
 @
 \column[t]{0.48\linewidth}
-<<scatter_gg_6b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+<<scatter_gg_6b, out.width="0.6\\linewidth", out.height="0.6\\linewidth">>=
+ggplot(data = iris,
+       mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(colour = "blue", shape = 16, size = 3)
 @
 \end{columns}
@@ -895,15 +998,17 @@ Note: we have used \verb`aes()` to apply colours but it can be used to make othe
 Again, for many elements you can set both an outline \verb`colour` (= \verb`col` for traditional graphics) and background \verb`fill` colour (= \verb`bg` for traditional graphics):
 \begin{columns}
 \column[t]{0.48\linewidth}
-<<scatter_gg_7a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(colour = Species), fill = "black", shape = 21)
+<<scatter_gg_7a, out.width="0.7\\linewidth", out.height="0.6\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
+                                  colour = Species)) +
+  geom_point(fill = "black", shape = 21)
 @
 
 \column[t]{0.48\linewidth}
-<<scatter_gg_7b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), colour = "black", shape = 21)
+<<scatter_gg_7b, out.width="0.7\\linewidth", out.height="0.6\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
+                                  fill = Species)) +
+  geom_point(colour = "black", shape = 21)
 @
 \end{columns}
 \end{frame}
@@ -913,43 +1018,46 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 You can also add lines to the plot:
 <<scatter_gg_8>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), shape = 21, size = 3) +
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
+  geom_point(shape = 21, size = 3) +
   theme(legend.position = "none") +
-  geom_hline(yintercept = mean(iris$Petal.Length), lty = 3) +
-  geom_vline(xintercept = mean(iris$Petal.Width), lty = 2) +
+  geom_hline(yintercept = mean(x = iris$Petal.Length), lty = 3) +
+  geom_vline(xintercept = mean(x = iris$Petal.Width), lty = 2) +
   geom_abline(intercept = 1.084, slope = 2.23, lty = 1)
 @
 \end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 You can add extra points to the plot by using two \verb`geom_point` layers:
 <<scatter_gg_9>>=
-versicolor <- subset(iris, Species == "versicolor")
-setosa     <- subset(iris, Species == "setosa")
+versicolor <- subset(x = iris, Species == "versicolor")
+setosa     <- subset(x = iris, Species == "setosa")
 ggplot() +
-  geom_point(data = versicolor, aes(x = Petal.Width, y = Petal.Length), fill = "red", shape = 21, size = 3) +
-  geom_point(data = setosa, aes(x = Petal.Width, y = Petal.Length), fill = "blue", shape = 21, size = 3)
+  geom_point(data = versicolor, mapping = aes(x = Petal.Width, y = Petal.Length), fill = "red", shape = 21, size = 3) +
+  geom_point(data = setosa, mapping = aes(x = Petal.Width, y = Petal.Length), fill = "blue", shape = 21, size = 3)
 @
 \vfill
-Note: Unlike traditional plots, \verb`ggplot` will automatically adjust the axis limits.
+Note 1: unlike traditional plots, \verb`ggplot` will automatically adjust the axes limits.\\
+Note 2: if needed you can define the \texttt{aes()} in the \texttt{geom}s!!
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: scatter plots}
 You can add text and arrows:
-<<scatter_gg_10, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_gg_10, out.height="0.3\\linewidth", out.width="0.35\\linewidth">>=
 max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), shape = 21, size = 3) +
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
+  geom_point(shape = 21, size = 3) +
   theme(legend.position = "none") +
   geom_segment(aes(x = max.value$Petal.Width - 0.75,
-                   xend = max.value$Petal.Width, y = max.value$Petal.Length,
+                   xend = max.value$Petal.Width,
+                   y = max.value$Petal.Length,
                    yend = max.value$Petal.Length), size = 1,
                arrow = arrow(length = unit(0.5, "cm"))) +
-  geom_text(aes(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, label = "Max"))
+  geom_text(mapping = aes(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, label = "Max"))
 @
 \end{frame}
 
@@ -957,20 +1065,31 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
 In ggplot, confidence intervals can be added with specialised function \verb`geom_ribbon()`:
-<<scatter_gg_11, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_gg_11, out.height="0.3\\linewidth", out.width="0.35\\linewidth">>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
 pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
 
 ggplot() +
-  geom_point(data = iris,    aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
-  geom_ribbon(data = newdat, aes(x = Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "purple", alpha = 0.5) +
+  geom_point(data = iris,    mapping = aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
+  geom_ribbon(data = newdat, mapping = aes(x = Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "purple", alpha = 0.5) +
   geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2)
 @
 \vfill
-Note: because we are building the plot with two different datasets (i.e. \verb`iris` \& \verb`newdat`), we specify the data separately in each line of the ggplot code.
+Note: because we are building the plot with two different datasets (i.e. \verb`iris` \& \verb`newdat`), we specify the \texttt{data} and \texttt{aes()} separately in each line of the ggplot code.
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+In ggplot, you can also do basic statistics directly:
+<<out.height="0.3\\linewidth", out.width="0.35\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(fill = "grey", shape = 21, size = 3) +
+  geom_smooth(method = "lm") +
+  geom_smooth(method = "loess", fill = "pink", colour = "red")
+@
+\end{frame}
 
 %%%%%%%%%%%%%%%%%
 %%%%% BOXPLOT
@@ -982,7 +1101,7 @@ Note: because we are building the plot with two different datasets (i.e. \verb`i
 \begin{frame}[fragile, t]{\texttt{ggplot}: box plots}
 In ggplot, use \verb`geom_boxplot()` to draw a box plot:
 <<boxplot_gg_1F>>=
-ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
   geom_boxplot()
 @
 \end{frame}
@@ -992,7 +1111,7 @@ ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: box plots}
 Many of the same changes made to scatter plots can be made here:
 <<boxplot_gg_2>>=
-ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
   geom_boxplot(fill = "grey", size = 1, lty = 2)
 @
 \end{frame}
@@ -1008,7 +1127,7 @@ ggplot(data = iris, aes(x = Species, y = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: histograms}
 In ggplot, use \verb`geom_histogram()` to draw an histogram:
 <<hist_gg_1>>=
-ggplot(data = iris, aes(x = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Petal.Length)) +
   geom_histogram()
 @
 \end{frame}
@@ -1020,12 +1139,12 @@ You can change the width of bins with \verb`binwidth` or their number with \verb
 \begin{columns}
 \column{0.48\linewidth}
 <<hist_gg_2, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Petal.Length)) +
   geom_histogram(binwidth = 0.5, colour = "black", fill = "grey")
 @
 \column{0.48\linewidth}
 <<hist_gg_2bis, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Petal.Length)) +
   geom_histogram(bins = 6, colour = "black", fill = "grey")
 @
 \end{columns}
@@ -1035,8 +1154,8 @@ ggplot(data = iris, aes(x = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: histograms}
 Add a rug below the histogram with \verb`geom_rug`:
 <<hist_gg_3>>=
-ggplot(data = iris, aes(x = Petal.Length)) +
-  geom_histogram(binwidth = 0.5, colour = "black", fill = "grey")+
+ggplot(data = iris, mapping = aes(x = Petal.Length)) +
+  geom_histogram(binwidth = 0.5, colour = "black", fill = "grey") +
   geom_rug()
 @
 \end{frame}
@@ -1052,7 +1171,7 @@ ggplot(data = iris, aes(x = Petal.Length)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
 In ggplot, use \verb`geom_col()` to draw a bar plot:
 <<bar_gg_1>>=
-ggplot(data = spp_means, aes(x = Species, y = mean)) +
+ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
   geom_col()
 @
 \end{frame}
@@ -1062,7 +1181,7 @@ ggplot(data = spp_means, aes(x = Species, y = mean)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
 Adding error bars in ggplot is much easier than in traditional graphics:
 <<bar_gg_2>>=
-ggplot(data = spp_means, aes(x = Species, y = mean)) +
+ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
   geom_col() +
   geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = 0.1)
 @
@@ -1073,7 +1192,7 @@ ggplot(data = spp_means, aes(x = Species, y = mean)) +
 \begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
 As before, modifications are straigthforward:
 <<bar_gg_3>>=
-ggplot(data = spp_means, aes(x = Species, y = mean)) +
+ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
   geom_col(fill = "white", colour = "black")
 @
 \end{frame}
@@ -1097,8 +1216,8 @@ We'll start by looking back at \verb`aes()`.
 
 We can use it to change multiple aesthetics of a plot:
 <<aes_gg_1>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species, size = Sepal.Length), shape = 21)
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species, size = Sepal.Length)) +
+  geom_point(shape = 21)
 @
 \end{frame}
 
@@ -1107,8 +1226,8 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{Using the aesthetic function more}
 Here we change the transparency:
 <<aes_gg_2>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species, alpha = Sepal.Length), shape = 21, size = 5)
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species, alpha = Sepal.Length)) +
+  geom_point(shape = 21, size = 5)
 @
 \end{frame}
 
@@ -1117,26 +1236,28 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{Using the aesthetic argument more}
 Applying aesthetics to continuous variables will be different to categorical variables:
 <<aes_gg_3>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5)
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Sepal.Length)) +
+  geom_point(shape = 21, size = 5)
 @
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Using the aesthetic argument more}
-We can adjust the way the aesthetics are applied:
+You can indicate values for a third dimension in different ways:
 \begin{columns}
 \column[t]{0.48\linewidth}
-<<aes_gg_4a, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Sepal.Length), shape = 21, size = 5) +
+<<aes_gg_4a, out.width="0.8\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
+                                  fill = Sepal.Length)) +
+  geom_point(shape = 21, size = 5) +
   scale_fill_continuous(low = "white", high = "black")
 @
 \column[t]{0.48\linewidth}
-<<aes_gg_4b, out.width="0.7\\linewidth", out.height="0.7\\linewidth">>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(size = Sepal.Length), shape = 21, fill = "grey") +
+<<aes_gg_4b, out.width="0.8\\linewidth", out.height="0.7\\linewidth">>=
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
+                                  size = Sepal.Length)) +
+  geom_point(shape = 21, fill = "grey") +
   scale_size_continuous(range = c(3, 10))
 @
 \end{columns}
@@ -1147,12 +1268,11 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{Change text}
 You can change size and colour of axis text easily:
 <<aes_gg_5, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth",>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   xlab("Petal Width (cm)") +
   ylab("Petal Length (cm") +
-  theme(axis.text = element_text(size = 12, colour = "red"),
-        axis.title = element_text(size = 12))
+  theme(axis.text = element_text(size = 12, colour = "red"), axis.title = element_text(size = 12))
 @
 \vfill
 Note: the text size uses different measurement units than traditional graphics.
@@ -1162,14 +1282,13 @@ Note: the text size uses different measurement units than traditional graphics.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Combining plots}
 Combining plots is less straightforward in \texttt{ggplot}\dots
-
+\vfill
 You need to use an additional package:
-<<aes_gg_6, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
-scatter <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point() + xlab("Petal Width (cm)") + ylab("Petal Length (cm")
+<<aes_gg_6, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10, message = FALSE>>=
+scatter <- ggplot(iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + geom_point() +
+  xlab("Petal Width (cm)") + ylab("Petal Length (cm")
 
-box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
-  geom_boxplot()
+box     <- ggplot(iris, mapping = aes(x = Species, y = Petal.Length)) + geom_boxplot()
 
 library(gridExtra)
 grid.arrange(scatter, box, nrow = 1)
@@ -1181,8 +1300,8 @@ grid.arrange(scatter, box, nrow = 1)
 \begin{frame}[fragile, t]{Faceting}
 Although combining multiple plots is cumbersome, there is an inbuilt function to create facets:
 <<aes_gg_7, out.width = "0.9\\linewidth", out.height = "0.3\\linewidth", fig.height = 5, fig.width = 15>>=
-ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point(aes(fill = Species), shape = 21, colour = "black", size = 3) +
+ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
+  geom_point(shape = 21, colour = "black", size = 3) +
   xlab("Petal Width (cm)") +
   ylab("Petal Length (cm)") +
   facet_wrap(~ Species)
@@ -1194,17 +1313,15 @@ ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
 \begin{frame}[fragile, t]{Modifying typefaces}
 Unlike traditional graphics, in \texttt{ggplot} you can easily change the typeface of individual elements in theme:
 <<aes_gg_8, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
-scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
+scatter <- ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   xlab("Petal Width (cm)") +
   ylab("Petal Length (cm") +
-  theme(axis.text = element_text(size = 12, colour = "red", family = "serif"),
-        axis.title = element_text(size = 12, family = "mono"))
+  theme(axis.text = element_text(size = 12, colour = "red", family = "serif"), axis.title = element_text(size = 12, family = "mono"))
 
-box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
+box     <- ggplot(iris, mapping = aes(x = Species, y = Petal.Length)) +
   geom_boxplot() +
-  theme(axis.text = element_text(size = 12, colour = "red", family = "sans"),
-        axis.title = element_text(size = 12, family = "sans"))
+  theme(axis.text = element_text(size = 12, colour = "red", family = "sans"), axis.title = element_text(size = 12, family = "sans"))
 
 grid.arrange(scatter, box, nrow = 1)
 @
@@ -1213,12 +1330,12 @@ grid.arrange(scatter, box, nrow = 1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Special characters}
 You can use weird characters:
-<<aes_gg_9>>=
+<<aes_gg_9, dev='png'>>=
 foo <- round(pi, 3)
-ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
+ggplot(iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   labs(x = expression(beta^2 + 2[alpha]), y = expression(paste(italic("bla bla bla"))), title = paste("Plot number", foo)) +
-  #annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12)+ # require font with unicode installed (try it!)
+  annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12) + ## requires font with unicode installed (try it!)
   theme(plot.title = element_text(hjust = 0.5, size = 20),
         axis.title = element_text(size = 20))
 @
@@ -1229,17 +1346,17 @@ ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
 Plot margins are also controlled in theme of each plot individually:
 <<aes_gg_10, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
 scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
-  geom_point() +
-  xlab("Petal Width (cm)") +
-  ylab("Petal Length (cm") +
-  theme(axis.text = element_text(size = 12, colour = "red"),
-        axis.title = element_text(size = 12),
-        plot.margin = unit(c(30, 4, 1, 1), "mm"))
+           geom_point() +
+           xlab("Petal Width (cm)") +
+           ylab("Petal Length (cm") +
+           theme(axis.text = element_text(size = 12, colour = "red"),
+                 axis.title = element_text(size = 12),
+                 plot.margin = unit(c(30, 4, 1, 1), "mm"))
 
 box     <- ggplot(iris, aes(x = Species, y = Petal.Length)) +
-  geom_boxplot() +
-  theme(axis.text = element_text(size = 12, colour = "red"),
-        axis.title = element_text(size = 12))
+           geom_boxplot() +
+           theme(axis.text = element_text(size = 12, colour = "red"),
+                 axis.title = element_text(size = 12))
 
 grid.arrange(scatter, box, nrow = 1)
 @
@@ -1340,6 +1457,23 @@ A few random examples of \texttt{ggplot} extensions:
 Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incomplete).
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Challenge}
+\begin{center}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{below 15 yrs only} and make a really nice plot of the outcome using \texttt{ggplot2}!}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Challenge}
+\begin{center}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals \underline{of each age class} and make a really nice plot of the outcome using \texttt{ggplot2}!}
+\end{center}
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % COMPARE THE TWO %
@@ -1361,6 +1495,7 @@ Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incom
   \item help files useful
   \item easier for doing something simple
   \item more difficult for doing something complex
+  \item main restriction: always add things on top of what has already been plotted
 \end{itemize}
 \end{block}
 \pause
@@ -1373,7 +1508,7 @@ Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incom
   \item more difficult for doing something simple
   \item easier for doing something complex
   \item faster for large datasets
-  \item more accessible than lattice (or grid itself)
+  \item more accessible than lattice
 \end{itemize}
 \end{block}
 \end{columns}
