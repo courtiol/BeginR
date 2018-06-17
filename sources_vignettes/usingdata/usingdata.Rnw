@@ -4,7 +4,7 @@
 \usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
 \usepackage[UKenglish]{babel}
 \usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
-\usepackage{subcaption}
+\usepackage{subcaption}%for captions below figures
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
 
@@ -34,6 +34,7 @@
 options(width = 120)
 library(knitr)
 opts_chunk$set("size" = "scriptsize")
+library(BeginR)
 @
 
 \AtBeginSection[]{
@@ -70,7 +71,10 @@ We will focus on:
 \item lists
 \end{itemize}
 \vfill
-Note: if you master those, we are pretty much all set because most other objects derive from those!
+\pause
+Note: if you master those, we are pretty much all set because most other objects derive from those!\\
+\vspace{1em}
+Note: if you don't master at least vectors and data frames, you will never get very far using \r.
 \end{frame}
 
 
@@ -91,18 +95,18 @@ Note: if you master those, we are pretty much all set because most other objects
     \item all rows \& columns have the same type
   \end{itemize}
   \vfill
-  \item data frames (and tibbles)
-  \vfill
-  \begin{itemize}
-    \item all rows \& columns have same length
-    \item each column can have its own type
-  \end{itemize}
-  \vfill
   \item lists
   \vfill
   \begin{itemize}
     \item each element can have its own length
     \item each element can have its own type
+  \end{itemize}
+  \vfill
+  \item data frames (and tibbles)
+  \vfill
+  \begin{itemize}
+    \item all rows \& columns have same length
+    \item each column can have its own type
   \end{itemize}
   \end{itemize}
   \vfill
@@ -153,7 +157,7 @@ height_girls[-3] ## remove element 3
 \vfill
 \pause
 <<boolean rep, echo = T>>=
-height_girls[c(1, 1, 2, 2, 2)]  ## open room for bootstraps and more
+height_girls[c(1, 1, 2, 2, 2)]  ## useful for bootstraps and more
 @
 \vfill
 \pause
@@ -168,8 +172,6 @@ height_girls[height_girls != min(height_girls)]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{Vector: general properties}
 The elements of a vector can be named and those names can be used for subsetting:%
-
-\vfill
 <<>>=
 foo <- c(alex = 1, colin = 2)
 foo
@@ -180,8 +182,15 @@ foo["colin"]
 But names behave sometimes somewhat unexpectedly:
 <<>>=
 foo[1] + foo[2]
+foo[2] + foo[1]
 @
 \vfill
+\pause
+Double squared brackets can also be used for subsetting of \underline{single} elements; they drop names (and other attributes):
+<<>>=
+foo[[1]] + foo[[2]]
+foo[["alex"]] + foo[["colin"]]
+@
 \end{frame}
 
 
@@ -189,6 +198,12 @@ foo[1] + foo[2]
 \begin{frame}[t, fragile]{Vector: general properties}
 Vectors (as any other object) can have metadata called `attributes' attached to them:
 \vfill
+<<>>=
+foo <- c(alex = 1, colin = 2)
+attributes(foo)
+@
+\vfill
+\pause
 <<>>=
 foo <- c(1, 2, 3)
 attr(x = foo, which = "whatever") <- "Learning to count"
@@ -249,9 +264,7 @@ typeof(x = foo)
 \end{columns}
 \vfill
 \pause
-Note: \r \ detects automatically the type of input and creates the right type of vector for you!
-\vspace{1em}
-Challenge: compare \texttt{typeof()} with \texttt{mode()}. % mode is the same except that doubles and integers are called numerics (and a few other name changes)
+Note: \r \ automatically detects the type of input and creates the right type of vector for you!
 \end{frame}
 
 
@@ -287,7 +300,7 @@ class(x = foo)
 \end{itemize}
 \end{columns}
 \vfill
-Note: many don't make the distinction between types and classes explicit but it helps to understand some weird behaviours of \r.
+Note: many don't make the distinction between types and classes explicit but it really help to understand many behaviours of \r.
 \end{frame}
 
 
@@ -329,7 +342,7 @@ Note: factors are heavily used in the context of linear models!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Vector: classes}
+\begin{frame}[fragile, t]{Vector: coercion}
 Vectors must contain elements of the same type (otherwise errors or automatic coercion may occur):%
 
 \vfill
@@ -353,14 +366,14 @@ foo_bar[1] + 1
 Challenges:
 \begin{itemize}
 \item find out why the previous call produces an error.
+\item find out which date is internally stored as 0? %c(as.Date(x = "2018/06/18"), 0)
 \item try to check how the automatic coercion occurs by mixing different classes in different ways (logical, integers, numeric, characters, factors).
-\item find out which date is internally stored as 0?
 \end{itemize}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Vector: classes}
+\begin{frame}[fragile, t]{Vector: coercion}
 Some coercions are straightforward:
 <<>>=
 as.integer(x = 1.2)
@@ -368,6 +381,7 @@ as.integer(x = 1.9)
 as.integer(x = -2.1)
 @
 \vfill
+\pause
 <<>>=
 foo <- factor(x = 10:20)
 foo
@@ -381,6 +395,7 @@ as.numeric(x = foo)
 as.numeric(as.character(x = foo))
 @
 \vfill
+\pause
 <<>>=
 foo <- as.Date(x = "20180618", format = "%Y%m%d")
 as.integer(x = foo)
@@ -395,27 +410,27 @@ as.integer(x = gsub(pattern = "-", replacement = "", x = as.character(foo)))
 \begin{frame}[fragile, t]{Factors}
 You can create them after in two steps:
 << factors sex, echo = T>>=
-sex <- c("girl","girl","girl","girl","girl", "girl",
-"boy","boy","boy","boy")
+sex <- c("girl","girl","girl","girl","girl", "girl", "boy","boy","boy","boy")
 class(x = sex)
 @
-
+\vfill
+\pause
 <<>>=
 sex <- factor(x = sex)
 sex
+class(x = sex)
 @
 \vfill
 \pause
 Better code:
 <<factors sex other options,echo = T>>=
-sex <- factor(x = c(rep(x = "girl", times = 6),
-                    rep(x = "boy", times = 4)))
+sex <- factor(x = c(rep(x = "girl", times = 6), rep(x = "boy", times = 4)))
 @
 \vfill
+\pause
 Even better code:
 <<>>=
-sex <- factor(x = c(rep(x = "girl", times = length(x = height_girls)),
-                    rep(x = "boy", times = length(x = height_boys))))
+sex <- factor(x = c(rep(x = "girl", times = length(x = height_girls)), rep(x = "boy", times = length(x = height_boys))))
 @
 \vfill
 Note: more on programming style later!
@@ -427,11 +442,11 @@ Note: more on programming style later!
 We want to merge the two following vectors:
 \vspace{1em}
 <<>>=
-foo <- factor(c("a", "b"))
+foo <- factor(x = c("a", "b"))
 foo
 @
 <<>>=
-bar <- factor(c("b", "c"))
+bar <- factor(x = c("b", "c"))
 bar
 @
 \vfill
@@ -442,15 +457,15 @@ Problem:
 <<>>=
 foo_bar <- c(foo, bar)
 foo_bar
-class(foo_bar)
+class(x = foo_bar)
 @
 \pause
 \column{0.45\linewidth}
 Solution:
 <<>>=
-foo_bar <- factor(c(as.character(foo), as.character(bar)))
+foo_bar <- factor(x =  c(as.character(x = foo), as.character(x = bar)))
 foo_bar
-class(foo_bar)
+class(x = foo_bar)
 @
 \end{columns}
 \end{frame}
@@ -460,7 +475,7 @@ class(foo_bar)
 \begin{frame}[fragile]{Dropping unused levels}
 By default \r \ keeps unused levels:
 <<>>=
-foo <- factor(c("a", "a", "b", "c"))
+foo <- factor(x = c("a", "a", "b", "c"))
 foo
 @
 <<>>=
@@ -474,7 +489,7 @@ table(bar)
 \pause
 If you want to update the levels you need to use the function \texttt{droplevels}:
 <<>>=
-new_bar <- droplevels(bar)
+new_bar <- droplevels(x = bar)
 table(new_bar)
 @
 Or use the argument \texttt{drop}:
@@ -510,25 +525,27 @@ my_factor2 <- factor(x = c("A", "A", "B", "B", "C"), levels = c("C", "B", "A"))
 \end{columns}
 
 \pause
-
-  \begin{columns}
-    \column{0.5\linewidth}
-
-    \begin{center}
-    You do:
-    <<solutions factors order>>=
-    my_factor2 <- factor(x = my_factor1, levels = levels(my_factor1)[c(3, 2, 1)])
-    my_factor2
-    @
-    \pause
-    Or if you only care about the first level:
-    <<solutions factors order 2>>=
-    my_factor3 <- relevel(x = my_factor1, ref = "C")
-    my_factor3
-    @
-    \end{center}
-  \end{columns}
+\vfill
+\begin{columns}
+  \column{0.5\linewidth}
+  \begin{center}
+  You do:
+  <<solutions factors order>>=
+  my_factor2 <- factor(x = my_factor1, levels = levels(my_factor1)[c(3, 2, 1)])
+  my_factor2
+  @
+  \end{center}
+  \pause
   \vfill
+  \begin{center}
+  Or if you only care about the first level:
+  <<solutions factors order 2>>=
+  my_factor3 <- relevel(x = my_factor1, ref = "C")
+  my_factor3
+  @
+  \end{center}
+\end{columns}
+\vfill
 
 \pause
 
@@ -562,30 +579,29 @@ my_factor2
 \end{center}
 \end{columns}
 \pause
+\vfill
 \begin{columns}
 \column{0.5\linewidth}
-
 \begin{center}
 You do:
 <<changing levels solution>>=
-## Using base:
 levels(x = my_factor1)
 my_factor2 <- my_factor1
 levels(x = my_factor2) <- c("A", "A", "D") ## in same order!
 my_factor2
 @
-\pause
-<<changing levels solutions dplyr, message = FALSE>>=
-## Using dplyr:
-library(dplyr)
-my_factor2 <- recode(.x = my_factor1, A = "A", B = "A", C = "D")
-my_factor2
-@
+%\pause
+%<<changing levels solutions dplyr, message = FALSE>>=
+%## Using dplyr:
+%library(dplyr)
+%my_factor2 <- recode(.x = my_factor1, A = "A", B = "A", C = "D")
+%my_factor2
+%@
 \end{center}
 \end{columns}
 \vfill
 \pause
-Note: if you want more modern functions to manipulate factors, look at the package \texttt{forcats} from \texttt{tidyverse}.
+Note: if you want more modern functions to manipulate factors, look at the package \texttt{forcats}.
 \end{frame}
 
 
@@ -606,6 +622,7 @@ length(x = foo)
 str(object = foo)
 summary(object = foo)
 @
+%str() shows the class!
 \pause
 \column{0.45\linewidth}
 <<>>=
@@ -639,7 +656,7 @@ sapply(X = bar, FUN = triple, simplify = FALSE) ## same but always returns a lis
 Note 1: this is useful when the function cannot work on vector and when the return is more than one element. For example, the input could be a vector of file names and the output one dataset per file!
 \vfill
 \pause
-Note 2: if you want more modern functions more consistent than the \texttt{*apply()} ones, look at the package \texttt{purrr} from \texttt{tidyverse}.
+Note 2: if you want more modern functions more consistent than the \texttt{*apply()} ones, look at the package \texttt{purrr}.
 \vfill
 \pause
 Challenge: can you think of an alternative to do that without using \texttt{sapply()}? %subsetting
@@ -664,8 +681,8 @@ typeof(x = my_matrix) ## behind the curtain, matrices are stored as vectors!
 @
 \vfill
 \pause
-Note 1: since there are a kind of vectors, the same restrictions apply: all elements must have the same class!
-
+Note 1: since there are a kind of vectors, the same restrictions apply: all elements must have the same class!\\
+\vspace{1em}
 Note 2: useful for building the input of some statistical tests (e.g. chi-square), for linear algebra (e.g. computation behind linear models), for handling GIS information \& for understanding data frames.
 \end{frame}
 
@@ -720,7 +737,7 @@ my_matrix["b", ]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Matrices: general properties}
-In the background, a matrix is a vector with dimension attributes (i.e. number of columns and rows).%
+In the background, a matrix is a vector with dimensions defined as an attribute:%
 
 \vfill
 <<>>=
@@ -729,16 +746,15 @@ str(my_matrix)
 @
 \vfill
 \pause
-You can subset the data using this dimension attributes or not:
+Thus, you can also subset a matrix considering it is a vector:
 <<>>=
-my_matrix[5]
-my_matrix[2, 2]
+my_matrix[5] == my_matrix[2, 2]
 @
 \vfill
 \pause
-A matrix will be filled from top - bottom, left - right:
+Note: by default, a matrix is always filled column by column (top $\rightarrow$ bottom then left $\rightarrow$ right):
 <<>>=
-(my_matrix4 <- matrix(data = 1:4, ncol = 2, nrow = 2)) ## but try byrow = TRUE
+(my_matrix4 <- matrix(data = 1:4, ncol = 2, nrow = 2)) ## but you can use the option byrow = TRUE to do fill matrices row by row instead!
 @
 \end{frame}
 
@@ -776,8 +792,13 @@ diag(x = my_matrix) ## extract diagonal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{A more complex function: \texttt{apply()}}
 \texttt{apply()} is a function to apply a function on each row or column of a matrix:
+\vfill
 <<>>=
 apply(X = my_matrix, MARGIN = 1, FUN = mean)  ## row means
+@
+\vfill
+\pause
+<<>>=
 apply(X = my_matrix, MARGIN = 2, FUN = sd)  ## column SDs
 @
 \end{frame}
@@ -818,7 +839,7 @@ typeof(x = list_height)
 \vfill
 Note 1: list elements can be anything!\\
 \vspace{1em}
-Note 2: lists are very important because no function can output more than one object!
+Note 2: lists are necessary because no function can output more than one object in \r!
 \end{frame}
 
 
@@ -848,16 +869,18 @@ list_height
 <<>>=
 list_height$girls
 @
+\pause
 <<>>=
 list_height["boys"] ## still a list
 @
+\pause
 <<>>=
 list_height[["boys"]] ## vector
 @
+\pause
 <<>>=
 list_height[[2]][3]
 @
-\vfill
 \end{frame}
 
 
@@ -869,7 +892,7 @@ list_height[[2]][3]
 length(x = list_full) ## number of elements
 @
 <<>>=
-str(object = list_full)  ## this function is really useful!
+str(object = list_full)  ## using str() on a list is really useful to understand the output of complex functions
 @
 \vfill
 Challenge: run the examples from \texttt{lm()} and explore the list \texttt{lm.D9}.
@@ -913,7 +936,7 @@ Note 2: it is safer to work on data frames than on floating vectors!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Data frames: general properties}
-They borrow from both matrices and lists:
+The usage borrows from both matrices and lists:
 \vfill
 \begin{columns}[t]
 \column{0.45\linewidth}
@@ -950,19 +973,19 @@ The \texttt{iris} data set (\url{https://en.wikipedia.org/wiki/Iris_flower_data_
     \begin{subfigure}[b]{0.3\textwidth}
         \begin{center}
         \includegraphics[height=3cm]{"../figures/Iris_setosa"}
-        \caption*{\emph{Iris setosa}\\ \textcopyright Miya.m}
+        \caption*{\emph{Iris setosa}\\ {\tiny \textcopyright Miya.m}}
         \end{center}
     \end{subfigure}
     \begin{subfigure}[b]{0.3\textwidth}
         \begin{center}
         \includegraphics[height=3cm]{"../figures/Iris_versicolor"}
-        \caption*{\emph{Iris versicolor}\\ \textcopyright D.G.E. Robertson}
+        \caption*{\emph{Iris versicolor}\\ {\tiny \textcopyright D.G.E. Robertson}}
         \end{center}
     \end{subfigure}
     \begin{subfigure}[b]{0.3\textwidth}
         \begin{center}
         \includegraphics[height=3cm]{"../figures/Iris_virginica"}
-        \caption*{\emph{Iris virginica}\\ \textcopyright F. Mayfield}
+        \caption*{\emph{Iris virginica}\\ {\tiny \textcopyright F. Mayfield}}
         \end{center}
     \end{subfigure}
 \end{figure}
@@ -992,12 +1015,12 @@ dataframe_ht[1, 1]
 @
 \pause
 <<>>=
-dataframe_ht$linenumber <- 1:nrow(x = dataframe_ht)  # add column
+dataframe_ht$linenumber <- 1:nrow(x = dataframe_ht)  ## add column
 head(x = dataframe_ht)
 @
 \pause
 <<>>=
-dataframe_ht$linenumber <- NULL  # remove column
+dataframe_ht$linenumber <- NULL  ## remove column
 head(x = dataframe_ht)
 @
 \end{frame}
@@ -1018,7 +1041,7 @@ summary(object = iris)
 dim(x = iris)
 ncol(x = iris)
 nrow(x = iris)
-length(x = iris) ## not as in matrix!!
+length(x = iris) ## as in list, not as in matrix!!
 rownames(x = iris)[1:10]
 colnames(x = iris)
 @
@@ -1051,17 +1074,18 @@ Note: \texttt{by()} is more powerful but more complex than \texttt{tapply()}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{The \texttt{dplyr} alternative to \texttt{tapply()}}
-The same operation in \texttt{dplyr} looks very different:
+The same operation using the package \texttt{dplyr} looks very different:
 \vfill
-<<>>=
+<<message = FALSE>>=
+library(dplyr)
+
 iris %>%
   group_by(Species) %>%
-  summarize(mean_sepal_length = mean(Sepal.Length),
-            mean_sepal_width = mean(Sepal.Width)) %>%
-  data.frame()  ## optional but otherwise tibble and not data frame
+  summarize(mean_sepal_length = mean(Sepal.Length), mean_sepal_width = mean(Sepal.Width)) %>%
+  data.frame()  ## optional but otherwise returns a tibble and not a data frame
 @
 \vfill
-Note: this replaces two \texttt{tapply()} calls and remains easy to read.\\
+Note: this replaces two \texttt{tapply()} calls and remains easy to read.
 \end{frame}
 
 
@@ -1084,7 +1108,7 @@ Note: this replaces two \texttt{tapply()} calls and remains easy to read.\\
 \pause
 \begin{columns}[t]
 \column{0.45\linewidth}
-\begin{block}{\R \ core team}
+\begin{block}{\R \ is from the \R \ core team who}
 \begin{itemize}
 \item build the core of \r \ and the original \r \ GUI
 \item maintain CRAN
@@ -1094,17 +1118,18 @@ Note: this replaces two \texttt{tapply()} calls and remains easy to read.\\
 \end{itemize}
 \end{block}
 \column{0.45\linewidth}
-\begin{block}{RStudio}
+\begin{block}{\texttt{tidyverse} is from the RStudio people who}
 \begin{itemize}
 \item build RStudio IDE, \texttt{tidyverse} and more
 \item \texttt{tidyverse} philosophy: 1 function = 1 action
 \item backward compatibility is not the priority
-\item 1 leader (Hadley Wickham) + $\sim$ 70 full time employees + tons of volunteers
+\item $\sim$ 80 employees + tons of volunteers% https://www.rstudio.com/about/
 \item free + commercial
 \end{itemize}
 \end{block}
 \end{columns}
 \pause
+\vfill
 Note 1: that has led to two quite distinct \r \ dialects
 
 Note 2: more and more users rely on \texttt{tidyverse}\dots
@@ -1148,9 +1173,9 @@ Note: there are also mutliple tutorial on the web\\ (e.g. \url{https://www.r-blo
 \begin{itemize}
 \item different \& redundant
 \item buggy (but less \& less so)
-\item poor traditional documentation
-\item lead to bad habits (e.g. arguments not named, help not looked at)
-\item broaden the gap between users and programmers
+\item poor ``traditional'' documentation
+\item lead to bad habits (e.g. help not looked at)
+\item gap between users and developers
 \end{itemize}
 \end{block}
 \end{columns}
@@ -1169,7 +1194,7 @@ head(x = dataframe_ht, n = 3)
 @
 \vfill
 \pause
-\item change column with \texttt{transmute()}
+\item create and keep only new columns with \texttt{transmute()}
 <<edit df dplyr2>>=
 dataframe_ht2 <- dataframe_ht %>% transmute(double_height = 2*height)
 head(x = dataframe_ht2, n = 3)
@@ -1199,7 +1224,7 @@ head(dataframe_ht_female, n = 3)
 \pause
 \item sort rows with \texttt{arrange()}
 <<sort dplyr>>=
-dataframe_ht_sorted <- dataframe_ht %>% arrange(Height)  ## add arrange(desc(Height)) for the other direction
+dataframe_ht_sorted <- dataframe_ht %>% arrange(Height)  ## arrange(desc(Height)) for the other direction
 head(dataframe_ht_sorted, n = 3)
 @
 \end{itemize}
@@ -1231,6 +1256,84 @@ iris_numeric <- iris %>%
 @
 \end{frame}
 
+
+\subsection{tibbles}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What are tibbles?}
+Tibbles are modified data frames that are automatically created by \texttt{tidyverse} packages:
+<<>>=
+iris_tbl <- iris %>%
+  group_by(Species) %>%
+  mutate(Sepal.Length.meam = mean(Sepal.Length))
+iris_tbl
+@
+\vfill
+Note: most of what works on objects of class \texttt{data.frame} works on objects of class \texttt{tbl} (but not all as they don't consider row names).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{From tibbles to data frames and back}
+You can easily convert one into the other:
+<<>>=
+head(data.frame(iris_tbl))
+@
+\vfill
+\pause
+<<>>=
+as_tibble(data.frame(iris_tbl))  ## no need for head as tibble!
+@
+\vfill
+\pause
+Note: for linear models, it is safer to convert everything into data frames!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
+You can change the number of rows being displayed:
+\vfill
+<<>>=
+print(iris_tbl, n = 2)
+@
+<<>>=
+print(iris_tbl, n = 8)
+@
+\vfill
+\pause
+Note: to always display all row you can set \texttt{options(dplyr.print\_min = Inf)}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
+You can change the number of digits being displayed:
+\vfill
+Default:
+<<>>=
+x <- as_tibble(data.frame(pi = pi))
+x
+@
+\vfill
+\pause
+Changing setting:
+<<>>=
+old_opt <- options(pillar.sigfig = 10)
+x
+@
+\vfill
+\pause
+Reseting setting:
+<<>>=
+options(old_opt)
+x
+@
+\vfill
+\end{frame}
+
+
+\subsection{\texttt{group\_by()}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{\texttt{group\_by()}}
@@ -1301,17 +1404,54 @@ iris %>%
 \begin{frame}[fragile]{Challenge}
 Use the dataset called \texttt{population\_UK} and compute the total population size for:
 \begin{itemize}
-\item 1915
+\item 1915% population_UK %>% group_by(Year) %>% summarize(sum(Pop)) %>% filter(Year == 1915)
 \item 2015
 \item all years in the dataset
 \item all years between 1915 and 2015
+%population_UK %>%
+%  group_by(Year) %>%
+%  summarize(Pop = sum(Pop)) %>%
+%  filter(Year >= 1915 & Year <=2015) %>%
+%  select(Pop) %>%
+%% pull
 \end{itemize}
 \vfill
-Use the dataset called \texttt{deaths\_UK} and figure out:
+Use the dataset called \texttt{deaths\_UK} (careful, quite large!) and figure out:
 \begin{itemize}
-\item which were the top 3 detailed causes of death before 1930 for each of the 21 broader categories
 \item the death toll for all individuals below 15 yrs for each year
+%deaths_UK %>%
+%  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+%  group_by(Year) %>%
+%  summarize(tot_deaths = sum(Deaths))
+\item which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories\\
+(most difficult)
 \end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of correction}
+Which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories?
+\vfill
+<<>>=
+str(deaths_UK)
+@
+\vfill
+\pause
+<<eval = FALSE>>=
+deaths_UK %>%
+  filter(Year <= 1930) %>%
+  group_by(Desc) %>%
+  summarize(tot_deaths = sum(Deaths), Cause_simple = Cause_simple[1]) %>%
+  arrange(Cause_simple) %>%
+  group_by(Cause_simple) %>%
+  arrange(desc(tot_deaths), .by_group = TRUE) %>%
+  slice(1:3) %>%
+  View ## for nice display as a spreadsheet
+@
+\vfill
+\pause
+Note: to clearly understand, check the output after each step!
 \end{frame}
 
 
@@ -1331,7 +1471,7 @@ More sophisticated alternative:
 Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but output a named vector!
 iris %>%
   group_by(Species) %>%
-  do(data.frame(as.list(Range(.$Petal.Length)))) %>%
+  do(data.frame(as.list(Range(.$Petal.Length)))) %>%  ## for this specific example we could of course use summarize with min and max but we want something that will work no matter the function!
   data.frame()
 @
 \vfill
@@ -1409,33 +1549,41 @@ merge(my_df1, my_df2, all = TRUE)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
-You can also use \texttt{left\_join()} to keep all data from the first dataset and keep only the new data from the second data set that fit in:
-\vfill
-<<left join>>=
-(flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
-                              Quality = c("High", "Medium", "Low")))
-@
-\pause
-<<>>=
-left_join(my_df3, flower_quality, by = "Species")
-@
-\pause
-<<>>=
-full_join(my_df3, flower_quality, by = "Species")
-@
-\end{frame}
+%\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+%You can also use \texttt{left\_join()} to keep all data from the first dataset and keep only the new data from the second %data set that fit in:
+%\vfill
+%<<left join>>=
+%(flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+%                              Quality = c("High", "Medium", "Low")))
+%@
+%\pause
+%<<>>=
+%left_join(my_df3, flower_quality, by = "Species")
+%@
+%\pause
+%<<>>=
+%full_join(my_df3, flower_quality, by = "Species")
+%@
+%\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Challenge}
-Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for:
-\begin{itemize}
-\item all individuals
-\item individuals below 15 yrs only
-\end{itemize}
+\begin{center}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals below 15 yrs only.}
+\end{center}
 \end{frame}
-
+%d1 <- deaths_UK %>%
+%  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+%  group_by(Year) %>%
+%  summarize(tot_Deaths = sum(Deaths))
+%
+%d2 <- population_UK%>%
+%  group_by(Year) %>%
+%  summarize(tot_Pop = sum(Pop))
+%
+%full_join(d1, d2) %>%
+%  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
 
 \subsection{tidyr}
 
@@ -1560,7 +1708,7 @@ my_df2 %>%
 \end{center}
 \end{columns}
 \vfill
-Note: but why on Earth would you need that?!
+Note: why on Earth would you need to do that!?
 \end{frame}
 
 
@@ -1582,108 +1730,6 @@ my_df3 %>% separate(New_col, c("ID", "Sex"))
 \pause
 Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but they are a bit more tedious to use.
 \end{frame}
-
-\subsection{tibbles}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{What are tibbles?}
-Tibbles are modified data frames that are automatically created by \texttt{tidyverse} packages:
-<<>>=
-iris_tbl <- iris %>%
-  group_by(Species) %>%
-  mutate(Sepal.Length.meam = mean(Sepal.Length))
-iris_tbl
-@
-\vfill
-Note: most of what works on objects of class \texttt{data.frame} works on objects of class \texttt{tbl} (but not all as they don't consider row names).
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{From tibbles to data frames and back}
-You can easily convert one into the other:
-<<>>=
-head(data.frame(iris_tbl))
-@
-\vfill
-\pause
-<<>>=
-as_tibble(data.frame(iris_tbl))  ## no need for head as tibble!
-@
-\vfill
-\pause
-Note: for linear models, it is safer to convert everything into data frames!
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to influence the display of tibbles?}
-You can change the number of rows being displayed:
-\vfill
-<<>>=
-print(iris_tbl, n = 2)
-@
-<<>>=
-print(iris_tbl, n = 8)
-@
-\vfill
-\pause
-Note: to always display all row you can set \texttt{options(dplyr.print\_min = Inf)}.
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to influence the display of tibbles?}
-You can change the number of digits being displayed:
-\vfill
-Default:
-<<>>=
-x <- as_tibble(data.frame(pi = pi))
-x
-@
-\vfill
-\pause
-Changing setting:
-<<>>=
-old_opt <- options(pillar.sigfig = 10)
-x
-@
-\vfill
-\pause
-Reseting setting:
-<<>>=
-options(old_opt)
-x
-@
-\vfill
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to influence the display of tibbles?}
-Sometimes the default is a little too dangerous!
-\vfill
-<<>>=
-foo <- c(178, 175, 159, 164, 183, 160, 181, 189, 174, 177)
-level <- c(rep("A", 6), rep("B", 4))
-@
-\vfill
-<<>>=
-d <- data.frame(foo, level)
-d %>%
-     group_by(level) %>%
-     summarize(Mean = mean(foo))
-@
-\vfill
-\pause
-Compare to base \r:
-<<>>=
-c(mean(foo[level == "A"]), mean(foo[level == "B"]))
-@
-\vfill
-Note: but at least they have recently added the "." suggesting there are more number out there!
-\end{frame}
-
 
 
 \section{Importing \& exporting data}
@@ -1715,13 +1761,13 @@ save(my_iris, file = "my_iris.rda") ## check the help for compression
 \pause
 <<>>=
 rm(list = ls()) ## removes everything!
-head(my_iris)
+head(x = my_iris)
 @
 \pause
 \vfill
 <<>>=
 load(file = "my_iris.rda")
-head(my_iris)
+head(x = my_iris)
 @
 <<echo = FALSE>>=
 system("rm my_iris.rda")
@@ -1747,15 +1793,15 @@ Note: this is useful and best for \r \ to \r \ exchanges (but it is useless with
 \vfill
 Writing a data set:
 <<tidy=F>>=
-write.csv(my_iris, file = "my_iris.csv", row.names = FALSE)
+write.csv(x = my_iris, file = "my_iris.csv", row.names = FALSE)
 @
 \vfill
 \pause
 Reading a data set:
 <<>>=
 rm(my_iris) ## delete the object my_iris
-my_iris <- read.csv("my_iris.csv") ## or read.table() with adequate options!
-head(my_iris)
+my_iris <- read.csv(file = "my_iris.csv") ## or read.table() with adequate options!
+head(x = my_iris)
 @
 <<echo = FALSE>>=
 system("rm my_iris.csv")
