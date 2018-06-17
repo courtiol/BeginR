@@ -1379,8 +1379,8 @@ Same as before, but we want to repeat the value for each individual:
 dataframe_ht %>%
   group_by(Sex) %>%
   mutate(mean_height = mean(Height),
-            median_height = median(Height),
-            n = n()) %>%
+         median_height = median(Height),
+         n = n()) %>%
   data.frame()
 @
 \vfill
@@ -1430,7 +1430,7 @@ Use the dataset called \texttt{deaths\_UK} (careful, quite large!) and figure ou
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Example of solution}
+\begin{frame}[fragile]{Possible solution}
 Which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories?
 \vfill
 <<>>=
@@ -1441,11 +1441,9 @@ str(deaths_UK)
 <<eval = FALSE>>=
 deaths_UK %>%
   filter(Year <= 1930) %>%
-  group_by(Desc) %>%
-  summarize(tot_deaths = sum(Deaths), Cause_simple = Cause_simple[1]) %>%
-  arrange(Cause_simple) %>%
-  group_by(Cause_simple) %>%
-  arrange(desc(tot_deaths), .by_group = TRUE) %>%
+  group_by(Cause_simple, Desc) %>%
+  summarize(tot_deaths = sum(Deaths)) %>%
+  arrange(Cause_simple, desc(tot_deaths)) %>%
   slice(1:3) %>%
   View ## for nice display as a spreadsheet
 @
@@ -1576,7 +1574,7 @@ merge(my_df1, my_df2, all = TRUE)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Example of solution}
+\begin{frame}[fragile]{Possible solution}
 <<>>=
 deaths_processed <- deaths_UK %>%
   filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
