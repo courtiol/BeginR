@@ -19,6 +19,7 @@ Imports:
   profvis,
   pryr,
   R6,
+  Rcpp,
   spaMM,
   tidyverse,
   utils,
