@@ -909,7 +909,7 @@ lapply(X = list_full, FUN = mean)
 
 
 
-\section{Data frames and tibbles}
+\section{Data frames}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Data frames}
@@ -919,8 +919,12 @@ Data frames allow the organisation of vectors of the same length as a matrix-lik
 \vfill
 Example:
 <<create Data frame>>=
+height <- c(172, 178, 182, 162, 175, 168)
+sex    <- factor(c("female", "male", "male", "female", "male", "male"))
+
 dataframe_ht <- data.frame(Height = height, Sex = sex)
 dataframe_ht
+
 class(dataframe_ht)
 typeof(dataframe_ht)
 @
@@ -942,7 +946,8 @@ The usage borrows from both matrices and lists:
 \column{0.45\linewidth}
 As for matrices:
 <<>>=
-(dataframe_ht_double <- cbind(dataframe_ht, newcol = 1:10))
+(dataframe_ht2 <- cbind(dataframe_ht,
+                              newcol = 1:nrow(dataframe_ht)))
 @
 \pause
 <<>>=
@@ -991,7 +996,7 @@ The \texttt{iris} data set (\url{https://en.wikipedia.org/wiki/Iris_flower_data_
 \end{figure}
 \vfill
 <<>>=
-head(x = iris, n = 2L) ## this function displays by default the first 6 rows
+head(x = iris, n = 2L) ## this function displays by default the first 6 rows but here we display only the first 2
 @
 \vfill
 \pause
@@ -1072,671 +1077,6 @@ Note: \texttt{by()} is more powerful but more complex than \texttt{tapply()}.
 \end{frame}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The \texttt{dplyr} alternative to \texttt{tapply()}}
-The same operation using the package \texttt{dplyr} looks very different:
-\vfill
-<<message = FALSE>>=
-library(dplyr)
-
-iris %>%
-  group_by(Species) %>%
-  summarize(mean_sepal_length = mean(Sepal.Length), mean_sepal_width = mean(Sepal.Width)) %>%
-  data.frame()  ## optional but otherwise returns a tibble and not a data frame
-@
-\vfill
-Note: this replaces two \texttt{tapply()} calls and remains easy to read.
-\end{frame}
-
-
-\subsection{\texttt{dplyr}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Some words about \texttt{dplyr} \& co.}
-\texttt{dplyr} is part of the growing \texttt{tidyverse} world (\url{https://www.tidyverse.org/}) developped by RStudio:
-
-\begin{center}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-dplyr"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-ggplot2"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-forcats"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-purrr"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-readr"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-stringr"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tibble"}
-\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tidyr"}
-\end{center}
-\pause
-\begin{columns}[t]
-\column{0.45\linewidth}
-\begin{block}{\R \ is from the \R \ core team who}
-\begin{itemize}
-\item build the core of \r \ and the original \r \ GUI
-\item maintain CRAN
-\item backward compatibility is the priority
-\item limited man power (20 selected volunteers)
-\item not commercial (but Microsoft may creep in?)
-\end{itemize}
-\end{block}
-\column{0.45\linewidth}
-\begin{block}{\texttt{tidyverse} is from the RStudio people who}
-\begin{itemize}
-\item build RStudio IDE, \texttt{tidyverse} and more
-\item \texttt{tidyverse} philosophy: 1 function = 1 action
-\item backward compatibility is not the priority
-\item $\sim$ 80 employees + tons of volunteers% https://www.rstudio.com/about/
-\item free + commercial
-\end{itemize}
-\end{block}
-\end{columns}
-\pause
-\vfill
-Note 1: that has led to two quite distinct \r \ dialects
-
-Note 2: more and more users rely on \texttt{tidyverse}\dots
-
-Note 3: we will see a bit of both dialects
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Getting started with \texttt{tidyverse}}
-\begin{center}
-\includegraphics[height = 0.8\textheight]{../figures/Wickham_r4ds}
-\end{center}
-\vfill
-Note: there are also mutliple tutorial on the web\\ (e.g. \url{https://www.r-bloggers.com/lesser-known-dplyr-tricks/}).
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\texttt{dplyr}}
-\begin{itemize}
-\item in \texttt{dplyr} one verb = one action = one function (\texttt{tidyverse} philosophy)
-\item operations can be chained with the pipe operator \texttt{\%>\%} (from package \texttt{magrittr}), which considers the output from one function as the input of the next function
-\end{itemize}
-\vfill
-\pause
-\begin{columns}[t]
-\column{0.45\linewidth}
-\begin{block}{Pros}
-\begin{itemize}
-\item clear code
-\item consistent
-\item powerful
-\item fast
-\item many tutorials
-\end{itemize}
-\end{block}
-\pause
-\column{0.45\linewidth}
-\begin{block}{Cons}
-\begin{itemize}
-\item different \& redundant
-\item buggy (but less \& less so)
-\item poor ``traditional'' documentation
-\item lead to bad habits (e.g. help not looked at)
-\item gap between users and developers
-\end{itemize}
-\end{block}
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
-Useful \texttt{dplyr} functions:\\
-\vfill
-\begin{itemize}
-\item add column with \texttt{mutate()}
-<<edit df dplyr>>=
-dataframe_ht <- dataframe_ht %>% mutate(ID = 1:nrow(dataframe_ht))
-head(x = dataframe_ht, n = 3)
-@
-\vfill
-\pause
-\item create and keep only new columns with \texttt{transmute()}
-<<edit df dplyr2>>=
-dataframe_ht2 <- dataframe_ht %>% transmute(double_height = 2*height)
-head(x = dataframe_ht2, n = 3)
-@
-\end{itemize}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
-Useful \texttt{dplyr} functions:\\
-\vfill
-\begin{itemize}
-\item select columns with \texttt{select()}
-<<select dplyr>>=
-dataframe_ht_sex <- dataframe_ht %>% select(Sex)
-head(x = dataframe_ht_sex, n = 3)
-@
-\vfill
-\pause
-\item select rows with \texttt{filter()}
-<<filter dplyr>>=
-dataframe_ht_female <- dataframe_ht %>% filter(Sex == "girl")
-head(dataframe_ht_female, n = 3)
-@
-\vfill
-\pause
-\item sort rows with \texttt{arrange()}
-<<sort dplyr>>=
-dataframe_ht_sorted <- dataframe_ht %>% arrange(Height)  ## arrange(desc(Height)) for the other direction
-head(dataframe_ht_sorted, n = 3)
-@
-\end{itemize}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Around \texttt{dplyr} verbs}
-These main \texttt{dplyr} functions have derivatives and some of them can be useful:\\
-e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
-\vfill
-\begin{columns}
-\column{0.45\linewidth}
-you have:
-<<mutate if, echo = F >>=
-str(iris)
-@
-\column{0.45\linewidth}
-you want:
-<<mutate if out, echo = F >>=
-str(data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
-@
-\end{columns}
-\vfill
-you do:
-<<mutate if solution, echo = T>>=
-iris_numeric <- iris %>%
-  mutate_if(is.numeric, ~ as.character(.))
-@
-\end{frame}
-
-
-\subsection{tibbles}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{What are tibbles?}
-Tibbles are modified data frames that are automatically created by \texttt{tidyverse} packages:
-<<>>=
-iris_tbl <- iris %>%
-  group_by(Species) %>%
-  mutate(Sepal.Length.meam = mean(Sepal.Length))
-iris_tbl
-@
-\vfill
-Note: most of what works on objects of class \texttt{data.frame} works on objects of class \texttt{tbl} (but not all as they don't consider row names).
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{From tibbles to data frames and back}
-You can easily convert one into the other:
-<<>>=
-head(data.frame(iris_tbl))
-@
-\vfill
-\pause
-<<>>=
-as_tibble(data.frame(iris_tbl))  ## no need for head as tibble!
-@
-\vfill
-\pause
-Note: for linear models, it is safer to convert everything into data frames!
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to influence the display of tibbles?}
-You can change the number of rows being displayed:
-\vfill
-<<>>=
-print(iris_tbl, n = 2)
-@
-<<>>=
-print(iris_tbl, n = 8)
-@
-\vfill
-\pause
-Note: to always display all row you can set \texttt{options(dplyr.print\_min = Inf)}.
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to influence the display of tibbles?}
-You can change the number of digits being displayed:
-\vfill
-Default:
-<<>>=
-x <- as_tibble(data.frame(pi = pi))
-x
-@
-\vfill
-\pause
-Changing setting:
-<<>>=
-old_opt <- options(pillar.sigfig = 10)
-x
-@
-\vfill
-\pause
-Reseting setting:
-<<>>=
-options(old_opt)
-x
-@
-\vfill
-\end{frame}
-
-
-\subsection{\texttt{group\_by()}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{group\_by()}}
-The \texttt{group\_by()} function allows you to perform operation on grouped data.\\
-\vfill
-\pause
-It is very powerful when combined to:
-\begin{itemize}
-\item \texttt{summarize()} $\rightarrow$ one value per group
-\vfill
-\pause
-\item \texttt{mutate()} or \texttt{transmute()} $\rightarrow$ one value per observation
-\vfill
-\pause
-\item \texttt{slice()} $\rightarrow$ select some rows for each "group"
-\vfill
-\pause
-\item \texttt{do()} $\rightarrow$ for applying custom functions on each "group"
-\end{itemize}
-\vfill
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{summarize()}}
-Example: you want the mean height of males and females, the median height and the number in
-each group:
-<<group_by summarize dplyr>>=
-dataframe_ht %>%
-  group_by(Sex) %>%
-  summarize(mean_height = mean(Height),
-            median_height = median(Height),
-            n = n()) %>%
-  data.frame()
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{mutate()}}
-Same as before, but we want to repeat the value for each individual:
-<<group_by mutate dplyr>>=
-dataframe_ht %>%
-  group_by(Sex) %>%
-  mutate(mean_height = mean(Height),
-         median_height = median(Height),
-         n = n()) %>%
-  data.frame()
-@
-\vfill
-Note: many other functions than \texttt{n()} can be used, see \texttt{?summarise} \ !
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{slice()}}
-Example: you want the first two rows of each species of irices:
-<<>>=
-iris %>%
-  group_by(Species) %>%
-  slice(1:2) %>%
-  data.frame()
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Challenge}
-Use the dataset called \texttt{population\_UK} and compute the total population size for:
-\begin{itemize}
-\item 1915% population_UK %>% group_by(Year) %>% summarize(sum(Pop)) %>% filter(Year == 1915)
-\item 2015
-\item all years in the dataset
-\item all years between 1915 and 2015
-%population_UK %>%
-%  group_by(Year) %>%
-%  summarize(Pop = sum(Pop)) %>%
-%  filter(Year >= 1915 & Year <=2015) %>%
-%  select(Pop) %>%
-%% pull
-\end{itemize}
-\vfill
-Use the dataset called \texttt{deaths\_UK} (careful, quite large!) and figure out:
-\begin{itemize}
-\item the death toll for all individuals below 15 yrs for each year
-%deaths_UK %>%
-%  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
-%  group_by(Year) %>%
-%  summarize(tot_deaths = sum(Deaths))
-\item which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories\\
-(most difficult)
-\end{itemize}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Possible solution}
-Which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories?
-\vfill
-<<>>=
-str(deaths_UK)
-@
-\vfill
-\pause
-<<eval = FALSE>>=
-deaths_UK %>%
-  filter(Year <= 1930) %>%
-  group_by(Cause_simple, Desc) %>%
-  summarize(tot_deaths = sum(Deaths)) %>%
-  arrange(Cause_simple, desc(tot_deaths)) %>%
-  slice(1:3) %>%
-  View ## for nice display as a spreadsheet
-@
-\vfill
-\pause
-Note: to clearly understand, check the output after each step!
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{do()}}
-Advanced: you want to apply a function that returns several elements, such as the range of \texttt{Petal.Length} for each species of iris:
-<<>>=
-iris %>%
-  group_by(Species) %>%
-  do(tibble(range = range(.$Petal.Length))) %>% ## must be turned into a tibble or data.frame to work
-  data.frame()
-@
-\vfill
-\pause
-More sophisticated alternative:
-<<>>=
-Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but output a named vector!
-iris %>%
-  group_by(Species) %>%
-  do(data.frame(as.list(Range(.$Petal.Length)))) %>%  ## for this specific example we could of course use summarize with min and max but we want something that will work no matter the function!
-  data.frame()
-@
-\vfill
-\pause
-% Alternatives:
-% iris %>%
-%   group_by(Species) %>%
-%   do(tidy(Range(.$Petal.Length))) %>%
-%   spread(key = names, value = x) %>% ## spread the lists
-%   select(Species, min, max) %>% ## reorder columns
-%   data.frame()
-%
-% iris %>%
-%   split(.$Species) %>%
-%   map_df(., function(df) c(as.character(df$Species[1]), range(df$Petal.Length))) %>%
-%   t %>%
-%   data.frame(., row.names = 1:nrow(.)) %>%
-%   rename(Species = V1, min = V2, max = V3)
-Alternatively, stick to standard \r \ and the function \texttt{tapply()}.
-%list_range <- with(data = iris, tapply(X = Petal.Length, INDEX = Species, FUN = Range))
-%data.frame(Species = levels(iris$Species), do.call(what = "rbind", args = list_range), %row.names = NULL)
-\end{frame}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
-\begin{columns}
-\column{0.45\linewidth}
-\begin{center}
-Data frame \#1:
-<<>>=
-my_df1 <- iris %>%
-  filter(Species == "setosa") %>%
-  select(Sepal.Length, Petal.Length, Species) %>%
-  slice(1:4)
-my_df1[4, 1] <- NA
-my_df1
-@
-\end{center}
-\column{0.45\linewidth}
-\begin{center}
-Data frame \#2:
-<<>>=
-my_df2 <- iris %>%
-  filter(Species == "virginica") %>%
-  select(Sepal.Length, Petal.Width, Species) %>%
-  slice(1:4)
-my_df2[3, 2] <- NA
-my_df2
-@
-\end{center}
-\end{columns}
-\vfill
-\begin{center}
-We will see how to merge these two data frames!
-\end{center}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Using \texttt{dplyr} to merge datasets}
-There are several options but \texttt{full\_join()} is the most effective one: it keeps all the rows of the two data frames and adds NA when no data are present!
-\vfill
-<<full join>>=
-my_df3 <- full_join(my_df1, my_df2)
-my_df3
-@
-\vfill
-Note: you can also do that without \texttt{dplyr} but the outcome is a bit more messy:
-<<eval = FALSE>>=
-merge(my_df1, my_df2, all = TRUE)
-@
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
-%You can also use \texttt{left\_join()} to keep all data from the first dataset and keep only the new data from the second %data set that fit in:
-%\vfill
-%<<left join>>=
-%(flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
-%                              Quality = c("High", "Medium", "Low")))
-%@
-%\pause
-%<<>>=
-%left_join(my_df3, flower_quality, by = "Species")
-%@
-%\pause
-%<<>>=
-%full_join(my_df3, flower_quality, by = "Species")
-%@
-%\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Challenge}
-\begin{center}
-\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals below 15 yrs only.}
-\end{center}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Possible solution}
-<<>>=
-deaths_processed <- deaths_UK %>%
-  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
-  group_by(Year) %>%
-  summarize(tot_Deaths = sum(Deaths))
-
-pop_processed <- population_UK %>%
-  group_by(Year) %>%
-  summarize(tot_Pop = sum(Pop))
-
-full_join(deaths_processed, pop_processed) %>%
-  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
-@
-\end{frame}
-
-\subsection{tidyr}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Reshaping data frame}
-For most data analyses, you need:
-\vfill
-\begin{center}
-\begin{minipage}{0.3\linewidth}
-\begin{block}{}
-\begin{itemize}
-\item one row = one observation
-\item one column = one variable
-\end{itemize}
-\end{block}
-\end{minipage}
-\end{center}
-\vfill
-Unfortunatelly, it is often not the way people input data!
-\vfill
-\pause
-The \texttt{tidyverse} package \texttt{tidyr} offers solutions:
-\begin{itemize}
-\item \texttt{gather()} turns wide data into long
-\item \texttt{spread()} turns long data into wide
-\end{itemize}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{From wide to long}
- << reshaping data frame, echo = FALSE>>=
-  my_df1 <- dataframe_ht %>%
-    mutate(age1 = Height -100, age2 = Height -25, age3 = Height -10) %>%
-    rename(age4 = Height) %>% select(ID, Sex, age1, age2, age3, age4) %>%
-    filter(ID == 1)
-
-  my_df2 <- my_df1 %>% tidyr::gather("Age", "Height", 3:ncol(my_df1)) %>% arrange(ID, Age)
-
-  @
-\vfill
-\begin{columns}[t]
-\column{0.3\linewidth}
-\begin{center}
-you have:
- << reshaping df1, echo = T>>=
-  head(my_df1)
-  dim(my_df1)
-  @
-\end{center}
-
-\column{0.3\linewidth}
-\begin{center}
-you want:
- << reshaping df2, echo = T>>=
-  head(my_df2)
-  dim(my_df2)
-  @
-\end{center}
-\end{columns}
-
-\vfill
-\pause
-\begin{columns}
-\column{0.5\linewidth}
-\begin{center}
-you do:
- << reshaping solution, echo = T>>=
-library(tidyr)
-my_df2 <- my_df1 %>%
-  gather("Age", "Height", -Sex, -ID) %>%
-  arrange(ID, Age)
-@
-\end{center}
-\end{columns}
-\pause
-\begin{columns}
-\column{0.5\linewidth}
-\begin{center}
-or:
-<< reshaping solution bis, echo = T>>=
-my_df2 <- my_df1 %>%
-  gather("Age", "Height", 3:ncol(my_df1)) %>%
-  arrange(ID, Age)
-@
-\end{center}
-\end{columns}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{From long to wide}
-\begin{columns}[t]
-\column{0.3\linewidth}
-\begin{center}
-you have:
-<< reshaping df1 spread, echo = T>>=
-head(my_df2)
-dim(my_df2)
-@
-\end{center}
-
-\column{0.3\linewidth}
-\begin{center}
-you want:
-<< reshaping df2 spread, echo = T>>=
-head(my_df1)
-dim(my_df1)
-@
-\end{center}
-\end{columns}
-\vfill
-\pause
-\begin{columns}
-\column{0.5\linewidth}
-\begin{center}
-you do:
-<< reshaping solution spread, echo = T>>=
-my_df2 %>%
-  spread(-Sex, -ID)
-@
-\end{center}
-\end{columns}
-\vfill
-Note: why on Earth would you need to do that!?
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Some other useful functions from \texttt{tidyr}}
-
-\texttt{unite()} merges 2 columns of a data frame:
- << unite, echo = T>>=
-my_df3 <- my_df2 %>% unite(New_col, ID, Sex)
-head(my_df3)
-@
-\pause
-\vfill
-\texttt{separate()} splits 2 columns of a data frame:
-<< separate, echo = T>>=
-my_df3 %>% separate(New_col, c("ID", "Sex"))
-@
-\vfill
-\pause
-Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but they are a bit more tedious to use.
-\end{frame}
-
-
 \section{Importing \& exporting data}
 
 
@@ -1746,7 +1086,7 @@ Before anything, you must know where you read \& write on your hard drive!
 <<>>=
 getwd() ## get the working directory, to change it use setwd()
 dir() ## list all files in the working directory
-dir(pattern = "*.csv")  ## list all ffiles with the extension csv
+dir(pattern = "*.csv")  ## list all files with the extension csv
 @
 \vfill
 Note: you can also set this up with RStudio but it won't be saved unless you set up a project file.
@@ -1829,5 +1169,666 @@ Create a data frame using your favorite spreadsheet software (or choose an exist
 \end{center}
 \end{large}
 \end{frame}
+
+
+\section{\texttt{tidyverse}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Meeting the \texttt{tidyverse} world}
+Two different ways to solve the problem: \emph{what is the average length and width for each iris species?}
+\vfill
+Standard \r \ approach:
+<<>>=
+tapply(X = iris$Sepal.Length, INDEX = iris$Species, FUN = mean)
+tapply(X = iris$Sepal.Width, INDEX = iris$Species, FUN = mean)
+@
+\vfill
+\pause
+The same operation using the package \texttt{dplyr} from \texttt{tidyverse}:
+<<message = FALSE>>=
+library(tidyverse)  ## or just load dplyr
+
+iris %>%
+  group_by(Species) %>%
+  summarize(mean_sepal_length = mean(Sepal.Length), mean_sepal_width = mean(Sepal.Width))
+@
+\vfill
+\pause
+Note: which one do you prefer?
+\end{frame}
+
+
+\subsection{introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Some words about the \texttt{tidyverse}}
+The \texttt{tidyverse} packages (\url{https://www.tidyverse.org/}) are developped by RStudio:
+
+\begin{center}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-dplyr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-ggplot2"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-forcats"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-purrr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-readr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-stringr"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tibble"}
+\includegraphics[width = 1.5cm]{"../figures/tidyverse/hex-tidyr"}
+\end{center}
+\pause
+\begin{columns}[t]
+\column{0.45\linewidth}
+\begin{block}{\R \ is from the \R \ core team who}
+\begin{itemize}
+\item build the core of \r \ and the original \r \ GUI
+\item maintain CRAN
+\item backward compatibility is the priority
+\item limited man power (20 selected volunteers)
+\item not commercial (but Microsoft may creep in?)
+\end{itemize}
+\end{block}
+\column{0.45\linewidth}
+\begin{block}{\texttt{tidyverse} is from the RStudio people who}
+\begin{itemize}
+\item build RStudio IDE, \texttt{tidyverse} and more
+\item \texttt{tidyverse} philosophy: 1 function = 1 action
+\item backward compatibility is not the priority
+\item $\sim$ 80 employees + tons of volunteers% https://www.rstudio.com/about/
+\item free + commercial
+\end{itemize}
+\end{block}
+\end{columns}
+\pause
+\vfill
+Note 1: that has led to two quite distinct \r \ dialects.
+
+Note 2: more and more users rely on \texttt{tidyverse} and many recent packages use the \texttt{tidyverse} grammar.
+
+Note 3: we will see a bit of both dialects.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Getting started with \texttt{tidyverse}}
+\begin{center}
+\includegraphics[height = 0.8\textheight]{../figures/Wickham_r4ds}
+\end{center}
+\vfill
+Note: there are also multiple tutorials on the web\\ (e.g. \url{https://www.r-bloggers.com/lesser-known-dplyr-tricks/}).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Key \texttt{tidyverse} principles}
+\begin{itemize}
+\item one verb = one action = one function
+\item operations can be chained with the pipe operator ``\texttt{\%>\%}'' (from package \texttt{magrittr}), which considers the output from one function as the input of the next function (exception: \texttt{ggplot2} that uses ``\texttt{+}'' instead)
+\item the outcome of a given function is always of the same \texttt{class}
+\end{itemize}
+\vfill
+\pause
+\begin{columns}[t]
+\column{0.45\linewidth}
+\begin{block}{Pros}
+\begin{itemize}
+\item clear code
+\item consistent
+\item powerful
+\item fast
+\item many tutorials
+\end{itemize}
+\end{block}
+\pause
+\column{0.45\linewidth}
+\begin{block}{Cons}
+\begin{itemize}
+\item different \& redundant
+\item buggy (but less \& less so)
+\item poor ``traditional'' documentation
+\item lead to bad habits (e.g. help not looked at)
+\item wider gap between users and developers
+\end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+\subsection{\texttt{dplyr}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
+Useful \texttt{dplyr} functions:\\
+\vfill
+\begin{itemize}
+\item add column with \texttt{mutate()}
+<<edit df dplyr>>=
+iris %>%
+  mutate(double_SL = 2*Sepal.Length) %>%
+  head(n = 3)
+@
+\vfill
+\pause
+\item create and keep only new columns with \texttt{transmute()}
+<<edit df dplyr2>>=
+iris %>%
+  transmute(double_SL = 2*Sepal.Length) %>%
+  head(n = 3)
+@
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{dplyr} verbs}
+Useful \texttt{dplyr} functions:\\
+\vfill
+\begin{itemize}
+\item select columns with \texttt{select()}
+<<select dplyr>>=
+iris %>%
+  select(Sepal.Length) %>%
+  head(n = 3)
+@
+\vfill
+\pause
+\item select rows with \texttt{filter()}
+<<filter dplyr>>=
+iris %>%
+  filter(Species == "virginica") %>%
+  head(n = 3)
+@
+\vfill
+\pause
+\item sort rows with \texttt{arrange()}
+<<sort dplyr>>=
+iris %>%
+  arrange(Petal.Length) %>% ## arrange(desc(Petal.Length)) for the other direction
+  head(n = 3)
+@
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}[fragile, t]{Around \texttt{dplyr} verbs}
+% These main \texttt{dplyr} functions have derivatives and some of them can be useful:\\
+% e.g. \texttt{mutate\_if} performs mutation if a condition is fulfilled, which could be useful for example if you want to change all numeric variables into character variables:
+% \vfill
+% \begin{columns}
+% \column{0.45\linewidth}
+% you have:
+% <<mutate if, echo = F >>=
+% str(iris)
+% @
+% \column{0.45\linewidth}
+% you want:
+% <<mutate if out, echo = F >>=
+% str(data.frame(iris %>% mutate_if(is.numeric, ~ as.character(.))))
+% @
+% \end{columns}
+% \vfill
+% you do:
+% <<mutate if solution, echo = T>>=
+% iris_numeric <- iris %>%
+%   mutate_if(is.numeric, ~ as.character(.))
+% @
+% \end{frame}
+
+
+\subsection{tibbles}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{What are tibbles?}
+Tibbles are modified data frames that can be used and (sometimes automatically) produced by \texttt{tidyverse} packages:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  mutate(Sepal.Length.meam = mean(Sepal.Length)) -> iris_tbl ## note the inverted arrow!
+iris_tbl
+@
+\vfill
+Note: most of what works on objects of class \texttt{data.frame} works on objects of class \texttt{tbl} (but not all as they don't consider row names).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{From tibbles to data frames and back}
+You can easily convert one into the other:
+<<>>=
+head(data.frame(iris_tbl))
+@
+\vfill
+\pause
+<<>>=
+as_tibble(data.frame(iris_tbl))  ## no need for head() when using tibbles!
+@
+\vfill
+\pause
+Note: for linear models, it is safer to convert everything into data frames!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
+You can change the number of rows being displayed:
+\vfill
+<<>>=
+print(iris_tbl, n = 2)
+@
+<<>>=
+print(iris_tbl, n = 8)
+@
+\vfill
+\pause
+Note: to always display all row you can set \texttt{options(dplyr.print\_min = Inf)}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{How to influence the display of tibbles?}
+You can change the number of digits being displayed:
+\vfill
+Default:
+<<>>=
+x <- as_tibble(data.frame(pi = pi))
+x
+@
+\vfill
+\pause
+Changing setting:
+<<>>=
+old_opt <- options(pillar.sigfig = 10)
+x
+@
+\vfill
+\pause
+Reseting setting:
+<<>>=
+options(old_opt)
+x
+@
+\vfill
+\end{frame}
+
+
+\subsection{advanced but useful features}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()}}
+The \texttt{group\_by()} function allows you to perform operation on grouped data.\\
+\vfill
+\pause
+It is very powerful when combined to:
+\begin{itemize}
+\item \texttt{summarize()} $\rightarrow$ one value per group
+\vfill
+\pause
+\item \texttt{mutate()} or \texttt{transmute()} $\rightarrow$ one value per observation
+\vfill
+\pause
+\item \texttt{slice()} $\rightarrow$ select some rows for each "group"
+\vfill
+\pause
+\item \texttt{do()} $\rightarrow$ for applying custom functions on each "group"\\ (but advanced and perhaps soon deprecated)
+\end{itemize}
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{summarize()}}
+Example: for each species you want the mean petal length, the sd and the number of observations:
+<<group_by summarize dplyr>>=
+iris %>%
+  group_by(Species) %>%
+  summarize(mean_PL = mean(Petal.Length),
+            sd_PL = sd(Petal.Length),
+            n = n())
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{mutate()}}
+Same as before, but we want to repeat the value for each individual:
+<<group_by mutate dplyr>>=
+iris %>%
+  group_by(Species) %>%
+  mutate(mean_PL = mean(Petal.Length),
+            sd_PL = sd(Petal.Length),
+            n = n())
+@
+\vfill
+Note: many other functions than \texttt{n()} can be used, see \texttt{?summarise} \ !
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{slice()}}
+Example: you want the first two rows of each iris species:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  slice(1:2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+Use the dataset called \texttt{population\_UK} and compute the total population size for:
+\begin{itemize}
+\item 1915% population_UK %>% group_by(Year) %>% summarize(sum(Pop)) %>% filter(Year == 1915)
+\item 2015
+\item all years in the dataset
+\item all years between 1915 and 2015
+%population_UK %>%
+%  group_by(Year) %>%
+%  summarize(Pop = sum(Pop)) %>%
+%  filter(Year >= 1915 & Year <=2015) %>%
+%  select(Pop) %>%
+%% pull
+\end{itemize}
+\vfill
+Use the dataset called \texttt{deaths\_UK} (careful, quite large!) and figure out:
+\begin{itemize}
+\item the death toll for all individuals below 15 yrs for each year
+%deaths_UK %>%
+%  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+%  group_by(Year) %>%
+%  summarize(tot_deaths = sum(Deaths))
+\item which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories\\
+(most difficult)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Possible solution}
+Which were the top 3 detailed causes of death before 1930 for each of the 8 broader categories?
+\vfill
+<<>>=
+str(deaths_UK)
+@
+\vfill
+\pause
+<<eval = FALSE>>=
+deaths_UK %>%
+  filter(Year <= 1930) %>%
+  group_by(Cause_simple, Desc) %>%
+  summarize(tot_deaths = sum(Deaths)) %>%
+  arrange(Cause_simple, desc(tot_deaths)) %>%
+  slice(1:3) %>%
+  View() ## for nice display as a spreadsheet
+@
+\vfill
+\pause
+Note: to clearly understand, check the output after each step!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{\texttt{group\_by()} with \texttt{do()}}
+Advanced: you want to apply a function that returns several elements, such as the range of \texttt{Petal.Length} for each species of iris:
+<<>>=
+iris %>%
+  group_by(Species) %>%
+  do(tibble(range = range(.$Petal.Length))) ## must be turned into a tibble or data.frame to work
+@
+\vfill
+\pause
+More sophisticated alternative (combining \texttt{tidyverse} and standard \r):
+<<>>=
+Range <- function(x, ...) c(min = min(x, ...), max = max(x, ...)) ## same as range() but output a named vector!
+iris %>%
+  group_by(Species) %>%
+  do(data.frame(as.list(Range(.$Petal.Length)))) ## for this specific example we could of course use summarize with min and max
+@
+%#true dplyr + purrr alternative
+%iris %>%
+%  group_by(Species) %>%
+%  nest() %>%
+%  mutate(output = map(data, function(x){
+%
+%    bind_rows(Range(x$Petal.Length))
+%
+%  })) %>%
+%  unnest(output, .drop = T) %>%
+%  data.frame()
+\vfill
+\pause
+% Alternatives:
+% iris %>%
+%   group_by(Species) %>%
+%   do(tidy(Range(.$Petal.Length))) %>%
+%   spread(key = names, value = x) %>% ## spread the lists
+%   select(Species, min, max) %>% ## reorder columns
+%   data.frame()
+%
+% iris %>%
+%   split(.$Species) %>%
+%   map_df(., function(df) c(as.character(df$Species[1]), range(df$Petal.Length))) %>%
+%   t %>%
+%   data.frame(., row.names = 1:nrow(.)) %>%
+%   rename(Species = V1, min = V2, max = V3)
+Alternatively, stick to standard \r \ and the function \texttt{tapply()}.
+%list_range <- with(data = iris, tapply(X = Petal.Length, INDEX = Species, FUN = Range))
+%data.frame(Species = levels(iris$Species), do.call(what = "rbind", args = list_range), %row.names = NULL)
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+\begin{columns}
+\column{0.45\linewidth}
+\begin{center}
+Data frame \#1:
+<<>>=
+iris %>%
+  filter(Species == "setosa") %>%
+  select(Sepal.Length, Petal.Length, Species) %>%
+  slice(1:4) -> my_df1
+
+my_df1
+@
+\end{center}
+\column{0.45\linewidth}
+\begin{center}
+Data frame \#2:
+<<>>=
+iris %>%
+  filter(Species == "virginica") %>%
+  select(Sepal.Length, Petal.Width, Species) %>%
+  slice(1:4) -> my_df2
+
+my_df2
+@
+\end{center}
+\end{columns}
+\vfill
+\begin{center}
+We will see how to merge these two data frames!
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Using \texttt{dplyr} to merge datasets}
+There are several options but \texttt{full\_join()} is the most effective one: it keeps all the rows of the two data frames and adds NA when no data are present!
+\vfill
+<<full join>>=
+my_df3 <- full_join(my_df1, my_df2)
+my_df3
+@
+\vfill
+Note: you can also do that without \texttt{dplyr} but the outcome is a bit more messy:
+<<eval = FALSE>>=
+merge(my_df1, my_df2, all = TRUE)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{frame}[fragile]{Using \texttt{dplyr} to merge datasets}
+%You can also use \texttt{left\_join()} to keep all data from the first dataset and keep only the new data from the second %data set that fit in:
+%\vfill
+%<<left join>>=
+%(flower_quality <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+%                              Quality = c("High", "Medium", "Low")))
+%@
+%\pause
+%<<>>=
+%left_join(my_df3, flower_quality, by = "Species")
+%@
+%\pause
+%<<>>=
+%full_join(my_df3, flower_quality, by = "Species")
+%@
+%\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Challenge}
+\begin{center}
+\large{Use the datasets called \texttt{population\_UK} and \texttt{deaths\_UK} to compute yearly mortality rates for individuals below 15 yrs only.}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Possible solution}
+<<>>=
+deaths_UK %>%
+  filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
+  group_by(Year) %>%
+  summarize(tot_Deaths = sum(Deaths)) -> deaths_processed
+
+population_UK %>%
+  group_by(Year) %>%
+  summarize(tot_Pop = sum(Pop)) -> pop_processed
+
+full_join(deaths_processed, pop_processed) %>%
+  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Reshaping data frame}
+For most data analyses, you need:
+\vfill
+\begin{center}
+\begin{minipage}{0.3\linewidth}
+\begin{block}{}
+\begin{itemize}
+\item one row = one observation
+\item one column = one variable
+\end{itemize}
+\end{block}
+\end{minipage}
+\end{center}
+\vfill
+Unfortunatelly, it is often not the way people input data!
+\vfill
+\pause
+The \texttt{tidyverse} package \texttt{tidyr} offers solutions:
+\begin{itemize}
+\item \texttt{gather()} turns wide data into long
+\item \texttt{spread()} turns long data into wide (useless?)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{From wide to long}
+<< reshaping data frame, echo = FALSE>>=
+iris[c(1:5, 51:55), ] %>% select(Species, Sepal.Length) %>% mutate(day = paste0("day_", rep(1:5, 2))) %>% spread(., day, Sepal.Length) -> my_df1
+my_df1 %>% gather("day", "Sepal.Length", -Species) %>% separate(day, c("obs", "day")) %>% select(-obs) %>% mutate(day = as.numeric(day)) %>% arrange(Species, day) -> my_df2
+@
+\vfill
+\begin{columns}[t]
+\column{0.33\linewidth}
+you have:
+<< reshaping df1, echo = T>>=
+my_df1
+@
+\vfill
+you want:
+<< reshaping df2, echo = T>>=
+my_df2
+@
+\vfill
+\pause
+\column{0.57\linewidth}
+you do:
+ << reshaping solution, echo = T>>=
+my_df1 %>%
+    gather(key = "day", value = "Sepal.Length", -Species) %>% ## after, optional
+    separate(day, c("obs", "day")) %>%
+    select(-obs) %>%
+    as_tibble() %>%
+    mutate(day = as.numeric(day)) %>%
+    arrange(Species, day)
+@
+\end{columns}
+\vfill
+Note: run the code step by step to understand everything that is happening!
+\end{frame}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}[fragile]{From long to wide}
+% \begin{columns}[t]
+% \column{0.3\linewidth}
+% \begin{center}
+% you have:
+% << reshaping df1 spread, echo = T>>=
+% head(my_df2)
+% dim(my_df2)
+% @
+% \end{center}
+%
+% \column{0.3\linewidth}
+% \begin{center}
+% you want:
+% << reshaping df2 spread, echo = T>>=
+% head(my_df1)
+% dim(my_df1)
+% @
+% \end{center}
+% \end{columns}
+% \vfill
+% \pause
+% \begin{columns}
+% \column{0.5\linewidth}
+% \begin{center}
+% you do:
+% << reshaping solution spread, echo = T>>=
+% my_df2 %>%
+%   spread(-Sex, -ID)
+% @
+% \end{center}
+% \end{columns}
+% \vfill
+% Note: why on Earth would you need to do that!?
+% \end{frame}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}[fragile]{Some other useful functions from \texttt{tidyr}}
+%
+% \texttt{unite()} merges 2 columns of a data frame:
+%  << unite, echo = T>>=
+% my_df3 <- my_df2 %>% unite(New_col, ID, Sex)
+% head(my_df3)
+% @
+% \pause
+% \vfill
+% \texttt{separate()} splits 2 columns of a data frame:
+% << separate, echo = T>>=
+% my_df3 %>% separate(New_col, c("ID", "Sex"))
+% @
+% \vfill
+% \pause
+% Note: the \r \ base equivalent are \texttt{paste()} and \texttt{strsplit()} but they are a bit more tedious to use.
+% \end{frame}
 
 \end{document}
