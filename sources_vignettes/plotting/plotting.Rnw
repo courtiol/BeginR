@@ -106,17 +106,19 @@ Note:
 \begin{columns}
 \column[b]{0.32\linewidth}
 <<baseplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
-plot(Petal.Length ~ Petal.Width, data = iris)
+plot(Petal.Length ~ Petal.Width,
+     data = iris)
 @
 \column[b]{0.32\linewidth}
 <<lattice_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
 library(lattice)
 
-xyplot(Petal.Length ~ Petal.Width, data = iris)
+xyplot(Petal.Length ~ Petal.Width,
+       data = iris)
 @
 \column[b]{0.32\linewidth}
-<<ggplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth">>=
-library(ggplot2)
+<<ggplot_eg, out.width = "0.7\\linewidth", out.height = "0.7\\linewidth", message = FALSE>>=
+library(tidyverse) ## or ggplot2
 
 ggplot(data = iris,
   aes(x = Petal.Width, y = Petal.Length)) +
@@ -625,6 +627,9 @@ Note: there is also an easier function for that:
 <<aes_3_bis, fig.width=15, fig.height=5, out.width="0.9\\linewidth", out.height="0.3\\linewidth">>=
 coplot(Petal.Length ~ Petal.Width | Species, data = iris, rows = 1)
 @
+\vfill
+\pause
+Challenge: have a look at the relationship between the happiness and the price of present using the dataset \texttt{Surprise}.
 \end{frame}
 
 
@@ -793,18 +798,17 @@ Note: there are a few other ones, but they do not seem very interesting\dots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Possible solution}
 <<children, echo = FALSE, message = FALSE, dev='cairo_pdf', out.width="0.55\\linewidth", fig.width=7, out.height="0.5\\linewidth", fig.height=6.5>>=
-library(dplyr)
-deaths_processed <- deaths_UK %>%
+deaths_UK %>%
   filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
   group_by(Year) %>%
-  summarize(tot_Deaths = sum(Deaths))
+  summarize(tot_Deaths = sum(Deaths)) -> deaths_processed
 
-pop_processed <- population_UK %>%
+population_UK %>%
   group_by(Year) %>%
-  summarize(tot_Pop = sum(Pop))
+  summarize(tot_Pop = sum(Pop)) -> pop_processed
 
-data_processed <- full_join(deaths_processed, pop_processed) %>%
-  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+full_join(deaths_processed, pop_processed) %>%
+  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop) -> data_processed
 
 par(mgp = c(3.2, 1, 0), mar = c(5, 5, 1, 1))
 
@@ -829,18 +833,17 @@ box()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Possible solution}
 <<eval = FALSE>>=
-library(dplyr)
-deaths_processed <- deaths_UK %>%
+deaths_UK %>%
   filter(Age_cat %in% levels(Age_cat)[1:3]) %>%
   group_by(Year) %>%
-  summarize(tot_Deaths = sum(Deaths))
+  summarize(tot_Deaths = sum(Deaths)) -> deaths_processed
 
-pop_processed <- population_UK %>%
+population_UK %>%
   group_by(Year) %>%
-  summarize(tot_Pop = sum(Pop))
+  summarize(tot_Pop = sum(Pop)) -> pop_processed
 
-data_processed <- full_join(deaths_processed, pop_processed) %>%
-  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+full_join(deaths_processed, pop_processed) %>%
+  mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop) -> data_processed
 
 par(mgp = c(3.2, 1, 0), mar = c(5, 5, 1, 1))
 
@@ -878,12 +881,12 @@ opts_chunk$set("size" = "scriptsize",
 opts_knit$set(global.par = TRUE)
 @
 
-\section{Plotting with \texttt{ggplot}}
+\section{Plotting with \texttt{ggplot2}}
 \subsection{introduction}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\texttt{ggplot}: introduction}
+\begin{frame}[fragile]{\texttt{ggplot2}: introduction}
 \verb`ggplot` (defunct) and \verb`ggplot2` were both created by Hadley Wickham (now chief Scientist at Rstudio) during his PhD: \url{http://had.co.nz/thesis/practical-tools-hadley-wickham.pdf}
 \vfill
 \pause
@@ -891,12 +894,12 @@ The idea was to create a grammar of graphics for \r.
 \vfill
 It is inspired from the seminal Leland Wilkson's book \textbf{The Grammar of Graphics}:
 \justifying
-\emph{"This book [...] presents a unique foundation for producing almost every quantitative graphic found in scientific journals, newspapers, statistical packages, and data visualization systems."}
+``\emph{This book [...] presents a unique foundation for producing almost every quantitative graphic found in scientific journals, newspapers, statistical packages, and data visualization systems.}''
 \vfill
 \pause
 In Wickham's words:\\
-\emph{"The grammar of graphics is an answer to a question: what is a statistical graphic? [\dots] In brief, the grammar tells us that a statistical graphic is a
-mapping from data to aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also contain statistical transformations of the data and is drawn on a specific coordinate system. Facetting can be used to generate the same plot for different subsets of the dataset. It is the combination of these independent components that make up a graphic."} (Wickham ggplot2 book)
+``\emph{The grammar of graphics is an answer to a question: what is a statistical graphic? [\dots] In brief, the grammar tells us that a statistical graphic is a
+mapping from data to aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also contain statistical transformations of the data and is drawn on a specific coordinate system. Facetting can be used to generate the same plot for different subsets of the dataset. It is the combination of these independent components that make up a graphic.}'' (Wickham ggplot2 book)
 \vfill
 \pause
 In plain english, that means that the graphics are build by considering building blocs or layers. The originality is that the user directly handles different functions corresponding to each layer and can combine them freely.
@@ -904,7 +907,7 @@ In plain english, that means that the graphics are build by considering building
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{How to learn \texttt{ggplot} on your own?}
+\begin{frame}[fragile, t]{How to learn \texttt{ggplot2} on your own?}
 \begin{itemize}
 \item forum: \url{https://community.rstudio.com}
 \item reference:\url{http://ggplot2.tidyverse.org/reference/}
@@ -922,11 +925,9 @@ Note: Wickham's books (or their sources) are free and open source!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: introduction}
-Overall structure of a \texttt{ggplot} call:
+\begin{frame}[fragile, t]{\texttt{ggplot2}: introduction}
+Overall structure of a \texttt{ggplot2} call:
 <<scatter_gg_2, fig.width = 4, fig.height = 4, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth">>=
-library(ggplot2)
-
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + ## we specify the source of data and map the variables
   geom_point() + ## we use a function that specifies the type of plot (e.g. scatterplot, histogram). A geom_* function is always required!
   scale_x_continuous(limits = c(0, 5)) + ## we can fiddle with the scale_*_* functions to adjust the axes, colouration etc.
@@ -945,7 +946,7 @@ Note: to better understand, execute the code progressively adding one command at
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 We start by preparing the data:
 <<scatter_0>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
@@ -953,7 +954,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length))
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 We add points on the empty plot:
 <<scatter_gg_3>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + geom_point()
@@ -962,7 +963,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + geom_poi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 You can change point shapes \verb`shape` (= \verb`pch` in traditional graphics) and \verb`colour` (= \verb`col` in traditional graphics):
 <<scatter_gg_4>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, colour = Species)) +
@@ -974,7 +975,7 @@ Note: everytime we want to create a connection between the data and some element
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 In ggplot the legend is included by default but you can remove it:
 <<scatter_gg_5, fig.width = 5, out.width = "0.35\\linewidth">>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, colour = Species)) +
@@ -985,7 +986,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, colour = Sp
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 The aesthetic function in ggplot is a powerful tool for changing plot aesthetics.
 
 If you specify an aesthetic argument inside \verb`aes()`, it will give each point a different aesthetic based on its value.
@@ -1011,7 +1012,7 @@ Note: we have used \verb`aes()` to apply colours but it can be used to make othe
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 Again, for many elements you can set both an outline \verb`colour` (= \verb`col` for traditional graphics) and background \verb`fill` colour (= \verb`bg` for traditional graphics):
 \begin{columns}
 \column[t]{0.48\linewidth}
@@ -1032,7 +1033,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length,
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 You can also add lines to the plot:
 <<scatter_gg_8>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
@@ -1046,7 +1047,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Spec
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 You can add extra points to the plot by using two \verb`geom_point` layers:
 <<scatter_gg_9>>=
 versicolor <- subset(x = iris, Species == "versicolor")
@@ -1080,12 +1081,12 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Spec
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 In ggplot, confidence intervals can be added with specialised function \verb`geom_ribbon()`:
 <<scatter_gg_11, out.height="0.3\\linewidth", out.width="0.35\\linewidth">>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
-pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
+pred     <- predict(object = test_mod, newdata = newdat, interval = "confidence")
 
 ggplot() +
   geom_point(data = iris,    mapping = aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
@@ -1098,7 +1099,7 @@ Note: because we are building the plot with two different datasets (i.e. \verb`i
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: scatter plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: scatter plots}
 In ggplot, you can also do basic statistics directly:
 <<out.height="0.3\\linewidth", out.width="0.35\\linewidth">>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
@@ -1115,7 +1116,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
 \subsection{box plots}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: box plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: box plots}
 In ggplot, use \verb`geom_boxplot()` to draw a box plot:
 <<boxplot_gg_1F>>=
 ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
@@ -1125,7 +1126,7 @@ ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: box plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: box plots}
 Many of the same changes made to scatter plots can be made here:
 <<boxplot_gg_2>>=
 ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
@@ -1141,7 +1142,7 @@ ggplot(data = iris, mapping = aes(x = Species, y = Petal.Length)) +
 \subsection{histograms}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: histograms}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: histograms}
 In ggplot, use \verb`geom_histogram()` to draw an histogram:
 <<hist_gg_1>>=
 ggplot(data = iris, mapping = aes(x = Petal.Length)) +
@@ -1151,7 +1152,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Length)) +
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: histograms}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: histograms}
 You can change the width of bins with \verb`binwidth` or their number with \verb`bins`:
 \begin{columns}
 \column{0.48\linewidth}
@@ -1168,7 +1169,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Length)) +
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: histograms}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: histograms}
 Add a rug below the histogram with \verb`geom_rug`:
 <<hist_gg_3>>=
 ggplot(data = iris, mapping = aes(x = Petal.Length)) +
@@ -1185,7 +1186,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Length)) +
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: bar plots}
 In ggplot, use \verb`geom_col()` to draw a bar plot:
 <<bar_gg_1>>=
 ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
@@ -1195,7 +1196,7 @@ ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: bar plots}
 Adding error bars in ggplot is much easier than in traditional graphics:
 <<bar_gg_2>>=
 ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
@@ -1206,7 +1207,7 @@ ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: bar plots}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: bar plots}
 As before, modifications are straigthforward:
 <<bar_gg_3>>=
 ggplot(data = spp_means, mapping = aes(x = Species, y = mean)) +
@@ -1298,7 +1299,7 @@ Note: the text size uses different measurement units than traditional graphics.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Combining plots}
-Combining plots is less straightforward in \texttt{ggplot}\dots
+Combining plots is less straightforward in \texttt{ggplot2}\dots
 \vfill
 You need to use an additional package:
 <<aes_gg_6, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10, message = FALSE>>=
@@ -1328,7 +1329,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Spec
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Modifying typefaces}
-Unlike traditional graphics, in \texttt{ggplot} you can easily change the typeface of individual elements in theme:
+Unlike traditional graphics, in \texttt{ggplot2} you can easily change the typeface of individual elements in theme:
 <<aes_gg_8, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
 scatter <- ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
@@ -1382,7 +1383,7 @@ grid.arrange(scatter, box, nrow = 1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Preset themes}
-\texttt{ggplot} also has a number of preset themes that you can use:
+\texttt{ggplot2} also has a number of preset themes that you can use:
 <<aes_gg_11, out.width = "0.75\\linewidth", out.height = "0.25\\linewidth", fig.height = 5, fig.width = 15>>=
 grey <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
@@ -1431,14 +1432,14 @@ theme_set(theme_old) ## restore original theme
 \subsection{saving your plot}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{\texttt{ggplot}: Exporting}
+\begin{frame}[fragile, t]{\texttt{ggplot2}: Exporting}
 <<tidy=F, eval=F>>=
 ?ggsave
 @
 \vspace{0.5cm}
 <<tidy=F, eval=F>>=
-classic <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length))+
-  geom_point()+
+classic <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point() +
   theme_classic()
 
 ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
@@ -1449,7 +1450,7 @@ ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
 \subsection{other plots}
 
 \begin{frame}[fragile]{There are other \texttt{geom} out there!}
-There are a few other plot types in \texttt{ggplot} that are worth looking at (check the cheatsheet!):
+There are a few other plot types in \texttt{ggplot2} that are worth looking at (check the cheatsheet!):
 \begin{itemize}
 \item \verb`geom_violin()`
 \item \verb`geom_area()`
@@ -1458,9 +1459,9 @@ There are a few other plot types in \texttt{ggplot} that are worth looking at (c
 \end{itemize}
 \vfill
 \pause
-But the true force of having developed something as modular as \texttt{ggplot} is that there are many more packages each week providing \texttt{ggplot} extensions!
+But the true force of having developed something as modular as \texttt{ggplot2} is that there are many more packages each week providing \texttt{ggplot2} extensions!
 \vfill
-A few random examples of \texttt{ggplot} extensions:
+A few random examples of \texttt{ggplot2} extensions:
 \begin{itemize}
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
@@ -1486,7 +1487,8 @@ Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incom
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Simple solution}
 <<>>=
-ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) + geom_area()
+ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
+  geom_area()
 @
 \end{frame}
 
@@ -1503,7 +1505,8 @@ ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
   scale_y_continuous(breaks = 0:ceiling(max(data_processed$Year)),
                      minor_breaks = NULL) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(hjust = 0.5),
         panel.grid.minor = element_line(colour = "lightgrey"),
         panel.grid.major = element_line(colour = "lightgrey"),
         panel.border = element_rect(colour = "black", fill = NA))
@@ -1523,7 +1526,8 @@ ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
   scale_y_continuous(breaks = 0:ceiling(max(data_processed$Year)),
                      minor_breaks = NULL) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(hjust = 0.5),
         panel.grid.minor = element_line(colour = "lightgrey"),
         panel.grid.major = element_line(colour = "lightgrey"),
         panel.border = element_rect(colour = "black", fill = NA))
@@ -1543,11 +1547,12 @@ ggplot(data = data_processed, mapping = aes(y = rel_Deaths, x = Year)) +
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Possible solution}
 <<out.width="0.55\\linewidth", fig.width=8>>=
-deaths_processed_all <- deaths_UK %>% group_by(Year, Age_cat) %>% summarize(tot_Deaths = sum(Deaths))
-pop_processed <- population_UK %>% group_by(Year) %>% summarize(tot_Pop = sum(Pop)) ## as before
-data_processed_all <- full_join(deaths_processed_all, pop_processed) %>% mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop)
+deaths_UK %>% group_by(Year, Age_cat) %>% summarize(tot_Deaths = sum(Deaths)) -> deaths_processed_all
+population_UK %>% group_by(Year) %>% summarize(tot_Pop = sum(Pop)) -> pop_processed## as before
+full_join(deaths_processed_all, pop_processed) %>% mutate(rel_Deaths = 1000*tot_Deaths/tot_Pop) -> data_processed_all
 
-ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill = Age_cat)) + geom_area()
+ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill = Age_cat)) +
+  geom_area()
 @
 \end{frame}
 
@@ -1559,7 +1564,7 @@ ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Conclusion: traditional graphics vs. \texttt{ggplot}}
+\section{Conclusion: traditional graphics vs. \texttt{ggplot2}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1578,7 +1583,7 @@ ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill =
 \end{block}
 \pause
 \column[t]{0.45\linewidth}
-\begin{block}{\texttt{ggplot}:}
+\begin{block}{\texttt{ggplot2}:}
 \begin{itemize}
   \item requires multiple packages for best results
   \item uniform grammar
@@ -1593,7 +1598,7 @@ ggplot(data = data_processed_all, mapping = aes(y = rel_Deaths, x = Year, fill =
 \vfill
 \pause
 \begin{center}
-\large{$\rightarrow$ It may be useful to know both!!}
+\large{$\rightarrow$ It may be useful to know both!?}
 \end{center}
 \end{frame}
 
