@@ -1,6 +1,6 @@
 Package: BeginR
 Title: Getting Started with R
-Version: 20180618.1
+Version: 20180619.1
 Authors@R: c(
     person("Alexandre", "Courtiol", email = "courtiol@izw-berlin.de", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0637-2959")),
     person("Liam", "Bailey", role = "aut", comment = c(ORCID = "0000-0002-8226-9454")),
