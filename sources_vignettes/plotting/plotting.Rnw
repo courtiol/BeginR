@@ -824,7 +824,7 @@ polygon(x = c(data_processed$Year, rev(x = data_processed$Year)),
         col = "darkgreen")
 
 axis(side = 1, at = seq(min(data_processed$Year), max(data_processed$Year), by = 5), las = 2)
-axis(side = 2)
+axis(side = 2, las = 1)
 box()
 @
 \end{frame}
@@ -859,7 +859,7 @@ polygon(x = c(data_processed$Year, rev(x = data_processed$Year)),
         col = "darkgreen")
 
 axis(side = 1, at = seq(min(data_processed$Year), max(data_processed$Year), by = 5), las = 2)
-axis(side = 2)
+axis(side = 2, las = 1)
 box()
 @
 \end{frame}
@@ -1465,14 +1465,29 @@ A few random examples of \texttt{ggplot2} extensions:
 \begin{itemize}
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
-\item \verb`ggmap` (for maps)
 \item \verb`ggrepel` (for adding labels to plots)
 \item \verb`ggalt` (for creating cluster plots)
 \item \verb`cowplot` (for creating nested figures)
-% to be completed!
 \end{itemize}
 \vfill
 Note: see also \url{http://www.ggplot2-exts.org/gallery/} (but the list is incomplete).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{A random example: \texttt{ggmap}}
+<<message = FALSE>>=
+library(ggmap)
+
+map_us <- get_map(location = c(lon = 13.349342, lat = 52.500033), source = "google", maptype = "satellite", zoom = 20)
+
+ggmap(map_us, extent = "panel") +
+  geom_point(mapping = aes(x = 13.349342, y = 52.500033), colour = "white", size = 60, shape = 21) +
+  geom_text(mapping = aes(x = 13.349342, y = 52.500033), label = "ALEX IS\n HERE", colour = "white", size = 8) +
+  xlab(label = "longitude") + ylab(label = "lattitude")
+@
+\vfill
+Note: this package does not seem very well maintained\dots
 \end{frame}
 
 
