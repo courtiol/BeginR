@@ -170,3 +170,22 @@
 #'
 #' Original dataset from: Draper,D. (1993). Assessment and propagation of model uncertainty. In Proceedings of the Fourth International Workshop on Artificial Intelligence and Statistics (pp. 497--509). Ft. Lauderdale, FL: Unpublished.
 "Challenger"
+
+
+#' Toy datasets based on the iris dataset
+#'
+#' These datasets are subset of the \code{\link[dataset]{iris}} dataset that have been designed to illustrate the use of the functions
+#' \code{\link[tidyr]{spread()}} and \code{\link[tidyr]{gather()}} from \pkg{\link[tidyr]{tidyr}}.
+#'
+#' @docType data
+#' @name iris_for_tidyr
+#' @aliases iris_for_tidyr, iris_long, iris_wide
+#' @format Objects of class \var{dataframe}.
+#' @source These data were derived from \code{iris}
+#' @keywords datasets
+#' @examples
+#' iris_long
+#' iris_wide
+NULL
+
+
