@@ -60,7 +60,310 @@ opts_chunk$set("size" = "scriptsize",
 % first slide of the doc
 \maketitle
 
-\section{Linear models}
+\section{Some basic tests}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. the usual correlation tests:
+\vfill
+<<>>=
+cor(x = iris$Sepal.Length, y = iris$Sepal.Width, method = "pearson")
+@
+\vfill
+\pause
+<<>>=
+cor.test(x = iris$Sepal.Length, y = iris$Sepal.Width, method = "pearson")
+@
+\vfill
+\pause
+Note: two other \texttt{method}s are available: ``\texttt{spearman}'' \& ```\texttt{kendall}''.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+Many (not all) tests allow for the use of a formula-based syntax:
+\vfill
+<<>>=
+cor.test(formula = ~ Sepal.Length + Sepal.Width, data = iris)
+@
+\vfill
+is synonymous to:
+<<>>=
+cor.test(x = iris$Sepal.Length, y = iris$Sepal.Width)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing two unpaired groups:
+\vfill
+The \emph{t}-test (parametric):
+<<>>=
+t.test(x = iris$Sepal.Length[iris$Species == "versicolor"],
+       y = iris$Sepal.Length[iris$Species == "setosa"])
+@
+\vfill
+\pause
+The Mann-Whitney U test (non-parametric):
+<<>>=
+wilcox.test(x = iris$Sepal.Length[iris$Species == "versicolor"],
+            y = iris$Sepal.Length[iris$Species == "setosa"])
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing two paired groups:
+\vfill
+The paired \emph{t}-test (parametric):
+<<>>=
+t.test(x = iris$Sepal.Length[iris$Species == "versicolor"],
+       y = iris$Petal.Length[iris$Species == "versicolor"], paired = TRUE)
+@
+\vfill
+\pause
+The Wilcox-signed-rank test (non-parametric):
+<<>>=
+wilcox.test(x = iris$Sepal.Length[iris$Species == "versicolor"],
+            y = iris$Petal.Length[iris$Species == "versicolor"], paired = TRUE)
+@
+\vfill
+\pause
+Note: if you forget to specify that the data are \texttt{paired}, it won't run the right test!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing more than 2 unpaired groups:
+\vfill
+The Kurskal-Wallis test (non-parametric):
+<<>>=
+kruskal.test(formula = Petal.Length ~ Species, data = iris)
+@
+\vfill
+\pause
+The ``\emph{test for equal means in a one-way layout}'' (parametric):
+<<>>=
+oneway.test(formula = Petal.Length ~ Species, data = iris)
+@
+\vfill
+\pause
+Note: linear models for a more sofisticated parametric alternative (see later).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing more than 2 paired groups:
+\vfill
+The Quade test (non-parametric):
+<<>>=
+quade.test(y = as.matrix(iris[, c("Petal.Length", "Sepal.Length", "Petal.Width")]))
+@
+\vfill
+\pause
+The Friedman test (non-parametric):
+<<>>=
+friedman.test(y = as.matrix(iris[, c("Petal.Length", "Sepal.Length", "Petal.Width")]))
+@
+\vfill
+\pause
+Note: linear mixed-effects models for parametric alternative.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing variances between groups:
+\vfill
+The F-test (parametric):
+<<>>=
+var.test(x = iris$Sepal.Length, y = iris$Petal.Length) ## max 2 groups, must be normaly distributed
+@
+\vfill
+\pause
+The Bartlett test (parametric):
+<<>>=
+bartlett.test(formula = Sepal.Length ~ Species, data = iris)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing variances between groups (continues):
+\vfill
+The Fligner test (non-parametric):
+<<>>=
+fligner.test(formula = Sepal.Length ~ Species, data = iris)
+@
+\vfill
+\pause
+Note: also \texttt{ansari.test()} and \texttt{mood.test()} for rank-based two-sample test for a difference in scale parameters.
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing 2 distributions:
+\vfill
+The Kolmogorov-Smirnov test (non-parametric):
+<<>>=
+ks.test(x = iris$Sepal.Length, y = iris$Petal.Length)
+@
+\vfill
+\pause
+The Shapiro-Wilk Normality test (non-parametric):
+<<>>=
+set.seed(2L)
+shapiro.test(x = rnorm(100))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing a binomial outcome to a probability (exact):
+\vfill
+The exact binomial test:
+<<>>=
+binom.test(x = 8, n = 10, p = 0.5)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) for comparing two independent proportions:
+\vfill
+The ``\emph{test of equal proportions}'':
+<<>>=
+prop.test(x = cbind(success = c(8, 4), failure = c(2, 6)))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
+E.g. test(s) of independence:
+\vfill
+The Fisher exact test:
+<<fisher>>=
+fisher.test(WorldPhones, simulate.p.value = TRUE, B = 100) ## simulation needed as too large for exact test!
+@
+\vfill
+\pause
+The Chi-squared test for independence:
+<<>>=
+chisq.test(WorldPhones)
+@
+\vfill
+\pause
+Note: the McNemar test is also available when the same subjects are measured in two conditions (see \texttt{?mcnemar.test}).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Packages provide even more simple statistical tests!}
+Some examples:
+\begin{itemize}
+\item \texttt{coin} provides permutation implementations of many tests.
+\item \texttt{nsm3} provides tons of non-parametric tests.
+\item \texttt{PMCMR} provides post-hoc tests for non-parametric tests.
+\item \texttt{nortest} provides several tests for normality.
+\end{itemize}
+\vfill
+Note: this list is only a very small subset!!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{A note before we continue}
+\r \ primary goal is to perform statistical analyses. So among the many thousands of
+packages many focus on statistical tools and by no means I will try to cover or even
+summarise this diversity. I have chosen to only illustrate some of the tools I know and that I have used to show you how to do some statistics in \r. Since time is limited, I will not for example illustrate any Bayesian methods, nor machine learning methods, although some good packages exist for that too!
+\end{frame}
+
+
+\section{Principal Component Analysis}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{PCA without packages}
+<<>>=
+pca_US <- prcomp(~ Murder + Assault + Rape, data = USArrests, scale. = TRUE)
+biplot(x = pca_US)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{PCA without packages}
+<<>>=
+summary(pca_US)
+@
+\vfill
+\pause
+<<>>=
+PC1 <- pca_US$x[, "PC1"]
+mean(PC1)
+sd(PC1)
+@
+\vfill
+<<>>=
+PC2 <- pca_US$x[, "PC2"]
+mean(PC2)
+sd(PC2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{PCA with \texttt{ade4}}
+<<>>=
+library(ade4)
+
+pca_US_ade4 <- dudi.pca(df = USArrests[, -3], scale = TRUE, scannf = FALSE)
+
+summary(pca_US_ade4)
+@
+\vfill
+\pause
+<<>>=
+USArrests$Vote <- rep("Trump", times = 50)
+Clinton_state <- c("California", "Colorado", "Connecticut", "Delaware", "Hawaii",
+                    "Illinois", "Maine", "Maryland", "Massachusetts", "Minnesota", "Nevada",
+                    "New Hampshire", "New Jersey","New Mexico", "New York", "Oregon",
+                    "Rhode Island", "Vermont", "Virginia", "Washington")
+USArrests[Clinton_state, "Vote"] <- "Clinton"
+USArrests$Vote <- factor(USArrests$Vote)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{PCA with \texttt{ade4}}
+<<out.width="0.85\\linewidth", fig.width=12>>=
+par(mfrow = c(1, 2))
+s.corcircle(dfxy = pca_US_ade4$c1)
+s.class(dfxy = pca_US_ade4$l1, fac = USArrests$Vote, col = c("blue", "red"))
+s.label(dfxy = pca_US_ade4$l1, label = rownames(USArrests), add.plot = TRUE, clabel = 0.5)
+@
+\vfill
+\pause
+Note: using \texttt{co} \& \texttt{li} instead of \texttt{c1} \& \texttt{l1} would respect the relative contribution of each principal component according to the variance they capture.
+\end{frame}
+
+
+\section{Linear Models}
+\subsection{introduction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{What is a linear model?}
@@ -145,8 +448,7 @@ any(is.na(iris))
 \end{frame}
 
 
-\section{Linear Models}
-\subsection{introduction \& inputs}
+\subsection{inputs}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
