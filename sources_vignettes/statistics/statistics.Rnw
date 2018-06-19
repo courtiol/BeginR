@@ -11,7 +11,7 @@
 \def\r{{\bf R}}
 \def\s{{\bf S}}
 
-\title{Getting to fit models in \r}
+\title{Getting to do statistics in \r}
 \author[Alexandre Courtiol]{Alexandre Courtiol}
 \institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
 \titlegraphic{
@@ -60,7 +60,7 @@ opts_chunk$set("size" = "scriptsize",
 % first slide of the doc
 \maketitle
 
-\section{Introduction}
+\section{Linear models}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{What is a linear model?}
@@ -1232,15 +1232,6 @@ head(TitanicSurvival)
 \end{frame}
 
 
-\section{Mixed Models}
-
-\subsection{introduction \& inputs}
-\subsection{outputs}
-\subsection{tests}
-\subsection{predictions}
-\subsection{assumptions}
-\subsection{advanced MM}
-
-\section{General Additive (Mixed) Models}
+\section{Other linear models}
 
 \end{document}
