@@ -1740,27 +1740,29 @@ The \texttt{tidyverse} package \texttt{tidyr} offers solutions:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{From wide to long}
 << reshaping data frame, echo = FALSE>>=
-iris[c(1:5, 51:55), ] %>% select(Species, Sepal.Length) %>% mutate(day = paste0("day_", rep(1:5, 2))) %>% spread(., day, Sepal.Length) -> my_df1
-my_df1 %>% gather("day", "Sepal.Length", -Species) %>% separate(day, c("obs", "day")) %>% select(-obs) %>% mutate(day = as.numeric(day)) %>% arrange(Species, day) -> my_df2
+iris[c(1:5, 51:55), ] %>% select(Species, Sepal.Length) %>% mutate(day = paste0("day_", rep(1:5, 2))) %>% spread(., day, Sepal.Length) -> iris_wide
+iris_wide %>% gather("day", "Sepal.Length", -Species) %>% separate(day, c("obs", "day")) %>% select(-obs) %>% mutate(day = as.numeric(day)) %>% arrange(Species, day) -> iris_long
+#save(iris_wide, file = "./data/iris_wide.rda", compress = "xz")
+#save(iris_long, file = "./data/iris_long.rda", compress = "xz")
 @
 \vfill
 \begin{columns}[t]
 \column{0.33\linewidth}
 you have:
 << reshaping df1, echo = T>>=
-my_df1
+iris_wide ## note: stored in BeginR!
 @
 \vfill
 you want:
 << reshaping df2, echo = T>>=
-my_df2
+iris_long ## note: stored in BeginR!
 @
 \vfill
 \pause
 \column{0.57\linewidth}
 you do:
  << reshaping solution, echo = T>>=
-my_df1 %>%
+iris_wide %>%
     gather(key = "day", value = "Sepal.Length", -Species) %>% ## after, optional
     separate(day, c("obs", "day")) %>%
     select(-obs) %>%
