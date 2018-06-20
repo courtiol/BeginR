@@ -400,7 +400,7 @@ You can also add additional points to the plot:
 versicolor <- subset(iris, Species == "versicolor")
 setosa     <- subset(iris, Species == "setosa")
 plot(Petal.Length ~ Petal.Width, data = versicolor, pch = 21, bg = "blue", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
-points(Petal.Length ~ Petal.Width, data = setosa, pch = 21, bg = "red", xlim = range(iris$Petal.Width), ylim = range(iris$Petal.Length))
+points(Petal.Length ~ Petal.Width, data = setosa, pch = 21, bg = "red")
 @
 \vfill
 Note: You need to make sure the axis limits are the same!
@@ -423,11 +423,12 @@ text(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, labels = "Max"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{Traditional graphics: scatter plots}
 Including an interval around a prediction line requires you to build a polygon:
-<<scatter_base_9, out.height="0.3\\linewidth", out.width="0.3\\linewidth">>=
+<<scatter_base_9, out.height="0.3\\linewidth", out.width="0.3\\linewidth", message = FALSE>>=
 test_mod <- lm(Petal.Length ~ Petal.Width, data = iris)
 newdat   <- data.frame(Petal.Width = seq(0, 3, length.out = 100))
 pred     <- predict(test_mod, newdata = newdat, interval = "confidence")
 
+library(scales) ## for transparency
 plot(Petal.Length ~ Petal.Width, data = iris, pch = 21, bg = "grey")
 polygon(x = c(newdat$Petal.Width, rev(newdat$Petal.Width)),
         y = c(pred[, "lwr"], rev(pred[, "upr"])),
@@ -1039,8 +1040,8 @@ You can also add lines to the plot:
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
   geom_point(shape = 21, size = 3) +
   theme(legend.position = "none") +
-  geom_hline(yintercept = mean(x = iris$Petal.Length), lty = 3) +
-  geom_vline(xintercept = mean(x = iris$Petal.Width), lty = 2) +
+  geom_hline(mapping = aes(yintercept = mean(Petal.Length)), lty = 3) +
+  geom_vline(mapping = aes(xintercept = mean(Petal.Width)), lty = 2) +
   geom_abline(intercept = 1.084, slope = 2.23, lty = 1)
 @
 \end{frame}
@@ -1070,12 +1071,13 @@ max.value <- iris[iris$Petal.Length == max(iris$Petal.Length), ]
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
   geom_point(shape = 21, size = 3) +
   theme(legend.position = "none") +
-  geom_segment(aes(x = max.value$Petal.Width - 0.75,
-                   xend = max.value$Petal.Width,
-                   y = max.value$Petal.Length,
-                   yend = max.value$Petal.Length), size = 1,
-               arrow = arrow(length = unit(0.5, "cm"))) +
-  geom_text(mapping = aes(x = max.value$Petal.Width - 0.9, y = max.value$Petal.Length, label = "Max"))
+  geom_segment(data = max.value, aes(x = Petal.Width - 0.75,
+                                     xend = Petal.Width,
+                                     y = Petal.Length,
+                                     yend = Petal.Length),
+               size = 1, arrow = arrow(length = unit(0.5, "cm"))) +
+  geom_text(data = max.value, mapping = aes(x = Petal.Width - 0.9,
+                                            y = Petal.Length, label = "Max"))
 @
 \end{frame}
 
@@ -1090,7 +1092,7 @@ pred     <- predict(object = test_mod, newdata = newdat, interval = "confidence"
 
 ggplot() +
   geom_point(data = iris,    mapping = aes(x = Petal.Width, y = Petal.Length), fill = "grey", shape = 21, size = 3) +
-  geom_ribbon(data = newdat, mapping = aes(x = Petal.Width, ymin = pred[, 2], ymax = pred[, 3]), fill = "purple", alpha = 0.5) +
+  geom_ribbon(data = cbind(newdat, pred), mapping = aes(x = Petal.Width, ymin = lwr, ymax = upr), fill = "purple", alpha = 0.5) +
   geom_abline(intercept = coef(test_mod)[1], slope = coef(test_mod)[2], lty = 2)
 @
 \vfill
@@ -1288,8 +1290,7 @@ You can change size and colour of axis text easily:
 <<aes_gg_5, out.width = "0.3\\linewidth", out.height = "0.3\\linewidth",>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
-  xlab("Petal Width (cm)") +
-  ylab("Petal Length (cm") +
+  labs(x = "Petal Width (cm)", y = "Petal Length (cm)") +
   theme(axis.text = element_text(size = 12, colour = "red"), axis.title = element_text(size = 12))
 @
 \vfill
@@ -1304,7 +1305,7 @@ Combining plots is less straightforward in \texttt{ggplot2}\dots
 You need to use an additional package:
 <<aes_gg_6, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10, message = FALSE>>=
 scatter <- ggplot(iris, mapping = aes(x = Petal.Width, y = Petal.Length)) + geom_point() +
-  xlab("Petal Width (cm)") + ylab("Petal Length (cm")
+  labs(x = "Petal Width (cm)", y = "Petal Length (cm)")
 
 box     <- ggplot(iris, mapping = aes(x = Species, y = Petal.Length)) + geom_boxplot()
 
@@ -1320,10 +1321,12 @@ Although combining multiple plots is cumbersome, there is an inbuilt function to
 <<aes_gg_7, out.width = "0.9\\linewidth", out.height = "0.3\\linewidth", fig.height = 5, fig.width = 15>>=
 ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length, fill = Species)) +
   geom_point(shape = 21, colour = "black", size = 3) +
-  xlab("Petal Width (cm)") +
-  ylab("Petal Length (cm)") +
+  labs(x = "Petal Width (cm)", y = "Petal Length (cm)") +
   facet_wrap(~ Species)
 @
+\vfill
+\pause
+Challenge: have a second look at the relationship between the happiness and the price of present using the dataset \texttt{Surprise}.
 \end{frame}
 
 
@@ -1333,8 +1336,7 @@ Unlike traditional graphics, in \texttt{ggplot2} you can easily change the typef
 <<aes_gg_8, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
 scatter <- ggplot(data = iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
-  xlab("Petal Width (cm)") +
-  ylab("Petal Length (cm") +
+  labs(x = "Petal Width (cm)", y = "Petal Length (cm)") +
   theme(axis.text = element_text(size = 12, colour = "red", family = "serif"), axis.title = element_text(size = 12, family = "mono"))
 
 box     <- ggplot(iris, mapping = aes(x = Species, y = Petal.Length)) +
@@ -1353,7 +1355,7 @@ foo <- round(pi, 3)
 ggplot(iris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point() +
   labs(x = expression(beta^2 + 2[alpha]), y = expression(paste(italic("bla bla bla"))), title = paste("Plot number", foo)) +
-  annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12) + ## requires font with unicode installed (try it!)
+  annotate("text", x = c(0.4, 0.5), y = c(4, 4), label = c("\u2640", "\u2642"), size = 12) + ## requires font with unicode installed!
   theme(plot.title = element_text(hjust = 0.5, size = 20),
         axis.title = element_text(size = 20))
 @
@@ -1365,8 +1367,7 @@ Plot margins are also controlled in theme of each plot individually:
 <<aes_gg_10, out.width = "0.56\\linewidth", out.height = "0.28\\linewidth", fig.height = 5, fig.width = 10>>=
 scatter <- ggplot(data = iris, aes(x = Petal.Width, y = Petal.Length)) +
            geom_point() +
-           xlab("Petal Width (cm)") +
-           ylab("Petal Length (cm") +
+           labs(x = "Petal Width (cm)", y = "Petal Length (cm)") +
            theme(axis.text = element_text(size = 12, colour = "red"),
                  axis.title = element_text(size = 12),
                  plot.margin = unit(c(30, 4, 1, 1), "mm"))
@@ -1484,7 +1485,7 @@ map_us <- get_map(location = c(lon = 13.349342, lat = 52.500033), source = "goog
 ggmap(map_us, extent = "panel") +
   geom_point(mapping = aes(x = 13.349342, y = 52.500033), colour = "white", size = 60, shape = 21) +
   geom_text(mapping = aes(x = 13.349342, y = 52.500033), label = "ALEX IS\n HERE", colour = "white", size = 8) +
-  xlab(label = "longitude") + ylab(label = "lattitude")
+  labs(x = "longitude", y = "lattitude")
 @
 \vfill
 Note: this package does not seem very well maintained\dots
