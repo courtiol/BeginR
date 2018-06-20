@@ -67,11 +67,13 @@ opts_chunk$set("size" = "scriptsize",
 \begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
 E.g. the usual correlation tests:
 \vfill
+Just the correlation coefficient:
 <<>>=
 cor(x = iris$Sepal.Length, y = iris$Sepal.Width, method = "pearson")
 @
 \vfill
 \pause
+Or the actual test:
 <<>>=
 cor.test(x = iris$Sepal.Length, y = iris$Sepal.Width, method = "pearson")
 @
@@ -83,8 +85,9 @@ Note: two other \texttt{method}s are available: ``\texttt{spearman}'' \& ```\tex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{\r \ provides many statistical tests out of the box}
-Many (not all) tests allow for the use of a formula-based syntax:
+Note: many (not all) tests allow for the use of both standard and formula-based syntax:
 \vfill
+E.g.
 <<>>=
 cor.test(formula = ~ Sepal.Length + Sepal.Width, data = iris)
 @
@@ -153,7 +156,7 @@ oneway.test(formula = Petal.Length ~ Species, data = iris)
 @
 \vfill
 \pause
-Note: linear models for a more sofisticated parametric alternative (see later).
+Note: linear models allow for more sofisticated parametric alternatives (see later).
 \end{frame}
 
 
@@ -173,7 +176,7 @@ friedman.test(y = as.matrix(iris[, c("Petal.Length", "Sepal.Length", "Petal.Widt
 @
 \vfill
 \pause
-Note: linear mixed-effects models for parametric alternative.
+Note: linear mixed-effects models allow for more sofisticated parametric alternatives.
 \end{frame}
 
 
@@ -234,7 +237,7 @@ E.g. test(s) for comparing a binomial outcome to a probability (exact):
 \vfill
 The exact binomial test:
 <<>>=
-binom.test(x = 8, n = 10, p = 0.5)
+binom.test(x = 8, n = 10, p = 0.5) ## 8 heads out of 10 coin throws -> is the coin biased?
 @
 \end{frame}
 
@@ -245,7 +248,7 @@ E.g. test(s) for comparing two independent proportions:
 \vfill
 The ``\emph{test of equal proportions}'':
 <<>>=
-prop.test(x = cbind(success = c(8, 4), failure = c(2, 6)))
+prop.test(x = cbind(success = c(8, 4), failure = c(2, 6))) ## 8 heads out of 10 for one coin, 4 out of 10 for the other, do they differ?
 @
 \end{frame}
 
@@ -256,6 +259,7 @@ E.g. test(s) of independence:
 \vfill
 The Fisher exact test:
 <<fisher>>=
+## check WorldPhones before running the code!
 fisher.test(WorldPhones, simulate.p.value = TRUE, B = 100) ## simulation needed as too large for exact test!
 @
 \vfill
@@ -271,7 +275,7 @@ Note: the McNemar test is also available when the same subjects are measured in 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Packages provide even more simple statistical tests!}
+\begin{frame}[fragile]{Many more simple statistical tests are available in \R \ packages}
 Some examples:
 \begin{itemize}
 \item \texttt{coin} provides permutation implementations of many tests.
@@ -286,9 +290,13 @@ Note: this list is only a very small subset!!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{A note before we continue}
-\r \ primary goal is to perform statistical analyses. So among the many thousands of
+\r's original primary goal was to perform statistical analyses. So among the many thousands of
 packages many focus on statistical tools and by no means I will try to cover or even
-summarise this diversity. I have chosen to only illustrate some of the tools I know and that I have used to show you how to do some statistics in \r. Since time is limited, I will not for example illustrate any Bayesian methods, nor machine learning methods, although some good packages exist for that too!
+summarise this diversity.\\
+\vspace{1cm}
+I have chosen to only illustrate some of the tools I know and that I have used to show you how to do some statistics in \r.\\
+\vspace{1cm}
+Since time is limited, I will not for example illustrate any Bayesian methods, nor machine learning methods, although some good packages exist for that too!
 \end{frame}
 
 
@@ -297,51 +305,59 @@ summarise this diversity. I have chosen to only illustrate some of the tools I k
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{PCA without packages}
+PCA is a traditional method for dimentionality reduction:
 <<>>=
-pca_US <- prcomp(~ Murder + Assault + Rape, data = USArrests, scale. = TRUE)
-biplot(x = pca_US)
+head(USArrests)  ## original coordinates
+@
+\vfill
+\pause
+<<>>=
+pca_US <- prcomp(~ Murder + Assault + Rape, data = USArrests, scale. = TRUE) ## scaling is not the default (but should be)
+@
+\vfill
+\pause
+<<>>=
+head(pca_US$x)  ## new coordinates
+@
+\vfill
+\pause
+<<>>=
+pca_US$rotation ## coefficients applied to original coordinate (after z-scoring them) to obtain the new coordinates by linear combination
 @
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{PCA without packages}
+The first axis alone captures more than 78\% of the total variation in the data:
 <<>>=
 summary(pca_US)
 @
 \vfill
 \pause
 <<>>=
-PC1 <- pca_US$x[, "PC1"]
-mean(PC1)
-sd(PC1)
-@
-\vfill
-<<>>=
-PC2 <- pca_US$x[, "PC2"]
-mean(PC2)
-sd(PC2)
+biplot(x = pca_US)
 @
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{PCA with \texttt{ade4}}
+\texttt{ade4} is a package with several multivariate tools, including the PCA:
 <<>>=
 library(ade4)
-
 pca_US_ade4 <- dudi.pca(df = USArrests[, -3], scale = TRUE, scannf = FALSE)
 
 summary(pca_US_ade4)
 @
 \vfill
 \pause
+Let us add voting data to this dataset:
 <<>>=
 USArrests$Vote <- rep("Trump", times = 50)
-Clinton_state <- c("California", "Colorado", "Connecticut", "Delaware", "Hawaii",
-                    "Illinois", "Maine", "Maryland", "Massachusetts", "Minnesota", "Nevada",
-                    "New Hampshire", "New Jersey","New Mexico", "New York", "Oregon",
-                    "Rhode Island", "Vermont", "Virginia", "Washington")
+Clinton_state <- c("California", "Colorado", "Connecticut", "Delaware", "Hawaii", "Illinois", "Maine", "Maryland", "Massachusetts",
+                   "Minnesota", "Nevada", "New Hampshire", "New Jersey","New Mexico", "New York", "Oregon", "Rhode Island", "Vermont",
+                   "Virginia", "Washington")
 USArrests[Clinton_state, "Vote"] <- "Clinton"
 USArrests$Vote <- factor(USArrests$Vote)
 @
@@ -350,6 +366,7 @@ USArrests$Vote <- factor(USArrests$Vote)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{PCA with \texttt{ade4}}
+The package allows a different kind of plot that is quite interesting:
 <<out.width="0.85\\linewidth", fig.width=12>>=
 par(mfrow = c(1, 2))
 s.corcircle(dfxy = pca_US_ade4$c1)
@@ -360,6 +377,15 @@ s.label(dfxy = pca_US_ade4$l1, label = rownames(USArrests), add.plot = TRUE, cla
 \pause
 Note: using \texttt{co} \& \texttt{li} instead of \texttt{c1} \& \texttt{l1} would respect the relative contribution of each principal component according to the variance they capture.
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Example of application of PCA: a revision of tiger taxonomy}
+\centering
+\includegraphics[height = 0.2\textheight]{../figures/tiger_title}\\
+\includegraphics[height = 0.7\textheight]{../figures/tiger}
+\end{frame}
+
 
 
 \section{Linear Models}
@@ -403,9 +429,9 @@ Models & Packages for fitting & Helper packages\\
 \hline
 LM & none; \texttt{spaMM} & \texttt{car}; \texttt{lmtest}; \texttt{visreg}\\
 GLM & none; \texttt{spaMM} & \texttt{car}; \texttt{DHARMa}; \texttt{visreg}\\
-LMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}\\
-GLMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}\\
-GAM & \texttt{mgcv} & \texttt{visreg}\\
+LMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}; \texttt{visreg}\\
+GLMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}; \texttt{visreg}\\
+GAM & \texttt{mgcv} & \texttt{DHARMa}; \texttt{visreg}\\
 GAMM & \texttt{mgcv} &\\
 \hline
 \end{tabular}
@@ -425,7 +451,7 @@ Note: those are my personal favorite ones, but they are plenty more out there.
 \includegraphics[height=4cm]{../figures/Wood}
 \end{center}
 \vfill
-Note: it is also useful to look at books not focussed on \r!
+Note: it is also useful to look at books focussed on statistics and not \r!
 \end{frame}
 
 
@@ -436,6 +462,7 @@ To maximize the chances of success prepare your data as follow:
 \item one row = one observation (if repeated measures, use several rows!)
 \item qualitative variables of class \texttt{factor} (check the levels, drop unused ones, set the reference properly)
 \item no \texttt{NA} (models can somewhat deal with them but it is a major source of headackes)
+\item data frames (i.e. object of class \texttt{data.frame}) and not tibbles (\texttt{tbl})
 \end{itemize}
 \vfill
 \pause
@@ -448,11 +475,11 @@ any(is.na(iris))
 \end{frame}
 
 
-\subsection{inputs}
+\subsection{traditional linear model (LM)}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t]{The linear model: specifications}
+\begin{frame}[t]{LM: notation}
 Simple notation:\\
 \vspace{1cm}
 $y_i = \hat{\beta_0} + \hat{\beta_1} \times x_{1,i} + \hat{\beta_2} \times x_{2,i} + \dots + \hat{\beta_p} \times x_{p,i} + \varepsilon_i$
@@ -472,7 +499,7 @@ $y_i = \hat{y_i} + \varepsilon_i$
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t]{The linear model: specifications}
+\begin{frame}[t]{LM: notation}
 Matrix notation:\\
 \vspace{1cm}
 $$
@@ -508,7 +535,7 @@ $\varepsilon = Y - \widehat{Y}$
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~ Petal.Width, data = iris)
@@ -537,7 +564,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  Species, data = iris)
@@ -562,7 +589,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width + Species, data = iris)
@@ -587,7 +614,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width + Species + Petal.Width:Species, data = iris)
@@ -612,7 +639,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width*Species, data = iris)
@@ -637,7 +664,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width/Species, data = iris)  ## dangerous
@@ -662,7 +689,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  1, data = iris)
@@ -687,7 +714,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: specifications}
+\begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
 mod <- lm(Petal.Length ~  ., data = iris)
@@ -712,7 +739,7 @@ head(model.matrix(mod))  ## the model matrix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The linear model: understanding the design matrix}
+\begin{frame}[fragile, t]{Understanding the design matrix}
 It is most important to understand the design matrix because the interpretation of the parameters depend on it!
 \vfill
 The design matrix depends on:
@@ -745,7 +772,7 @@ Note 2: contrasts do not alter predicted values and thus likelihood, AIC\dots
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The linear model: understanding the design matrix}
+\begin{frame}[fragile]{Understanding the design matrix}
 Challenge: find out whether these different representations of gender are equivalent or not?
 \vfill
 \begin{itemize}
@@ -761,9 +788,7 @@ Note: no need to fit a model, use the function \texttt{model.matrix()} with a fo
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{outputs}
-
-\begin{frame}[t, fragile]{Parameter estimates}
+\begin{frame}[t, fragile]{LM outputs: parameter estimates}
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width + Species, data = iris)
 @
@@ -782,7 +807,7 @@ coefficients(mod) ## or coef(mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Parameter estimates}
+\begin{frame}[t, fragile]{LM outputs: parameter estimates}
 <<>>=
 mod <- lm(Petal.Length ~  Petal.Width + Species, data = iris)
 @
@@ -810,7 +835,7 @@ Note: that reveals that there are much more information in the object \texttt{mo
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The model object}
+\begin{frame}[fragile]{LM outputs: the model object}
 The fitted model object is in fact a big list of class \texttt{"lm"}:
 <<>>=
 class(mod)
@@ -827,7 +852,7 @@ but it is safer to use extractors if they are available!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Example of other outputs}
+\begin{frame}[fragile]{LM: example of other outputs}
 There are quite a few extractors out there:
 <<>>=
 logLik(mod)
@@ -844,11 +869,8 @@ Note: the list will change depending on the packages that are attached to the \r
 \end{frame}
 
 
-\subsection{tests}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Testing coefficients}
+\begin{frame}[fragile, t]{LM tests: coefficients}
 For LM, simply use \texttt{summary()}:
 <<>>=
 summary(mod)
@@ -857,7 +879,7 @@ summary(mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Testing predictors}
+\begin{frame}[fragile, t]{LM tests: predictors}
 Don't use the default \texttt{anova()} function which perform type-I analysis-of-variance:
 <<>>=
 anova(mod)
@@ -875,7 +897,7 @@ Note: p-values are the same no matter the order of the predictors in the formula
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Testing the overall model}
+\begin{frame}[fragile, t]{LM tests: the overall model}
 Before looking at significance for estimates or predictor, always start by checking that your model fits the data better than a null model:
 \vfill
 <<>>=
@@ -889,11 +911,8 @@ Note 1: this was also given at the bottom of the summary table!\\
 Note 2: here using \texttt{anova()} is perfectly fine!
 \end{frame}
 
-
-\subsection{predictions}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Fitted values}
+\begin{frame}[fragile, t]{LM predictions: fitted values}
 You can easily obtain the prediction for your observation (i.e. fitted values):
 <<>>=
 fitted(mod)[1:39]
@@ -911,7 +930,7 @@ head(cbind("response" = model.response(model.frame(mod)),
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Plotting predictions: fast \& dirty}
+\begin{frame}[fragile, t]{LM predictions: fast and dirty plot}
 <<"fig.width" = 10, "out.width" = "0.7\\linewidth">>=
 library(visreg)
 par(mfrow = c(1, 2))
@@ -921,7 +940,7 @@ visreg(mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Plotting predictions: fast \& less dirty}
+\begin{frame}[fragile]{LM predictions: fast \& less dirty plot}
 <<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
 library(visreg)
 library(ggplot2)
@@ -934,7 +953,7 @@ Note: if you have different quantitative predictors you can specify the value fo
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Prediction by ``hand''}
+\begin{frame}[fragile, t]{LM predictions: by ``hand''}
 The most difficult step is to create the data frame defining the predictor values:
 <<message = FALSE>>=
 library(dplyr)
@@ -964,7 +983,7 @@ head(pred_mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Prediction by ``hand''}
+\begin{frame}[fragile, t]{LM predictions: by ``hand''}
 <<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
 data_for_plot <- cbind(pred_mod, data_for_predictions)
 ggplot(data = data_for_plot, mapping = aes(x = Petal.Width, y = fit, colour = Species)) +
@@ -977,10 +996,8 @@ ggplot(data = data_for_plot, mapping = aes(x = Petal.Width, y = fit, colour = Sp
 \end{frame}
 
 
-\subsection{assumptions}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Assumptions behind linear models}
+\begin{frame}[fragile]{LM assumptions: generalities}
 Model structure:
 \begin{itemize}
 \item linearity
@@ -999,7 +1016,7 @@ Errors:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: linearity}
+\begin{frame}[t, fragile]{LM assumptions: linearity}
 Departure from linearity can originate from a multitude of reasons and can create all kinds of problems.
 \vfill
 \pause
@@ -1035,7 +1052,7 @@ Quiz: can you express the following models as LM?
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: lack of perfect multicollinearity}
+\begin{frame}[t, fragile]{LM assumptions: lack of perfect multicollinearity}
 The number of parameters to be estimated must be equal to the rank of the design matrix.
 \vfill
 Caused by having less data than parameters or when there is linear dependence between the column vectors of the design matrix. In such case, some parameters cannot be computed.
@@ -1067,7 +1084,7 @@ Note: strong albeit imperfect collinearity is not great either; possible check c
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: predictor variables have fixed values}
+\begin{frame}[t, fragile]{LM assumptions: predictor variables have fixed values}
 The dependent variable are represented by fixed values.
 \vfill
 The presence of measurement errors is the main cause of violation. Violation can trigger both estimates and tests to be biased.
@@ -1096,7 +1113,7 @@ Alternatives:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: independence (no serial autocorrelation)}
+\begin{frame}[t, fragile]{LM assumptions: independence (no serial autocorrelation)}
 A lack of independence (serial autocorrelation) in the residuals can appear if there is a departure from linearity, if data have been sampled non-randomly (e.g. spatial or temporal series), or if there is an overarching structure (e.g. repeated measures within individuals, families, species, ...). Lack of independence increases the risk of false positive (sometimes a lot).\\
 \vspace{1em}
 \pause
@@ -1108,7 +1125,7 @@ plot(mod, which = 1)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: independence (no serial autocorrelation)}
+\begin{frame}[t, fragile]{LM assumptions: independence (no serial autocorrelation)}
 A lack of independence (serial autocorrelation) in the residuals can appear if there is a departure from linearity, if data have been sampled non-randomly (e.g. spatial or temporal series), or if there is an overarching structure (e.g. repeated measures within individuals, families, species, ...). Lack of independence increases the risk of false positive (sometimes a lot).\\
 \vspace{1em}
 Diagnostic by Durbin-Watson test:
@@ -1134,7 +1151,7 @@ Alternatives:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: constant variance (homoscedasticity)}
+\begin{frame}[t, fragile]{LM assumptions: constant variance (homoscedasticity)}
 Heteros(c/k)edasticity can emerge when there is a mean - variance relationship, when there is non independence between observations, when reaction norm changes acording to the treatement. It can create both false positives and false negative.
 \vfill
 \pause
@@ -1146,7 +1163,7 @@ plot(mod, which = 3)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: constant variance (homoscedasticity)}
+\begin{frame}[t, fragile]{LM assumptions: constant variance (homoscedasticity)}
 Heteros(c/k)edasticity can emerge when there is a mean - variance relationship, when there is non independence between observations, when reaction norm changes acording to the treatement. It can create both false positives and false negative.
 \vfill
 Diagnostic by Breusch-Pagan test:
@@ -1175,7 +1192,7 @@ Alternatives:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: normality}
+\begin{frame}[t, fragile]{LM assumptions: normality}
 The distribution of residuals can be skewed, this is often caused by the presence of outliers, and/or when the process generating the data is very different from normal (e.g. Poisson, Binomial...).
 \vfill
 \pause
@@ -1187,7 +1204,7 @@ plot(mod, which = 2)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: normality}
+\begin{frame}[t, fragile]{LM assumptions: normality}
 The distribution of residuals can be skewed, this is often caused by the presence of outliers, and/or when the process generating the data is very different from normal (e.g. Poisson, Binomial...).
 \vfill
 Diagnostic by test (many test are possible):
@@ -1211,7 +1228,7 @@ Alternatives:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: simple glimpse}
+\begin{frame}[t, fragile]{LM assumptions: simple glimpse}
 You can check all assumptions about the erros at once:
 \vfill
 <<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.4\\linewidth", "out.height" = "0.4\\linewidth">>=
@@ -1222,7 +1239,7 @@ plot(mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: outliers}
+\begin{frame}[t, fragile]{LM assumptions: outliers}
 There is a powerful function in \r:
 <<>>=
 influence.measures(mod)
@@ -1231,7 +1248,7 @@ influence.measures(mod)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Assumptions: outliers}
+\begin{frame}[fragile]{LM assumptions: outliers}
 Interpretation of the output from \texttt{influence.measures(mod)}:
 \vfill
 \begin{small}
@@ -1256,9 +1273,9 @@ abbreviate(stats:::variable.names.lm(mod))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: outliers}
+\begin{frame}[t, fragile]{LM assumptions: outliers}
 There are also plotting possibilitites:
-<<>>=
+<<"fig.width" = 12, "out.width" = "0.9\\linewidth">>=
 par(mfrow = c(1, 3))
 plot(mod, which = 4:6)
 @
@@ -1266,7 +1283,7 @@ plot(mod, which = 4:6)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: simple glimpse at residuals}
+\begin{frame}[t, fragile]{LM assumptions: simple glimpse at residuals}
 What would it look like if it was perfect?
 \vfill
 <<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.4\\linewidth", "out.height" = "0.4\\linewidth">>=
@@ -1279,7 +1296,7 @@ plot(mod_perfect)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: fixing iris}
+\begin{frame}[t, fragile]{LM assumptions: fixing iris?}
 Fixing attempt:
 \vfill
 <<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.4\\linewidth", "out.height" = "0.4\\linewidth">>=
@@ -1293,10 +1310,10 @@ plot(mod_bc)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: fixing iris}
+\begin{frame}[t, fragile]{LM assumptions: fixing iris?}
 Plotting predictions:
 \vfill
-<<>>=
+<<"fig.width" = 7, out.width = "0.5\\linewidth">>=
 visreg(fit = mod_bc, xvar = "Petal.Width", by = "Species", overlay = TRUE, gg = TRUE) +
   theme_classic()
 @
@@ -1306,23 +1323,18 @@ Note: that is not very useful because it is on the BoxCoxed scale!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t, fragile]{Assumptions: fixing iris}
+\begin{frame}[t, fragile]{LM assumptions: fixing iris?}
 Plotting predictions:
 \vfill
-<<>>=
+<<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
 visreg(fit = mod_bc, xvar = "Petal.Width", by = "Species", overlay = TRUE, gg = TRUE,
        trans = function(x) bcnPowerInverse(x, lambda = bc$lambda, gamma = 0), partial = TRUE) +
   theme_classic()
 @
-\vfill
-Note: that is not very useful because it is on the BoxCoxed scale!
 \end{frame}
 
 
-\section{Generalised Linear Models}
-
-\subsection{introduction \& inputs}
-
+\subsection{generalised linear models (GLM)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The generalised linear model: what for?}
@@ -1460,9 +1472,6 @@ Note: you can use these functions to better understand GLM or when you need them
 \end{frame}
 
 
-\subsection{outputs}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
 <<>>=
@@ -1514,14 +1523,6 @@ exp(coef(mod_challenger_binom)["temp"])
 Every decrease by one degree increases the odd of failure for exactly one oring by \Sexpr{round(1/exp(coef(mod_challenger_binom)["temp"]), 1)} time!
 \end{frame}
 
-
-
-
-\subsection{tests}
-\subsection{predictions}
-\subsection{assumptions}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{The generalised linear model: challenge}
 Try to understand what influenced survival (i.e. access to lifeboats) during the Titanic disaster.
@@ -1534,6 +1535,6 @@ head(TitanicSurvival)
 \end{frame}
 
 
-\section{Other linear models}
+\subsection{other linear models}
 
 \end{document}
