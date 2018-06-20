@@ -22,6 +22,7 @@ Imports:
   pryr,
   R6,
   Rcpp,
+  scales,
   spaMM,
   tidyverse,
   utils,
