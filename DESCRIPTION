@@ -10,6 +10,7 @@ Description: An introductory course about R.
 Depends: R (>= 3.0)
 Imports:
   ade4,
+  brglm2,
   car,
   carData,
   ggmap,
@@ -18,8 +19,10 @@ Imports:
   lattice,
   lmtest,
   mosaic,
+  nlme,
   profvis,
   pryr,
+  pscl,
   R6,
   Rcpp,
   scales,
