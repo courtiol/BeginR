@@ -19,6 +19,7 @@ Imports:
   lattice,
   lmtest,
   mosaic,
+  nadiv,
   nlme,
   profvis,
   pryr,
