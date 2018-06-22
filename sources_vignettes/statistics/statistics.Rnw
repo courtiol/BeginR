@@ -3,6 +3,7 @@
 \usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
 \usepackage{amsmath, amssymb, lmodern} % nice T1 compatible fonts
 \usepackage[UKenglish]{babel}
+\usepackage{graphicx} % for reflectbox
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
 
@@ -30,7 +31,7 @@
 
 \setlength{\topsep}{1pt}%space between input and output
 <<echo = FALSE, message = FALSE>>=
-options(width = 120)
+options(width = 140)
 library(knitr)
 library(BeginR)
 opts_chunk$set("size" = "scriptsize",
@@ -79,7 +80,7 @@ cor.test(x = iris$Sepal.Length, y = iris$Sepal.Width, method = "pearson")
 @
 \vfill
 \pause
-Note: two other \texttt{method}s are available: ``\texttt{spearman}'' \& ```\texttt{kendall}''.
+Note: two other \texttt{method}s are available: ``\texttt{spearman}'' \& ``\texttt{kendall}''.
 \end{frame}
 
 
@@ -427,8 +428,8 @@ For now, no other software seems to be remotely as good (prognostic: only \textt
 \hline
 Models & Packages for fitting & Helper packages\\
 \hline
-LM & none; \texttt{spaMM} & \texttt{car}; \texttt{lmtest}; \texttt{visreg}\\
-GLM & none; \texttt{spaMM} & \texttt{car}; \texttt{DHARMa}; \texttt{visreg}\\
+LM & \texttt{stats*}; \texttt{spaMM} & \texttt{car}; \texttt{lmtest}; \texttt{visreg}\\
+GLM & \texttt{stats*}; \texttt{spaMM}; \texttt{pscl} & \texttt{car}; \texttt{DHARMa}; \texttt{visreg}\\
 LMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}; \texttt{visreg}\\
 GLMM & \texttt{lme4}; \texttt{spaMM}; \texttt{glmmTMB} & \texttt{DHARMa}; \texttt{pbkrtest}; \texttt{visreg}\\
 GAM & \texttt{mgcv} & \texttt{DHARMa}; \texttt{visreg}\\
@@ -436,6 +437,8 @@ GAMM & \texttt{mgcv} &\\
 \hline
 \end{tabular}
 \end{center}
+\vfill
+* = included in any \r \ installation!
 \vfill
 Note: those are my personal favorite ones, but they are plenty more out there.
 \end{frame}
@@ -456,7 +459,7 @@ Note: it is also useful to look at books focussed on statistics and not \r!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Preparing data for (G)LM(M) \& GA(M)}
+\begin{frame}[fragile, t]{Preparing data for (G)LM(M)}
 To maximize the chances of success prepare your data as follow:
 \begin{itemize}
 \item one row = one observation (if repeated measures, use several rows!)
@@ -493,7 +496,7 @@ $y_i = \hat{y_i} + \varepsilon_i$
 \item $\hat{y_i}$ = the fitted values
 \item $x_{j,i}$ = constants derived from the predictors / explanatory variables / independent variables
 \item $\hat{\beta_j}$ = the (model parameter / regression coefficient) estimates
-\item $\varepsilon_i$ = the residuals (i.e. the estimates for the error which is Gaussian with constant variance)
+\item $\varepsilon_i$ = the residuals (i.e. the estimates for the error which is here Gaussian with constant variance)
 \end{itemize}
 \vfill
 \end{frame}
@@ -527,7 +530,7 @@ $\varepsilon = Y - \widehat{Y}$
 \pause
 \begin{itemize}
 \item $Y$ = the vector of observations
-\item $Y$ = the vector of fitted values
+\item $\widehat{Y}$ = the vector of fitted values
 \item $X$ = a matrix called the design matrix (or the model matrix)
 \item $\varepsilon$ = the vector of residuals
 \end{itemize}
@@ -548,17 +551,13 @@ formula(mod)  ## the formula
 \vfill
 \pause
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 \pause
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-\pause
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -575,15 +574,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -600,15 +596,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -625,15 +618,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -650,15 +640,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -667,7 +654,7 @@ head(model.matrix(mod))  ## the model matrix
 \begin{frame}[fragile, t]{LM: specifications}
 \r \ formula notation:\\
 <<>>=
-mod <- lm(Petal.Length ~  Petal.Width/Species, data = iris)  ## dangerous
+mod <- lm(Petal.Length ~  Petal.Width/Species, data = iris)  ## dangerous!!!
 @
 \vfill
 <<>>=
@@ -675,15 +662,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -700,15 +684,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), , drop = FALSE]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), , drop = FALSE]  ## the model matrix
 @
 \end{frame}
 
@@ -725,15 +706,12 @@ formula(mod)  ## the formula
 @
 \vfill
 <<>>=
-head(model_frame <- model.frame(mod))  ## the data used for the fit
+model_frame <- model.frame(mod)  ## the data used for the fit
+model_frame[c(1:2, 51:52, 101:102), ]
 @
 \vfill
 <<>>=
-head(model.response(model_frame))  ## the response variable
-@
-\vfill
-<<>>=
-head(model.matrix(mod))  ## the model matrix
+model.matrix(mod)[c(1:2, 51:52, 101:102), ]  ## the model matrix
 @
 \end{frame}
 
@@ -783,7 +761,7 @@ Challenge: find out whether these different representations of gender are equiva
 \item \texttt{TRUE} vs \texttt{FALSE}
 \end{itemize}
 \vfill
-Note: no need to fit a model, use the function \texttt{model.matrix()} with a formula!
+Note: no need to fit a model, you can use the function \texttt{model.matrix()} with a formula!
 \end{frame}
 
 
@@ -880,12 +858,12 @@ summary(mod)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{LM tests: predictors}
-Don't use the default \texttt{anova()} function which perform type-I analysis-of-variance:
+Don't use the default \texttt{anova()} function which performs type-I analysis-of-variance:
 <<>>=
 anova(mod)
 @
 \vfill
-Instead use the better function \texttt{Anova()} from the package \texttt{car} which perfroms type-II analysis-of-variance:
+Instead, better use the function \texttt{Anova()} from the package \texttt{car} which performs type-II analysis-of-variance:
 <<message = FALSE>>=
 library(car)
 Anova(mod)
@@ -1031,7 +1009,7 @@ Solutions:
 \begin{itemize}
 \item different model structure $\rightarrow$ change the formula
 \item transform one or several predictors (e.g. polynomials) $\rightarrow$ function \texttt{poly()}
-\item transform the response (e.g. log and power transformation) $\rightarrow$ function \texttt{powerTransform()} in \texttt{car} (see later)
+\item transform the response (e.g. log and power transformation) $\rightarrow$ function \texttt{powerTransform()} in \texttt{car}\\ (see later)
 \end{itemize}
 \vfill
 \pause
@@ -1079,7 +1057,19 @@ Alternatives:
 \end{itemize}
 \vfill
 \pause
-Note: strong albeit imperfect collinearity is not great either; possible check correlation between estimates ($\rightarrow$ \texttt{cov2cor(vcov(mod))}) and variance inflation factors ($\rightarrow$ \texttt{vif(mod)}).
+Note: strong albeit imperfect collinearity is not great either; check correlation between estimates ($\rightarrow$ \texttt{cov2cor(vcov(mod))}) and variance inflation factors ($\rightarrow$ \texttt{vif(mod)}).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t, fragile]{LM assumptions: lack of perfect multicollinearity}
+Example of perfect multicollinearity:
+<<>>=
+iris_silly <- iris
+iris_silly$Petal.Surface <-  iris_silly$Petal.Length*iris_silly$Petal.Width
+mod_silly <- lm(Sepal.Width ~ log(Petal.Length) + log(Petal.Width) + log(Petal.Surface), data = iris_silly)
+summary(mod_silly)
+@
 \end{frame}
 
 
@@ -1231,7 +1221,7 @@ Alternatives:
 \begin{frame}[t, fragile]{LM assumptions: simple glimpse}
 You can check all assumptions about the erros at once:
 \vfill
-<<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.4\\linewidth", "out.height" = "0.4\\linewidth">>=
+<<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.45\\linewidth", "out.height" = "0.45\\linewidth">>=
 par(mfrow = c(2, 2))
 plot(mod)
 @
@@ -1261,7 +1251,7 @@ Interpretation of the output from \texttt{influence.measures(mod)}:
 \item<3-> \texttt{cov.r} $\rightarrow$ extent to which the covariance matrix of parameter estimates changes if a given observation is dropped
 \item<4-> \texttt{cook.d} $\rightarrow$ $F$ statistics comparing simultaneously the changes in all estimates when the observation is dropped or not
 \item<5-> \texttt{hat} $\rightarrow$ diagonal element of the hat matrix (the hat values); extent to which an observation is unusual in terms of X values (leverage)
-\item<6-> \texttt{inf} $\rightarrow$ some overal add hoc receipe to spot influential observation (not to be taken too seriously)
+\item<6-> \texttt{inf} $\rightarrow$ some overall add hoc recipe to spot influential observations (not to be taken too seriously)
 \end{itemize}
 \end{small}
 \vfill
@@ -1287,7 +1277,7 @@ plot(mod, which = 4:6)
 What would it look like if it was perfect?
 \vfill
 <<"fig.width" = 7, "fig.height" = 7, "out.width" = "0.4\\linewidth", "out.height" = "0.4\\linewidth">>=
-iris$Fake.Petal.Length <- simulate(object = mod)[, 1]  ## redo it, it will change each time!
+iris$Fake.Petal.Length <- simulate(object = mod)[, 1]  ## if you rerun that, it will change each time!
 mod_perfect <- lm(Fake.Petal.Length ~  Petal.Width + Species, data = iris)
 par(mfrow = c(2, 2))
 plot(mod_perfect)
@@ -1337,7 +1327,7 @@ visreg(fit = mod_bc, xvar = "Petal.Width", by = "Species", overlay = TRUE, gg = 
 \subsection{generalised linear models (GLM)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{The generalised linear model: what for?}
+\begin{frame}{GLM: what for?}
 GLM are used for fitting data generating processes for which a relationship between mean and variance is expected.
 \vfill
 \pause
@@ -1350,7 +1340,7 @@ That includes the analysis of:
 \vspace{1em}
 \item Poisson processes (counts)
 \vspace{1em}
-\item negative binomail processes (counts)
+\item negative binomial processes (counts)
 \vspace{1em}
 \item variances (positive continuous)
 \end{itemize}
@@ -1359,7 +1349,7 @@ That includes the analysis of:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[t]{The generalised linear model: specifications}
+\begin{frame}[t]{GLM: notation}
 Definition:\\
 \vspace{1em}
 $\text{Y} = g^{-1}(\widehat{\eta})+ \varepsilon = g^{-1}(\text{X}\widehat{\beta}) + \varepsilon$
@@ -1391,7 +1381,7 @@ This is identical to the LM if:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The generalised linear model: the \texttt{Challenger} dataset}
+\begin{frame}[fragile, t]{The \texttt{Challenger} dataset}
 \begin{center}
 \includegraphics[height = 5cm]{../figures/Challenger}
 \end{center}
@@ -1399,12 +1389,12 @@ This is identical to the LM if:
 head(Challenger, n = 3L)
 @
 \vfill
-Note: we will study both the probability that one oring fails (binary event) or that at least one oring fails (binomial event) as a function of the temperature.
+Note: we will study both the probability that one O-ring fails (binary event) or that at least one O-ring fails (binomial event) as a function of the temperature and the leak-check pressure.
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The generalised linear model: the \texttt{VonBort} dataset}
+\begin{frame}[fragile, t]{The \texttt{VonBort} dataset}
 \begin{center}
 \includegraphics[height = 5cm]{../figures/prussians}
 \end{center}
@@ -1417,20 +1407,20 @@ Note: we will compare the number of deaths caused by horse (or mule) kicks betwe
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{The generalised linear model: specifications}
+\begin{frame}[fragile]{GLM: specifications}
 In \r \ notation:\\
 \vspace{1em}
 <<>>=
 Challenger$issue <- Challenger$oring_dt > 0
 
-mod_challenger_binar <- glm(issue ~ temp, family = binomial(link = "logit"), data = Challenger)
+mod_challenger_binar <- glm(issue ~ temp + psi, family = binomial(link = "logit"), data = Challenger)
 @
 \vspace{1em}
 \pause
 <<>>=
 Challenger$oring_ok <- Challenger$oring_tot - Challenger$oring_dt
 
-mod_challenger_binom <- glm(cbind(oring_dt, oring_ok) ~ temp, family = binomial(link = "logit"), data = Challenger)
+mod_challenger_binom <- glm(cbind(oring_dt, oring_ok) ~ temp + psi, family = binomial(link = "logit"), data = Challenger)
 @
 \vspace{1em}
 \pause
@@ -1441,7 +1431,7 @@ mod_horsekick <- glm(deaths ~ corps, family = poisson(link = "log"), data = VonB
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The generalised linear model: specifications}
+\begin{frame}[fragile, t]{GLM: specifications}
 The \texttt{family} object contains all kinds of useful information required for the fitting procedure:
 <<>>=
 names(binomial(link = "logit"))
@@ -1451,6 +1441,7 @@ names(binomial(link = "logit"))
 The link function:
 <<>>=
 probs <- seq(0.1, 0.9, by = 0.1)
+probs
 logits <- binomial(link = "logit")$linkfun(mu = probs)
 logits
 @
@@ -1473,7 +1464,7 @@ Note: you can use these functions to better understand GLM or when you need them
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+\begin{frame}[fragile, t]{GLM: outputs}
 <<>>=
 mod_challenger_binar
 confint(mod_challenger_binar)
@@ -1482,7 +1473,7 @@ confint(mod_challenger_binar)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+\begin{frame}[fragile, t]{GLM: outputs}
 <<>>=
 mod_challenger_binom
 confint(mod_challenger_binom)
@@ -1491,21 +1482,20 @@ confint(mod_challenger_binom)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The outputs are similar to those from \texttt{lm} fits!}
+\begin{frame}[fragile, t]{GLM: outputs}
 <<>>=
 mod_horsekick
 head(confint(mod_horsekick))
 @
 \vfill
 \pause
-Note: \alert{but the interpretation of the parameters is very different since they are expressed on the scale of the linear predictor!!}
+Note: \alert{but the interpretation of the parameters is very different since they are expressed on the scale of the linear predictor!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{Interpreting estimates}
+\begin{frame}[fragile, t]{GLM outputs: parameter estimates}
 There is no general receipe, it all depends on the link function used\dots
-\vfill
 \pause
 \begin{itemize}
 \item For logistic regressions (\texttt{link = "logit"}; not for all binomial models), use odd-ratios:
@@ -1514,17 +1504,587 @@ There is no general receipe, it all depends on the link function used\dots
 exp(coef(mod_challenger_binar)["temp"])
 1/exp(coef(mod_challenger_binar)["temp"])
 @
-Every decrease by one degree increases the odd of failure for at least one oring by \Sexpr{round(1/exp(coef(mod_challenger_binar)["temp"]), 1)} time!
+Every decrease by one degree increases the odd of failure for at least one O-ring by \Sexpr{round(1/exp(coef(mod_challenger_binar)["temp"]), 1)} time!
 \vfill
 <<>>=
 exp(coef(mod_challenger_binom)["temp"])
 1/exp(coef(mod_challenger_binom)["temp"])
 @
-Every decrease by one degree increases the odd of failure for exactly one oring by \Sexpr{round(1/exp(coef(mod_challenger_binom)["temp"]), 1)} time!
+Every decrease by one degree increases the odd of failure for exactly one O-ring by \Sexpr{round(1/exp(coef(mod_challenger_binom)["temp"]), 1)} time!
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile, t]{The generalised linear model: challenge}
+\begin{frame}[fragile, t]{GLM outputs: parameter estimates}
+There is no general receipe, it all depends on the link function used\dots
+\begin{itemize}
+\item For logistic regressions (\texttt{link = "logit"}; not for all binomial models), use odd-ratios.
+\item For Poisson regressions (\texttt{link = "log"}; not for all binomial models), use proportional increase:
+\vfill
+<<>>=
+exp(coef(mod_horsekick)["corpsXIV"])
+@
+The army corp XIV received 1.5 times more kicks than the corp G (reference).
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM tests: the overall model}
+<<>>=
+mod_challenger_binar_null <- glm(issue ~ 1, family = binomial(link = "logit"), data = Challenger)
+@
+\vspace{1em}
+<<>>=
+anova(mod_challenger_binar, mod_challenger_binar_null, test = "LRT")
+@
+\vfill
+\pause
+<<>>=
+mod_challenger_binom_null <- glm(cbind(oring_dt, oring_ok) ~ 1, family = binomial(link = "logit"), data = Challenger)
+@
+\vspace{1em}
+<<>>=
+anova(mod_challenger_binom, mod_challenger_binom_null, test = "LRT")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM tests: the overall model}
+<<>>=
+mod_horsekick_null <- glm(deaths ~ 1, family = poisson(link = "log"), data = VonBort)
+@
+\vfill
+<<>>=
+anova(mod_horsekick, mod_horsekick_null, test = "LRT")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM tests: predictors}
+<<>>=
+Anova(mod_challenger_binar)
+@
+<<>>=
+Anova(mod_challenger_binom)
+@
+<<>>=
+Anova(mod_horsekick)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM tests: coefficients}
+<<>>=
+summary(mod_challenger_binar)
+@
+\vfill
+\pause
+Note: these z-tests are assymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM tests: coefficients}
+<<>>=
+summary(mod_challenger_binom)
+@
+\vfill
+Note: these z-tests are assymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM tests: coefficients}
+<<>>=
+summary(mod_horsekick)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+Fitted values are on the scale of probabilities:
+<<>>=
+fitted(mod_challenger_binar)
+@
+\vfill
+\pause
+<<>>=
+predict(mod_challenger_binar, type = "link") ## the default!!!!!!!!
+@
+<<>>=
+predict(mod_challenger_binar, type = "response") ## the useful one!!!!!!!!!
+@
+<<>>=
+predict(mod_challenger_binar, newdata = data.frame(temp = 31, psi = mean(Challenger$psi)), type = "response")
+@
+\vfill
+\pause
+Note: the crash was almost inevitable (but we extrapolate)!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+Fitted values are on the scale of probabilities:
+<<>>=
+fitted(mod_challenger_binom)
+@
+\vfill
+\pause
+<<>>=
+predict(mod_challenger_binom, type = "link") ## the default!!!!!!!!
+@
+<<>>=
+predict(mod_challenger_binom, type = "response") ## the useful one!!!!!!!!!
+@
+<<>>=
+predict(mod_challenger_binom, newdata = data.frame(temp = 31, psi = mean(Challenger$psi)), type = "response")
+@
+\vfill
+Note: the crash was almost inevitable (but we extrapolate)!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+Fitted values are on the scale of counts:
+<<>>=
+fitted(mod_horsekick)[1:30]
+@
+\vfill
+<<>>=
+predict(mod_horsekick, type = "link")[1:30] ## the default!!!!!!!!
+@
+\vfill
+<<>>=
+predict(mod_horsekick, type = "response")[1:30] ## the useful one!!!!!!!!!
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM: predictions}
+Try that:
+<<eval = FALSE>>=
+visreg2d(mod_challenger_binar, xvar = "temp", yvar = "psi", plot.type = "rgl", scale = "response") ## I cannot do that easily inside a PDF...
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<"fig.width" = 7, "out.width" = "0.55\\linewidth">>=
+visreg2d(mod_challenger_binar, xvar = "temp", yvar = "psi", plot.type = "persp", scale = "response")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<"fig.width" = 8, "out.width" = "0.55\\linewidth">>=
+visreg2d(mod_challenger_binar, xvar = "temp", yvar = "psi", plot.type = "image", scale = "response")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<"fig.width" = 8, "out.width" = "0.55\\linewidth">>=
+visreg2d(mod_challenger_binar, xvar = "temp", yvar = "psi", plot.type = "gg", scale = "response")
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<>>=
+visreg(fit = mod_challenger_binar, xvar = "temp",
+       cond = list(psi = mean(Challenger$psi)),
+       gg = TRUE, scale = "response") +
+  geom_vline(xintercept = 31, colour = "red", lty = 2) +
+  theme_classic()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<>>=
+visreg(fit = mod_challenger_binom, xvar = "temp",
+       cond = list(psi = mean(Challenger$psi)),
+       gg = TRUE, scale = "response") +
+  geom_vline(xintercept = 31, colour = "red", lty = 2) +
+  theme_classic()
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: predictions}
+<<>>=
+visreg(fit = mod_horsekick, gg = TRUE, scale = "response") +
+  theme_classic() + ylim(min = 0, max = 2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: generalities}
+Model structure:
+\begin{itemize}
+\item linearity
+\item lack of perfect multicollinearity (design matrix of full rank)
+\item predictor variables have fixed values
+\end{itemize}
+\pause
+\vfill
+Errors:
+\begin{itemize}
+\item independence (no serial autocorrelation)
+\item lack of overdispersion and underdispersion
+\end{itemize}
+\vfill
+Other:
+\begin{itemize}
+\item no data separation or quasi-separation
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+Very difficult to diagnose...
+\vfill
+You may try to:
+\begin{itemize}
+\item plot partial residuals using \texttt{car}
+\item compare prediction to GAM using \texttt{mgcv}
+\item overall goodness of fit test using \texttt{DHARMa}
+\end{itemize}
+\vfill
+\pause
+Note: same fix as for LM!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+Partial residual plots using \texttt{car}:
+\vfill
+<<"fig.width" = 8, "out.width" = "0.7\\linewidth">>=
+crPlots(mod_challenger_binar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+General Additive Model fit using \texttt{mgcv}:
+\vfill
+<<message = FALSE>>=
+library(mgcv)
+mod_challenger_binar_GAM <- gam(issue ~ s(temp) + psi, family = binomial(link = "logit"), data = Challenger)
+plot(mod_challenger_binar_GAM, shade = TRUE, shade.col = "red")  ## on the scale of the linear predictor!
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+<<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
+library(DHARMa)  ## package to create USEFUL residuals in GLM, GAM and GLMM
+res_mod_challenger_binar <- simulateResiduals(mod_challenger_binar)
+plot(res_mod_challenger_binar)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+<<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
+res_mod_challenger_binom <- simulateResiduals(mod_challenger_binom)
+plot(res_mod_challenger_binom)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: linearity}
+<<"fig.width" = 7, "out.width" = "0.5\\linewidth">>=
+res_mod_horsekick <- simulateResiduals(mod_horsekick)
+plot(res_mod_horsekick)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: multicollinearity \& fixed-values}
+\begin{center}
+\large{Same as for LM!}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: lack for serial autocorrelation}
+<<>>=
+testTemporalAutocorrelation(res_mod_challenger_binar, time = Challenger$temp)
+@
+\vfill
+Note: this is best done for all predictors and according to predicted values!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: correct amount of dispersion}
+A GLM assumes a particular relationship between mean and variance:
+<<"fig.width" = 10, "out.width" = "0.8\\linewidth">>=
+p <- seq(0, 1, 0.1)
+lambda <- 0:10
+theta <- 0:10
+v_b <- binomial()$variance(p)
+v_p <- poisson()$variance(lambda)
+v_G <- Gamma()$variance(theta)
+par(mfrow = c(1, 3), las = 2)
+plot(v_b ~ p); plot(v_p ~ lambda); plot(v_G ~ theta)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: correct amount of dispersion}
+\begin{itemize}
+\item Overdispersion = more variance than expected
+\begin{itemize}
+\item very common $\rightarrow$ increases false positive
+\vfill
+\item specially relevant for Poisson and Binomial
+\vfill
+\item irrelevant for the binary case! (don't look for it)
+\vfill
+\item Usual suspects:
+\begin{itemize}
+\item lack of linearity
+\item unobserved heterogeneity
+\item zero-augmentation
+\end{itemize}
+\end{itemize}
+\vfill
+\item Underdispersion = less variance than expected
+\begin{itemize}
+\item rather rare $\rightarrow$ increases false negative
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM assumptions: testing overdispersion}
+Usual recommended tests are quite poor (deviance / residual degree of freedom\dots).
+\vfill
+A much better alternative: use \texttt{DHARMa}:
+<<>>=
+testDispersion(res_mod_challenger_binom)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM assumptions: testing overdispersion}
+Usual recommended tests are quite poor (deviance / residual degree of freedom\dots).
+\vfill
+A much better alternative: use \texttt{DHARMa}:
+<<>>=
+testDispersion(res_mod_horsekick)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: fixing overdispersion}
+Potential solutions:
+\begin{itemize}
+\item fix linearity issues
+\vfill
+\item fix heterogeneity issues (if you have the data)
+\vfill
+\item model the overdispersion (e.g. using \texttt{spaMM})
+\vfill
+\item try another probability distribution
+\begin{itemize}
+\item Poisson overdispersed? $\rightarrow$ quasipoisson overdispersed? $\rightarrow$ Negative binomial or COMPoisson (e.g. using \texttt{spaMM})
+\item Binomial overdispersed? $\rightarrow$ quasibinomial or GLMM with random effect per observation
+\end{itemize}
+\vfill
+\item there are specific solutions if the origin is zero-augmentation!!
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: the right amount of zeros}
+Do we have too many zeros?
+<<>>=
+testZeroInflation(res_mod_horsekick)  ## again from DHARMa
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: the right amount of zeros}
+Why could you have too many zeros (in GLM)?
+\vfill
+It can occur when the response results from a 2 (or more) steps process
+\vfill
+Examples:
+\begin{itemize}
+\item detection issue (low counts are less detected, e.g. counting cells on microscope)
+\item biological (e.g. infection, then spread of microbes)
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{GLM assumptions: the right amount of zeros}
+We have 2 main options if you have too many zeros:
+\vfill
+\begin{itemize}
+\item Fit an hurdle model:
+\begin{itemize}
+\item binomial (or truncated count distribution) + truncated Poisson or truncated negative binomial
+\item a single source of zeros (e.g. measuring device fails)
+\end{itemize}
+\vfill
+\item Fit a zero-inflation model:
+\begin{itemize}
+\item binomial (or truncated count distribution) + Poisson or negative binomial
+\item two sources of zeros (e.g. number of viruses in individuals 0 for unexposed, 0 for exposed with strong immune system)
+\end{itemize}
+\end{itemize}
+\vfill
+\pause
+Note 1: If you are not sure where the zeros come from, try both!
+\vfill
+Note 2: both solutions are implemented in the package \texttt{pscl} for GLM (and \texttt{glmmTMB} for mixed models).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of zero-inflation}
+<<message = FALSE>>=
+library(pscl)
+data("bioChemists", package = "pscl")
+head(bioChemists)
+@
+\vfill
+<<>>=
+mod_bioch_poiss <- glm(art ~ ., data = bioChemists, family = poisson(link = "log"))
+@
+\vfill
+<<>>=
+res_mod_bioch_poiss <- simulateResiduals(mod_bioch_poiss)
+testOverdispersion(res_mod_bioch_poiss, plot = FALSE)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of zero-inflation}
+<<>>=
+testZeroInflation(res_mod_bioch_poiss)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of zero-inflation}
+<<>>=
+mod_bioch_zinfl <- zeroinfl(art ~ . | 1, data = bioChemists, dist = "poisson")
+mod_bioch_zinfl  ## mind that binomial model measures excess of _non-zero_
+@
+\vfill
+<<>>=
+mod_bioch_hurdle <- hurdle(art ~ . | 1, data = bioChemists, dist = "poisson")
+mod_bioch_hurdle  ## mind that binomial model measures excess of _zero_
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of zero-inflation}
+<<>>=
+mod_bioch_zinfl2 <- zeroinfl(art ~ . | 1, data = bioChemists, dist = "negbin")
+mod_bioch_zinfl2  ## mind that binomial model measures excess of _non-zero_
+@
+\vfill
+<<>>=
+mod_bioch_hurdle2 <- hurdle(art ~ . | 1, data = bioChemists, dist = "negbin")
+mod_bioch_hurdle2  ## mind that binomial model measures excess of _zero_
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Example of zero-inflation}
+<<>>=
+library(lmtest)
+lrtest(mod_bioch_zinfl, mod_bioch_zinfl2, mod_bioch_hurdle, mod_bioch_hurdle2)
+@
+\vfill
+Note: the model \texttt{mod\_bioch\_zinfl2} is clearly the best one.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{Example of zero-inflation}
+You can then evaluate then as usual:
+<<eval = FALSE>>=
+lrtest(mod_bioch_zinfl2) ## test against null model
+Anova(mod_bioch_zinfl2)  ## test predictors
+summary(mod_bioch_zinfl2) ## test parameter estimates (approximative)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM assumptions: no separation}
+Separation occurs when a level or combination of levels for categorical predictor, or when a particular threshold along a continuous predictor, predicts the outcomes perfectly. It prevents the model to fit or lead to silly estimates and SE.
+\vfill
+<<>>=
+set.seed(1L)
+n <- 50
+myxococcus <- data.frame(sporulation = rbinom(2*n, prob = c(rep(0, n), rep(0.75, n)), size = 1),
+                   strain = factor(c(rep("sp1", n), rep("sp2", n))))
+table(myxococcus$sporulation, myxococcus$strain)
+@
+\vfill
+\pause
+<<>>=
+mod <- glm(sporulation ~ strain, data = myxococcus, family = binomial(link = "log"))
+summary(mod)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM assumptions: fixing separation}
+One possible way out is to use the package \texttt{brglm2}
+<<>>=
+library(brglm2)
+mod2 <- glm(sporulation ~ strain, data = myxococcus, family = binomial(link = "log"), method = "brglmFit")
+summary(mod2)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{GLM: challenge}
 Try to understand what influenced survival (i.e. access to lifeboats) during the Titanic disaster.
 \begin{center}
 \includegraphics[height = 5cm]{../figures/Titanic}
@@ -1535,6 +2095,137 @@ head(TitanicSurvival)
 \end{frame}
 
 
-\subsection{other linear models}
+\subsection{mixed models (LMM \& GLMM)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: introduction}
+Liner mixed-effects models (LMM) and generalised linear mixed-effects models (GLMM) are extensions from, respectivelly, LM and GLMM for situation for which there is covariation between the errors.
+\vfill
+\pause
+Mixed-effects models allow for:
+\begin{itemize}
+\item the study of other questions than LM (e.g. heritability)
+\item the fixing of assumption violations in LM (lack of dependence, some cases of overdispersion)
+\item the reduction of the uncertainty in estimates and predictions in cases where many parameters would have to be estimated at the cost of an additional hypothesis (the distribution of the random effects)
+\end{itemize}
+\vfill
+\pause
+The main sources of heterogeneity considered by mixed-effects models are:
+\begin{itemize}
+\item origin (in its widest sense)
+\item time
+\item space
+\end{itemize}
+\vfill
+\pause
+Note 1: how to perform predicitons, tests, checks of the assumptions\dots properly requires to first master (G)LM and is matter of current research; so it is beyond the context of this short introduction.
+\vfill
+Note 2: for good packages, check \texttt{lme4} \texttt{spaMM} \& \texttt{glmmTMB}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can account for replicates!
+\vfill
+Example:
+<<>>=
+data("Oats", package = "nlme")
+#coplot(yield ~ nitro | Variety + Block, data = Oats, type = "b")
+library(spaMM)
+mod_yield_spaMM <- fitme(yield ~ nitro + Variety + (1|Block), data = Oats)
+mod_yield_spaMM
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can account for spatial and/or temporal autocorrelation!
+\vfill
+Example:
+<<loaloa, "fig.width" = 10, "out.width" = "0.7\\linewidth">>=
+data("Loaloa", package = "spaMM")
+ndvi <- Loaloa[, c("maxNDVI", "latitude", "longitude")]
+mod_ndvi_spaMM <- fitme(maxNDVI ~ 1 + Matern(1|longitude + latitude), data = ndvi, method = "REML")
+filled.mapMM(mod_ndvi_spaMM, add.map = TRUE, plot.title = title(xlab = "Longitude", ylab = "Latitude"))
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can estimate the effects of variable(s) that you cannot measure!
+\vfill
+Example: the estimation of genetic additive effects and heritability.
+\begin{center}
+\includegraphics[height = 0.2\textheight]{../figures/AnimalModel}
+\reflectbox{\includegraphics[height = 0.55\textheight]{../figures/Gryphon}}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can estimate the effects of variable(s) that you cannot measure!
+\vfill
+Example: the estimation of genetic additive effects and heritability.
+<<>>=
+tail(Gryphon$pedigree)
+@
+\vfill
+\pause
+<<>>=
+library(nadiv)
+A <- as(makeA(Gryphon$pedigree), "matrix")
+colnames(A) <- rownames(A) <- Gryphon$pedigree$ID
+A[1305:1309, 1296:1309]
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can estimate the effects of variable(s) that you cannot measure!
+\vfill
+Example: the estimation of genetic additive effects and heritability.
+<<>>=
+mod_gryphon <- fitme(BWT ~ 1 + corrMatrix(1|ID), corrMatrix = A, data = Gryphon$data, method = "REML")
+mod_gryphon
+@
+\vfill
+\pause
+<<>>=
+(h2 <- as.numeric(mod_gryphon$lambda / (mod_gryphon$lambda + mod_gryphon$phi)))
+@
+\vfill
+Note: the model is a little slow to fit\dots
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can estimate the effects of variable(s) that you cannot measure!
+\vfill
+Example: the estimation of genetic additive effects and heritability.
+<<>>=
+curve(dnorm(x, sd = sqrt(as.numeric(mod_gryphon$lambda["ID"]))), from = -3, to = 3, las = 1,
+      ylab = "pdf", xlab = "predicted breeding value")
+BLUPs <- ranef(mod_gryphon)$"corrMatrix(1 | ID)"
+points(dnorm(BLUPs, sd = sqrt(as.numeric(mod_gryphon$lambda["ID"]))) ~ BLUPs, col = "blue", type = "h", lwd = 0.1)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile, t]{(G)LMM: showcase}
+With mixed models, you can estimate the effects of variable(s) that you cannot measure!
+\vfill
+Example: the estimation of genetic additive effects and heritability.
+<<>>=
+plot(BLUPs ~ scale(mod_gryphon$data$BWT), ylab = "Predicted breeding values", xlab = "Scaled phenotypic values")
+@
+\end{frame}
+
 
 \end{document}
