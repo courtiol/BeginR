@@ -4,6 +4,7 @@
 .DS_Store
 vignettes
 inst
+info
 sources_vignettes/**/*.snm
 sources_vignettes/**/*.synctex.gz
 sources_vignettes/**/*.tex
