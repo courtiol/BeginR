@@ -157,7 +157,7 @@ oneway.test(formula = Petal.Length ~ Species, data = iris)
 @
 \vfill
 \pause
-Note: linear models allow for more sofisticated parametric alternatives (see later).
+Note: linear models allow for more sophisticated parametric alternatives (see later).
 \end{frame}
 
 
@@ -177,7 +177,7 @@ friedman.test(y = as.matrix(iris[, c("Petal.Length", "Sepal.Length", "Petal.Widt
 @
 \vfill
 \pause
-Note: linear mixed-effects models allow for more sofisticated parametric alternatives.
+Note: linear mixed-effects models allow for more sophisticated parametric alternatives.
 \end{frame}
 
 
@@ -464,7 +464,7 @@ To maximize the chances of success prepare your data as follow:
 \begin{itemize}
 \item one row = one observation (if repeated measures, use several rows!)
 \item qualitative variables of class \texttt{factor} (check the levels, drop unused ones, set the reference properly)
-\item no \texttt{NA} (models can somewhat deal with them but it is a major source of headackes)
+\item no \texttt{NA} (models can somewhat deal with them but it is a major source of headaches)
 \item data frames (i.e. object of class \texttt{data.frame}) and not tibbles (\texttt{tbl})
 \end{itemize}
 \vfill
@@ -1583,7 +1583,7 @@ summary(mod_challenger_binar)
 @
 \vfill
 \pause
-Note: these z-tests are assymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
+Note: these z-tests are asymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
 \end{frame}
 
 
@@ -1593,7 +1593,7 @@ Note: these z-tests are assymptotic tests relying on normality of parameter esti
 summary(mod_challenger_binom)
 @
 \vfill
-Note: these z-tests are assymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
+Note: these z-tests are asymptotic tests relying on normality of parameter estimates. They are not to be trusted with small dataset for GLM! There is no easy alternative, so better trust the likelihood ratio test of the overall predictor!
 \end{frame}
 
 
@@ -2099,7 +2099,7 @@ head(TitanicSurvival)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile, t]{(G)LMM: introduction}
-Liner mixed-effects models (LMM) and generalised linear mixed-effects models (GLMM) are extensions from, respectivelly, LM and GLMM for situation for which there is covariation between the errors.
+Liner mixed-effects models (LMM) and generalised linear mixed-effects models (GLMM) are extensions from, respectivelly, LM and GLM for situations for which there is covariation between the errors.
 \vfill
 \pause
 Mixed-effects models allow for:
@@ -2120,7 +2120,7 @@ The main sources of heterogeneity considered by mixed-effects models are:
 \pause
 Note 1: how to perform predicitons, tests, checks of the assumptions\dots properly requires to first master (G)LM and is matter of current research; so it is beyond the context of this short introduction.
 \vfill
-Note 2: for good packages, check \texttt{lme4} \texttt{spaMM} \& \texttt{glmmTMB}.
+Note 2: for good packages, check \texttt{lme4}, \texttt{spaMM} \& \texttt{glmmTMB}.
 \end{frame}
 
 
@@ -2199,7 +2199,7 @@ mod_gryphon
 (h2 <- as.numeric(mod_gryphon$lambda / (mod_gryphon$lambda + mod_gryphon$phi)))
 @
 \vfill
-Note: the model is a little slow to fit\dots
+Note: the model is a little slow to fit ($\sim$60 sec, but optimisations are possible)%we can use sparse matrix but with HLCor and precision matrix... I prefer not to go there.
 \end{frame}
 
 
