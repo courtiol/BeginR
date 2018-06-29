@@ -174,12 +174,12 @@
 
 #' Toy datasets based on the iris dataset
 #'
-#' These datasets are subset of the \code{\link[dataset]{iris}} dataset that have been designed to illustrate the use of the functions
-#' \code{\link[tidyr]{spread()}} and \code{\link[tidyr]{gather()}} from \pkg{\link[tidyr]{tidyr}}.
+#' These datasets are subset of the \code{\link[datasets]{iris}} dataset that have been designed to illustrate the use of the functions
+#' \code{\link[tidyr]{spread}} and \code{\link[tidyr]{gather}} from \pkg{\link[tidyr]{tidyr}}.
 #'
 #' @docType data
-#' @name iris_for_tidyr
-#' @aliases iris_for_tidyr, iris_long, iris_wide
+#' @name iris_long
+#' @aliases iris_long iris_wide
 #' @format Objects of class \var{dataframe}.
 #' @source These data were derived from \code{iris}
 #' @keywords datasets
@@ -187,5 +187,3 @@
 #' iris_long
 #' iris_wide
 NULL
-
-
