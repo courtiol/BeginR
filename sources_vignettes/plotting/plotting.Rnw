@@ -1316,6 +1316,7 @@ A few random examples of ggplot extensions:
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
 \item \verb`ggmap` (for maps)
+\item \verb`ggsn` (for adding a scale bar and north arrow to maps)
 \item \verb`ggrepel` (for adding labels to plots)
 \item \verb`ggalt` (for creating cluster plots)
 \item \verb`cowplot` (for creating nested figures)
