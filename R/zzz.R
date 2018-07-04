@@ -9,4 +9,12 @@
     "\n where you can find more information on how to use this package",
     "\n and where you can also leave comments (under 'Issues').",
     "\n")
+  ## preload data from other packages:
+  TitanicSurvival <- VonBort <- NULL ## prevents NOTE in R CMD check
+  if (requireNamespace(package = "carData", quietly = TRUE)) {
+    utils::data(TitanicSurvival, package = "carData")
+  }
+  if (requireNamespace(package = "vcd", quietly = TRUE)) {
+    utils::data(VonBort, package = "vcd")
+  }
 }

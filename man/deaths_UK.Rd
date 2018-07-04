@@ -8,6 +8,9 @@
 \source{
 These data were derived files freely available from the Office for National Statistics (\url{http://webarchive.nationalarchives.gov.uk}).
 }
+\usage{
+deaths_UK
+}
 \description{
 This dataset contains numbers and causes of death for England and Wales over the period 1901-2016.
 The causes of deaths have been classified using the International Classification of Diseases (ICD).
