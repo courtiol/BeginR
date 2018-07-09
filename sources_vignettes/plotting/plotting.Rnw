@@ -1453,10 +1453,7 @@ ggsave("ggplot.pdf", plot = classic, width = 15, height = 5)
 \begin{frame}[fragile]{There are other \texttt{geom} out there!}
 There are a few other plot types in \texttt{ggplot2} that are worth looking at (check the cheatsheet!):
 \begin{itemize}
-\item \verb`geom_violin()`
-\item \verb`geom_area()`
-\item \verb`geom_smooth()`
-\item \verb`geom_density()`
+\item \verb`geom_violin()`, \verb`geom_area()`, \verb`geom_smooth()`, \verb`geom_density()`
 \end{itemize}
 \vfill
 \pause
@@ -1464,7 +1461,7 @@ But the true force of having developed something as modular as \texttt{ggplot2} 
 \vfill
 A few random examples of \texttt{ggplot2} extensions:
 \begin{itemize}
-\item \verb`ggforce` (for extra geoms to draw circles, pie charts \dots)
+\item \verb`ggforce` (for extra geoms to draw circles, pie charts, fancy violin plots, \dots)
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
 \item \verb`ggmap` (for maps)
