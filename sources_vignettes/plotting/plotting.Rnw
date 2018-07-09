@@ -1464,6 +1464,7 @@ But the true force of having developed something as modular as \texttt{ggplot2} 
 \vfill
 A few random examples of \texttt{ggplot2} extensions:
 \begin{itemize}
+\item \verb`ggforce` (for extra geoms to draw circles, pie charts \dots)
 \item \verb`ggExtra` (for marginal distribution)
 \item \verb`ggthemes` (for extra themes, including \verb`theme_excel()`!! :-/)
 \item \verb`ggrepel` (for adding labels to plots)
