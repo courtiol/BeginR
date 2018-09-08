@@ -589,7 +589,7 @@ Key facts about packages:
 \item there are tons of packages out there:
 \begin{itemize}
 \item \Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages are available on \url{cran.r-project.org}
-\item $\sim$ 1500 packages aimed at bioinformatic on \url{bioconductor.org}
+\item $\sim$ 1500 packages aimed at bioinformatics on \url{bioconductor.org}
 \item many more on \url{github.com}
 \item many more shared between users in other ways
 \end{itemize}
