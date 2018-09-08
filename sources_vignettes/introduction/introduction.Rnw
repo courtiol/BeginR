@@ -703,7 +703,7 @@ Some things to know:
 \begin{itemize}
 \item \r \ has many bugs (like all other software)
 \item \r \ bugs are reported, discussed and solved in the open (unlike most other software): \url{https://bugs.r-project.org/bugzilla3/}
-\item each new version of \r \ is in general more efficient and less buggy
+\item each new version of \r \ is more efficient and less buggy
 \end{itemize}
 
 \vfill
@@ -711,7 +711,7 @@ Some things to know:
 What to do?
 \begin{itemize}
 \item check for \r \ new versions on CRAN
-\item check for what has changed if you fancy (\url{https://cran.r-project.org/index.html})
+\item check for what has changed if you fancy (\url{http://cran.r-project.org/doc/manuals/r-release/NEWS.html})
 \item install the new version of \r \ (unless it is not a minor update that you don't need)
 \item re-install all your packages
 \end{itemize}
