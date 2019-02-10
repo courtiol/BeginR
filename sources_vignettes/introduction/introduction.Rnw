@@ -577,7 +577,7 @@ Packages extend \r \ functionalities:
 \begin{itemize}
 \item for most users; e.g. \verb+ggplot2+
 \item for specific users; e.g. \verb+IsoriX+
-\item for developpers; eg. \verb+Rcpp+
+\item for developers; eg. \verb+Rcpp+
 \end{itemize}
 
 \vfill

@@ -1153,7 +1153,7 @@ system("rm my_iris.csv")
 @
 \vfill
 \pause
-Note 1: always check your file in a text editor before importing it or use RStudio "File/Import Datasets GUI".
+Note 1: always check your file in a text editor before importing it or use RStudio "File/Import Datasets" GUI.
 \vfill
 Note 2: you will have often to change the arguments \texttt{sep} (and \texttt{dec} if you are german).
 \vfill
