@@ -29,6 +29,7 @@ Imports:
   scales,
   spaMM,
   tidyverse,
+  timelineS,
   utils,
   vcd,
   visreg
