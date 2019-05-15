@@ -1,0 +1,170 @@
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
+  \usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
+\usepackage[UKenglish]{babel}
+\usepackage{verbatim}%for comment environment
+\usepackage{pdfpages} %for importing specific pages from pdf
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\usepackage{subcaption}%for captions below figures
+\usepackage{eurosym}%for euro sign
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+\usepackage{colourchange}% to change theme colours on the go
+
+\def\R{{\Large \bf R}}
+\def\S{{\Large \bf S}}
+\def\r{{\bf R}}
+\def\s{{\bf S}}
+
+\title{Getting to know the RStudio IDE}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{1cm}
+  \includegraphics[height=2cm]{../figures/izw_logo}
+  \hspace{0.7cm}
+  \includegraphics[height=3cm]{../figures/physalia}
+  \hspace{1.3cm}
+  \includegraphics[height=2cm]{../figures/FU}
+  \hspace{1cm}
+}
+\date[June 2018]{\small June 2019}%
+
+\begin{document}
+\selectmanualcolour{blue!75!black}%set main colour
+
+\setlength{\topsep}{1pt}%space between input and output
+<<knitr options, echo = FALSE, message = FALSE>>=
+  options(width = 120)
+library(knitr)
+opts_chunk$set("size" = "scriptsize",
+               "error" = TRUE,
+               "fig.align" = "center")
+@
+
+\AtBeginSection[]{
+    \begin{frame}
+    \frametitle{Getting started with \R}
+    \setcounter{tocdepth}{1}
+    \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\AtBeginSubsection[]{
+  \begin{frame}
+  \frametitle{Getting started with \R}
+  \setcounter{tocdepth}{2}
+  \tableofcontents[currentsubsection]
+  \end{frame}
+}
+
+\maketitle
+
+\section{The RStudio IDE}
+\subsection{introduction}
+
+\begin{frame}{The RStudio Integrated Desktop Environment}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{../figures/RStudio.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Why using the RStudio IDE?}
+You can use R without RStudio, but RStudio is:
+\begin{itemize}
+\item provided with many more (useful) functionalities than the official R IDE
+\item integrated with several key R packages developed by RStudio (e.g. \texttt{rmarkdown})
+\item suitable for both desktop and remote computers (web server) %so it looks the same on a cluster!
+\item free and open source
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Overall structure}
+\begin{itemize}
+\item Top menu
+\item Toolbar (small subset from the top menu)
+\item 4 main panes:
+\begin{itemize}
+  \item the \texttt{source} pane to type the code you want to keep
+  \item the \texttt{console} pane to run the \r \ code and to type code you don't want to keep
+  \item 2 other panes which contain various views:
+    \begin{itemize}[<+->]
+      \item \texttt{Environment}: the list of object known to the \texttt{console}
+      \item \texttt{History}: all the code that has been run in the \texttt{console}
+      \item \texttt{Connections}: connections to databases
+      \item \texttt{Build}: tools for developing \r \ packages
+      \item \texttt{VCS}: tools when using a version control system (e.g. \texttt{Git})
+      \item \texttt{Files}: the integrated file manager
+      \item \texttt{Plots}: display plots
+      \item \texttt{Packages}: tools for installing, loading and updating \r \ packages
+      \item \texttt{Help}: display help about \r \ functions and packages
+      \item \texttt{Viewer}: a html/pdf viewer
+    \end{itemize}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{top menu}
+
+\begin{frame}[fragile]{10 most useful items from the top menu}
+  \begin{itemize}
+    \item \texttt{File $\rightarrow$ New File}
+    \item \texttt{File $\rightarrow$ New Project}
+    \item \texttt{File $\rightarrow$ Import Dataset}
+    \item \texttt{File $\rightarrow$ Save}
+    \item \texttt{Edit $\rightarrow$ Undo}
+    \item \texttt{Edit $\rightarrow$ Clear console}
+    \item \texttt{Code $\rightarrow$ Comment/Uncomment Lines}
+    \item \texttt{Tools $\rightarrow$ Global Options...}
+    \item \texttt{Help $\rightarrow$ Check for Updates} (for updating RStudio, not \r, nor \r \ packages)
+    \item \texttt{Help $\rightarrow$ Cheatsheets}
+  \end{itemize}
+\end{frame}
+
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+  \begin{enumerate}
+    \item create a new project
+    \item create a new \r \ markdown file
+    \item explore and edit the global options of RStudio
+  \end{enumerate}
+\vfill
+Notes:
+\begin{itemize}
+\item a project is defined by a simple (text) file that contains local options and whose main benefit is to open RStudio with the correct working directory set (that is, the one where the project file is)
+\item an \r \ markdown file is a (text) file where we can write \r \ code together with text
+\end{itemize}
+\end{frame}
+
+\selectmanualcolour{blue!75!black}
+\begin{frame}[fragile]{My tips about the global options}
+1. I never save or restore the workspace (the default is a receipe for disasters)
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+2. I don't like parenthesis auto-completion
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings2.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+3. I use a black theme except when using a video projector
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings3.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+4. I put the \texttt{source} and the \texttt{console} panes side by side to give them more vertical space on the screen
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings4.png}
+\end{center}
+\end{frame}
+
+\end{document}
