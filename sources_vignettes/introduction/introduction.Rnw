@@ -27,7 +27,7 @@
 \includegraphics[height=2cm]{../figures/FU}
 \hspace{1cm}
 }
-\date[June 2018]{\small June 2019}%
+\date[June 2019]{\small June 2019}%
 
 \begin{document}
 \setlength{\topsep}{1pt}%space between input and output
