@@ -11,8 +11,6 @@
 \setbeamertemplate{navigation symbols}{}%no nav symbols
 \usetheme[secheader]{Madrid}%
 
-\def\R{{\Large \bf R}}
-\def\S{{\Large \bf S}}
 \def\r{{\bf R}}
 \def\s{{\bf S}}
 
@@ -43,7 +41,7 @@ opts_chunk$set("size" = "scriptsize",
 
 % \AtBeginSection[]{
 %      \begin{frame}
-%      \frametitle{Getting started with \R}
+%      \frametitle{Getting started with \r}
 %      \setcounter{tocdepth}{1}
 %      \tableofcontents[currentsection]
 %      \end{frame}
@@ -51,7 +49,7 @@ opts_chunk$set("size" = "scriptsize",
 
 \AtBeginSubsection[]{
      \begin{frame}
-     \frametitle{Getting started with \R}
+     \frametitle{Getting started with \r}
      \setcounter{tocdepth}{2}
      \tableofcontents[currentsubsection]
      \end{frame}
@@ -61,15 +59,15 @@ opts_chunk$set("size" = "scriptsize",
 
 \section{What is \r?}
 
-
 \subsection{\r \ in brief}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{\r \ in brief}
 \justifying
-\R \ is a programming language and software environment for statistical computing \& graphics.
+\r \ is a programming language and software environment for statistical computing \& graphics.
 \vfill
-Key points about \R:
+Key points about \r:
 \begin{itemize}
 \item free \underline{for all}
 \item open source (explore: \url{https://github.com/wch/r-source})
@@ -82,59 +80,94 @@ Key points about \R:
   \end{itemize}
 \pause
 \item rich (tons of \r \ packages out there)
-\item cutting edge (check updates for today: \url{http://dirk.eddelbuettel.com/cranberries/cran/updated/})
+\item cutting edge (check updates for today: \url{http://dirk.eddelbuettel.com/cranberries/cran/updated})
 \pause
 \item used by millions
-\item \r \ is the best software environment for statistical computing, but it is far from perfect!
 \end{itemize}
+\pause
+\vfill
+CONCLUSION: \r \ is the best software environment for statistical computing (but it is far from perfect!)
 \end{frame}
 
 
+\subsection{\r cheology}
 
-\subsection{\r \ origins}
-
-
-\begin{frame}{A short history of \S/\R}
-\S \ (\url{http://ect.bell-labs.com/sl/S/})
-\begin{itemize}
-\item 1976-1980: version 1: interactive statistical system, Fortran based (Becker, Chambers, \& al. at Bell Labs)
-%Bells Labs is now owned by NOKIA
-\item 1980-1988: version 2: portable version (thanks to Unix) %Unix was conceived one floor upstairs at Bell Labs, C and C++ are also coming from Bells Labs (New Jersey)
-\item 1988: version 3 (\s3): ``everything is an object'' paradigm, C-based (very much like R)
-\item 1991: a large statistical modeling toolbox is added to \s3
-\item 1993: \s+ exclusive license (to StatSci, later MathSoft, later SolutionMetrics)
-\item 1998: version 4 (\s4): advanced object-oriented features
-\item 2012: \s+ becomes TIBCO Enterprise Runtime for \r \ (TERR)
-\end{itemize}
-\vfill
-
-\pause
-%Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \R!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{A short history of \s/\r}
+\vspace{-1cm}
+<<time line SR, echo = FALSE, message = FALSE, "fig.width" = 10, "fig.height" = 6, "out.width" = "\\linewidth", "out.height" = "0.6\\linewidth">>=
+library(timelineS)
+RS_life <- data.frame(
+  Events = c("Scheme begins!", "S begins at Bells Lab! \n (interactive, in Fortran)", "S2.0\n (portable)", "S3.0\n (all object, in C)", "stat models added", "S+ (commercial)", "R begins!", "CRAN begins!", "GNU license", "S+4.0", "S+5.0", "S+6.0", "R1.0", "R2.0", "S+7.0", "S+8.0", "RStudio", "R3.0", "TERR", "R3.6"),
+  Event_Dates = as.Date(c("1975-01-01", "1976-01-01", "1980-01-01", "1988-01-01", "1991-01-01", "1993-01-01", "1993-01-01",
+                          "1997-04-23", "1997-12-05", "1998-01-01", "1999-01-01", "2000-01-01", "2000-02-29", "2004-10-04", "2005-01-01", "2007-01-01", "2011-02-28", "2013-04-03", "2014-01-01", "2019-04-26")))
+## TERR = TIBCO Enterprise Runtime for R
+timelineS(RS_life, main = "", labels = RS_life$Events, buffer.days = 2*365, line.color = "lightgrey",
+          label.angle = 70, label.position = 3, scale.cex = 0.8,
+          label.length = c(1.4, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 0.5, 1, 1, 0.5, 0.5, 1.25, 1, 0.75, 1),
+          point.cex = 0.5,
+          scale.orient = 2, label.direction = "up")
+@
+\vspace{-1cm}
+\r \ tooks its syntax and tools from the \s, and its semantic from \texttt{Scheme}
+\end{frame}
+%note: all date at 01-01 are approximative (could be any time during the year)
+%Due to the ownership of \s \ by a phone company, \s \ could not be free, nor open source. Hence \r?
 %developer of S try to keep it non commercial as much they could!
+%Unix was conceived one floor upstairs at Bell Labs, C and C++ are also coming from Bells Labs (New Jersey)
+%Bells Labs is now owned by NOKIA
+%R creators: Ihaka \& Gentleman at University of Auckland
+%CRAN = Comprehensive R Archive Network
+%TERR = TIBCO Enterprise Runtime for R
 
-\R \ (\url{https://www.r-project.org/about.html})
-\begin{itemize}
-\item 1993: the replication of \s \ as the \r \ project starts (Ihaka \& Gentleman at University of Auckland)
-\item 23/04/1997: first version of \r \ archieved on The Comprehensive R Archive Network (CRAN) %and creation of CRAN
-\item 05/12/1997: \r \ version 0.6 is part of GNU project (``freedom to share, freedom to change'')
-\item 29/02/2000: \r \ version 1.0 (judged stable enough for production use by the R Development Core Team)
-\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\r's Who's Who}
+\begin{figure}
+\captionsetup[subfigure]{justification=centering}
+    \centering
+    \begin{subfigure}[b]{0.22\textwidth}%
+        \begin{center}%
+        \includegraphics[height=3.5cm]{../figures/Chambers.jpg}%
+        \caption*{\emph{John Chambers}\\ {\tiny creator of \s}}%
+        \end{center}%
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.22\textwidth}%
+        \begin{center}%
+        \includegraphics[height=3.5cm]{../figures/Ihaka.jpg}%
+        \caption*{\emph{Ross Ihaka}\\ {\tiny creator of \r}}%
+        \end{center}%
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.22\textwidth}%
+        \begin{center}%
+        \includegraphics[height=3.5cm]{../figures/Gentleman.jpg}%
+        \caption*{\emph{Robert Gentleman}\\ {\tiny creator of \r \ (\& \emph{Bioconductor})}}%
+        \end{center}%
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.22\textwidth}%
+        \begin{center}%
+        \includegraphics[height=3.5cm]{../figures/Wickham.jpg}%
+        \caption*{\emph{Hadley Wickham}\\ {\tiny creator of the \texttt{tidyverse}}}%
+        \end{center}%
+    \end{subfigure}%
+\end{figure}
+\vfill
+Note: many other persons have been (and continue to be) strongly influencing \r \ and its community!
 \end{frame}
 
 
 \subsection{why use \r?}
 
-
-\begin{frame}{Is \R \ good for you?}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Is \r \ good for you?}
 \begin{columns}
 \column[t]{0.4\linewidth}
 \begin{block}{Good for:}
 \begin{itemize}
   \item small, medium and big data
   \item data manipulation
-  \item plotting (including GIS, web \dots)
   \item data analyses
-  \item programming
+  \item plotting (including GIS, web \dots)
+  \item programming (even for biologists)
 \end{itemize}
 \end{block}
 \pause
@@ -144,6 +177,7 @@ Key points about \R:
   \item beginners
   \item data entry
   \item formal algebra
+  \item general purpose programming
 \end{itemize}
 \end{block}
 \end{columns}
@@ -152,13 +186,15 @@ Key points about \R:
 
 \subsection{who uses \r?}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {
 \setbeamercolor{background canvas}{bg=}
 \includepdf[pages={7}]{../figures/Rexer2017.pdf}
 }
 
 
-\begin{frame}{Rich companies rely on \R \ too!}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Rich companies rely on \r \ too!}
 Some examples:
 
 (\url{http://blog.revolutionanalytics.com/2014/05/companies-using-r-in-2014.html})
@@ -171,12 +207,12 @@ Some examples:
 \item Facebook (data analysis, big-data visualization, user behaviour analysis)
 \item Google (advertising effectiveness, economic forecasting, and big-data statistical modeling)
 \item Lloyds of London (risk analysis and catastrophe modeling)
-\item Merk (factors that affect the cold chain)
+\item Merk (analysis of factors that affect the cold chain)
 \item Microsoft (Xbox matchmaking + plus much more these days!!)
 \item Monsanto (statistical analysis in plant breeding, fertility mapping and yield forecasting)
 \item The New York Times (interactive features such as the Dialect Quiz and the Election Forecast)
 \item Twitter (data visualization and semantic clustering)
-\item Uber (statistical analysis)
+\item Uber (various analyses)
 \end{itemize}
 \end{small}
 \end{frame}
@@ -184,8 +220,43 @@ Some examples:
 
 \section{About}
 
+\subsection{me}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Who am I?}
+\begin{itemize}
+\item evolutionary biologist / statistician
+\vfill
+\item studies in France (Montpellier), postdoc in the UK (Sheffield)
+\vfill
+\item senior researcher at Leibniz IZW / lecturer at Freie University (Berlin)
+\vfill
+\pause
+\item experience with \r:
+\end{itemize}
+\vspace{-2cm}
+<<time line, echo = FALSE, message = FALSE, "fig.width" = 10, "fig.height" = 6, "out.width" = "\\linewidth", "out.height" = "0.6\\linewidth">>=
+library(timelineS)
+R_life_alex <- data.frame(
+  Events = c("studying R", "using R most days", "teaching R", "debugging R packages", "developping R packages", "debugging R"),
+  Event_Dates = as.Date(c("2003-01-01", "2008-01-01", "2010-01-01", "2013-01-01", "2016-01-01", "2018-01-01")))
+timelineS(R_life_alex,
+          main = "",
+          labels = R_life_alex$Events, buffer.days = 2*365,
+          label.length = 1.5*c(0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+          line.color = "lightgrey",
+          label.angle = 0, label.position = 3, scale.cex = 0.8,
+          point.cex = 0.5,
+          scale.orient = 2, label.direction = "up")
+@
+\vspace{-1.2cm}
+All of these activities are still ongoing (\r \ is rich and evolving)
+\end{frame}
+
+
 \subsection{the course}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{What will we do?}
 I will:
 \begin{itemize}
@@ -205,49 +276,26 @@ You will not:
 \vfill
 You should:
 \begin{itemize}
-\item focus on the big picture (try to understand the logic) $\rightarrow$ consider the long term gains
+\item ``\emph{accept that you are gonna be frustrated, accept that you are gonna be bad at it for a while, but you have to keep going anyway\dots}'' (Wickham 2018, \url{https://www.youtube.com/watch?v=Uxdf8evD6pQ})
 \item ask any silly question that pops up in your creative minds
 \item let me know immediately when you stop following
 \end{itemize}
 \end{frame}
 
-\subsection{me}
-
-\begin{frame}[fragile]{Who am I?}
-\begin{itemize}
-\item evolutionary biologist / statistician
-\vfill
-\item studies in France (Montpellier), postdoc in the UK (Sheffield)
-\vfill
-\item senior researcher at Leibniz IZW / lecturer at Freie University (Berlin)
-\vfill
-\pause
-\item experience with \R:
-\end{itemize}
-<<time line, echo = FALSE, message = FALSE, "fig.width" = 7, "fig.height" = 5, "out.width" = "0.6\\linewidth", "out.height" = "0.4\\linewidth">>=
-library(timelineS)
-R_life_alex <- data.frame(
-  Events = c("studying R", "using R most days", "teaching R", "debugging R packages", "developping R packages", "debugging R"),
-  Event_Dates = as.Date(c("2003-01-01", "2008-01-01", "2010-01-01", "2013-01-01", "2016-01-01", "2018-01-01")))
-timelineS(R_life_alex, main = "Onset of my R activities", labels = R_life_alex$Events, buffer.days = 2*365,
-          label.length = 1.5*c(0.2, 0.3, 0.4, 0.4, 0.3, 0.2))
-@
-\end{frame}
-
-
-\section{Let's get started!}
-
-\subsection{installing \r}
-
-
-\begin{frame}{Installation steps}
-  \begin{enumerate}
-  \item check that you do get internet access
-  \item install \r: \url{https://cran.r-project.org/}
-  \item install the RStudio IDE: \url{https://www.rstudio.com/products/rstudio/download/}
-  \item open the RStudio IDE
-  \end{enumerate}
-\vfill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Structure of the course}
+\begin{center}
+\begin{huge}
+\begin{tabular}{ll}
+  \hline
+  Day   1 & Getting ready to work with \r\\
+  Day 2-3 & Getting to use data in \r\\
+  Day   4 & Getting to plot data in \r\\
+  Day   5 & Getting to analyses data in \r\\
+  \hline
+\end{tabular}
+\end{huge}
+\end{center}
 \end{frame}
 
 \end{document}
