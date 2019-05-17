@@ -1,0 +1,896 @@
+\documentclass[xcolor=dvipsnames, aspectratio=1610, 9pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
+  \usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
+\usepackage[UKenglish]{babel}
+\usepackage{verbatim}%for comment environment
+\usepackage{pdfpages} %for importing specific pages from pdf
+\usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
+\usepackage{subcaption}%for captions below figures
+\usepackage{eurosym}%for euro sign
+\setbeamertemplate{navigation symbols}{}%no nav symbols
+\usetheme[secheader]{Madrid}%
+\usepackage{colourchange}% to change theme colours on the go
+\usepackage{tikz}
+\usepackage{smartdiagram}% for diagram using TikZ
+\usesmartdiagramlibrary{additions}% for diagram using TikZ
+
+\def\R{{\Large \bf R}}
+\def\S{{\Large \bf S}}
+\def\r{{\bf R}}
+\def\s{{\bf S}}
+
+\title{Getting ready to work with \r}
+\author[Alexandre Courtiol]{Alexandre Courtiol}
+\institute[IZW]{Leibniz Institute of Zoo and Wildlife Research}%
+\titlegraphic{
+  \vspace{0cm}
+  \hspace{1cm}
+  \includegraphics[height=2cm]{../figures/izw_logo}
+  \hspace{0.7cm}
+  \includegraphics[height=3cm]{../figures/physalia}
+  \hspace{1.3cm}
+  \includegraphics[height=2cm]{../figures/FU}
+  \hspace{1cm}
+}
+\date[June 2018]{\small June 2019}%
+
+\begin{document}
+\selectmanualcolour{blue!75!black}%set main colour
+
+\setlength{\topsep}{1pt}%space between input and output
+<<knitr options, echo = FALSE, message = FALSE>>=
+  options(width = 120)
+library(knitr)
+opts_chunk$set("size" = "scriptsize",
+               "error" = TRUE,
+               "fig.align" = "center")
+@
+
+\AtBeginSection[]{
+    \begin{frame}
+    \frametitle{Getting ready to work with \r}
+    \setcounter{tocdepth}{1}
+    \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\AtBeginSubsection[]{
+  \begin{frame}
+  \frametitle{Getting ready to work with \r}
+  \setcounter{tocdepth}{2}
+  \tableofcontents[currentsubsection]
+  \end{frame}
+}
+
+\maketitle
+
+\section{Installation steps}
+
+\selectmanualcolour{red!75!black}
+\begin{frame}{Practice}
+  \begin{enumerate}
+  \item check that you do get internet access
+  \item install \r: \url{https://cran.r-project.org/}
+  \item install the RStudio IDE: \url{https://www.rstudio.com/products/rstudio/download/}
+  \item open the RStudio IDE
+  \end{enumerate}
+\vfill
+\end{frame}
+\selectmanualcolour{blue!75!black}
+
+\section{The RStudio IDE}
+\subsection{introduction}
+
+\begin{frame}{The RStudio Integrated Desktop Environment}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{../figures/RStudio.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Why using the RStudio IDE?}
+You can use R without RStudio, but RStudio is:
+\begin{itemize}
+\item provided with many more (useful) functionalities than the official R IDE
+\item integrated with several key R packages developed by RStudio (e.g. \texttt{rmarkdown})
+\item suitable for both desktop and remote computers (web server) %so it looks the same on a cluster!
+\item free and open source
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Overall structure}
+\begin{itemize}
+\item Top menu
+\item Toolbar (small subset from the top menu)
+\item 4 visible panes
+\end{itemize}
+\end{frame}
+
+\subsection{top menu}
+
+\begin{frame}[fragile]{10 most useful items from the top menu}
+  \begin{itemize}
+    \item \texttt{File $\rightarrow$ New File}
+    \item \texttt{File $\rightarrow$ New Project}
+    \item \texttt{File $\rightarrow$ Import Dataset}
+    \item \texttt{File $\rightarrow$ Save}
+    \item \texttt{Edit $\rightarrow$ Undo}
+    \item \texttt{Edit $\rightarrow$ Clear console}
+    \item \texttt{Code $\rightarrow$ Comment/Uncomment Lines}
+    \item \texttt{Tools $\rightarrow$ Global Options...}
+    \item \texttt{Help $\rightarrow$ Check for Updates} (for updating RStudio, not \r, nor \r \ packages)
+    \item \texttt{Help $\rightarrow$ Cheatsheets}
+  \end{itemize}
+\end{frame}
+
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+  \begin{enumerate}
+    \item create a new project
+    \item create a new \r \ markdown file
+    \item save the created \r \ markdown file into the project folder directory
+    \item have a look at the RStudio cheatsheet
+  \end{enumerate}
+\vfill
+Notes:
+\begin{itemize}
+\item a project is defined by a simple (text) file whose main benefit is to open RStudio with the correct working directory set (that is, the one where the project file is)
+\item an \r \ markdown file is a (text) file where we can write \r \ code together with text
+\end{itemize}
+\end{frame}
+
+\selectmanualcolour{blue!75!black}
+\begin{frame}[fragile]{My tips about the global options}
+1. I never save or restore the workspace (the default is a receipe for disasters)
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+2. I don't like parenthesis auto-completion
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings2.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+3. I use a black theme except when using a video projector
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings3.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{My tips about the global options}
+4. I like to put the \texttt{source} and the \texttt{console} panes side by side to give them more vertical space on the screen
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_settings4.png}
+\end{center}
+\end{frame}
+
+\subsection{the panes}
+
+\begin{frame}{The \texttt{Source} pane}
+This is where you type the code you want to keep
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_pane1.png}
+\end{center}
+Notes: tabs give you access to different files (if several files are open)
+\end{frame}
+
+\begin{frame}{The \texttt{Console} pane}
+This is where you run the \r \ code (of the \texttt{Source} pane or directly writen here)
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_pane2.png}
+\end{center}
+Notes: tabs give you access to a few other panes including the \texttt{Terminal} (others depend on context)
+\end{frame}
+
+\begin{frame}{The other panes}
+This is where everything else is
+\begin{center}
+\includegraphics[height=0.8\textheight]{../figures/RStudio_pane34.png}
+\end{center}
+Notes: tabs give you access to various panes
+\end{frame}
+
+\begin{frame}{The other panes}
+You should have at least access to:
+\begin{itemize}
+ \item \texttt{Environment}: the list of object known to the \texttt{console}
+ \item \texttt{History}: all the code that has been run in the \texttt{console}
+ \item \texttt{Connections}: connections to databases
+ \item \texttt{Files}: the integrated file manager
+ \item \texttt{Plots}: display plots
+ \item \texttt{Packages}: tools for installing, loading and updating \r \ packages
+ \item \texttt{Help}: display help about \r \ functions and packages
+ \item \texttt{Viewer}: a html/pdf viewer
+\end{itemize}
+\vfill
+\pause
+But other panes will appear depending on the context
+\end{frame}
+
+\section{\r \ markdown}
+\subsection{introduction}
+
+\begin{frame}{What is \r \ markdown?}
+It is a framework to write reproducible reports, which combines\dots
+\begin{itemize}
+  \item text
+  \item \r \ code
+  \item \r\ outputs (e.g. plots, tables)
+\end{itemize}
+\dots to form a document (e.g. html page, PDF, Microsoft Word, Libre Office, website \dots)
+\vfill
+Alternative frameworks are available (e.g. these slides are created using a combination of \LaTeX \ and \r, but \r\ markdown is by far the simplest)
+\end{frame}
+
+\begin{frame}{Why using \r \ markdown?}
+\begin{itemize}
+  \item clear: text, \r \ code, and output are not dispatched in different files
+  \item structured: the document can be divided in sections and the \r \ code into chunks
+  \item transparent: all the \r \ code must be in the \r \ markdown file(s)
+  \item reproducible: enforce that the \r \ code is running
+  \item adaptable: you can change one thing and everything else will adjust
+  \item dynamic: you can create so-called dynamic documents
+  \item easy to communicate: outputs look nice (details can be hidden)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{General structure of a \r \ markdown file}
+\begin{columns}[t]
+\column{0.4\linewidth}
+3 parts:
+\begin{itemize}
+\item \alert<2>{the header (writen in \texttt{YAML})}
+\item \alert<3>{the text (writen in \texttt{markdown})}
+\item \alert<4>{the code chunks (writen in \r \ or alternatives)}
+\end{itemize}
+\column{0.6\linewidth}
+\begin{center}%
+  \includegraphics<1>[width=0.9\linewidth]{../figures/Rmarkdown.png}%
+  \includegraphics<2>[width=0.9\linewidth]{../figures/Rmarkdown_YAML.png}%
+  \includegraphics<3>[width=0.9\linewidth]{../figures/Rmarkdown_text.png}%
+  \includegraphics<4>[width=0.9\linewidth]{../figures/Rmarkdown_R.png}%
+\end{center}
+\end{columns}
+\end{frame}
+
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+Render the \r \ markdown file using \texttt{knitr} and observe the outcome
+\begin{center}
+  \includegraphics[height=0.9\textheight]{../figures/Rmarkdown_knit.png}%
+\end{center}
+\end{frame}
+
+\selectmanualcolour{blue!75!black}
+\begin{frame}{How does it work?}
+\smartdiagramset{
+    sequence item border color=black,
+    sequence item text color=black,
+    sequence item border size=1.2\pgflinewidth,
+    sequence item font size=\small\sffamily,
+    additions={
+        additional item shape=rectangle,
+        additional arrow line width=2pt,
+        additional arrow tip=to,
+        additional arrow color=black,
+        additional item font=\small\sffamily,
+      }
+}
+\begin{center}
+\smartdiagramadd[sequence diagram]{\r \ markdown (*.Rmd),markdown (*.md), output\\ (e.g. *.html)}
+{above of sequence-item1/you,above of sequence-item2/knitr,above of sequence-item3/pandoc}
+\smartdiagramconnect{to-}{sequence-item1/additional-module1}
+\smartdiagramconnect{to-}{sequence-item2/additional-module2}
+\smartdiagramconnect{to-}{sequence-item3/additional-module3}
+\end{center}
+\vfill
+Notes:
+\begin{itemize}
+\item \texttt{knitr} is an \r \ package that turns the \r \ code and outputs into markdown syntax
+\item \texttt{pandox} is an external program that turns markdown documents into many possible outputs
+\item the calls to \texttt{knitr} and \texttt{pandox} are orchestrated by the \r \ package \texttt{rmarkdown}
+\end{itemize}
+\end{frame}
+
+\subsection{YAML header}
+
+\begin{frame}[fragile]{The YAML header}
+The header sets the configuration for \texttt{pandoc}, so it is used to influence the format and style of the output file
+
+(It is also be used to set some options for \texttt{rmarkdown})
+\vfill
+\begin{columns}[t]
+\column{0.45\linewidth}
+A simple YAML header:
+\begin{verbatim}
+---
+title: "My_first_R_script"
+author: "Alexandre Courtiol"
+date: "5/15/2019"
+output: html_document
+---
+\end{verbatim}
+\pause
+\column{0.45\linewidth}
+A slightly more complex YAML header:
+\begin{verbatim}
+---
+title: "My_first_R_script"
+author: "Alexandre Courtiol"
+date: "5/15/2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: journal
+    keep_md: yes
+---
+\end{verbatim}
+\end{columns}
+
+\vfill
+Notes:
+\begin{itemize}
+\item indentation matters in YAML!!! (beware while copy \& pasting with RStudio autoindentation)
+\item not all settings work for all type of documents
+\item YAML = YAML Ain't Markup Language
+\end{itemize}
+\end{frame}
+
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+Modify the YAML options in the header and observe how the output changes accordingly
+\vfill
+\begin{columns}
+\column{0.45\linewidth}
+A few options can directly be set using RStudio:
+\includegraphics[width = \linewidth]{../figures/YAML_options.png}
+
+\column{0.45\linewidth}
+\begin{block}{For info on what you can change, check:}
+\begin{itemize}
+\item The \texttt{\r \ Markdown Cheat Sheet}
+\item \url{https://rmarkdown.rstudio.com}
+\item \url{https://bookdown.org/yihui/rmarkdown}
+\end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+\selectmanualcolour{blue!75!black}
+
+\subsection{markdown text}
+
+\subsection{code chuncks}
+
+\section{Basics of the \r \ language}
+
+\subsection{arithmetic}
+
+\begin{frame}[fragile]{Basic arithmetic}
+Try the following:
+<<arithmetic>>=
+1 + 1
+1 - 1
+2 * pi
+3 / 2
+10 %% 3
+5^2
+5^2 + 1
+5^(2 + 1)
+@
+\vfill
+Conclusion: you may never need a hand calculator anymore!
+\end{frame}
+
+\begin{frame}{Good practice}
+\begin{enumerate}
+\item only use the ``Console'' pannel to mess around
+\item write proper \r \ code inside a chunk in your Rmd document
+\item name objects with useful names
+\end{enumerate}
+\end{frame}
+
+
+\subsection{objects}
+
+
+\begin{frame}[fragile]{Creating objects}
+Objects are being assigned using the ``arrow'' operator:
+<<one plus one>>=
+one.plus.one <- 1 + 1 ## storing the result
+@
+\pause
+\vfill
+
+Objects are being used through their name (that is the whole point):
+
+<<display one plus one>>=
+one.plus.one ## displaying the result
+one.plus.one.plus.one <- one.plus.one + 1
+one.plus.one.plus.one
+@
+\pause
+\vfill
+
+Tip:
+<<one times two>>=
+(one.times.two <- 1 * 2) ## storing and displaying the result at once
+@
+\vfill
+\pause
+Note 1: avoid spaces \& weird characters in object names to avoid troubles (but ``\texttt{\_}'' and ``\texttt{.}'' are OK).
+
+Note 2: names are case sensitive.
+\end{frame}
+
+
+\begin{frame}[t, fragile]{Common mistakes}
+The huge majority of beginner's problems are typos:
+\vfill
+<<mistakes, tidy=F>>=
+one.plus.one
+@
+\vfill
+<<>>=
+one.plus.One
+@
+\vfill
+\pause
+<<>>=
+one.plusone
+@
+\vfill
+\pause
+<<>>=
+1 +
+one.plus.one <- 1 + 1
+@
+\end{frame}
+
+
+\begin{frame}{The concept of an \R \ object}
+What is an object?
+\begin{itemize}
+\item everything in \r \ is an object
+\item objects have names
+\item objects allow abstraction
+\item objects belongs to classes for which specific methods exist (and can be created)
+\end{itemize}
+\vfill
+Note: we will come back on that later (for the programming session).
+\end{frame}
+
+
+\begin{frame}[fragile]{Note for geeks who know other computer languages}
+\r \ objects are (by default) not mutable (there is copy on demand):
+<<not mutable>>=
+a <- 1
+b <- a
+b <- b + 1
+b
+a ## although 'b' derives from 'a' changing 'b' has no impact on 'a' (because 'a' and 'b' share different physical memory addresses)
+@
+\vfill
+Note: if you don't know other computer languages, it just behaves as you would expect while most other programming languages don't.
+\end{frame}
+
+
+\subsection{functions}
+
+
+\begin{frame}[fragile]{Functions}
+<<citation, eval=FALSE>>=
+citation()  ## function showing how to cite R
+@
+<<citation run, eval=TRUE, echo=FALSE, size="tiny">>=
+citation()
+@
+\vfill
+\pause
+<<help citation, eval=FALSE, tidy=FALSE>>=
+help(citation) ## getting help for this function
+@
+\vfill
+<<eval = FALSE>>=
+?citation() ## same but shorter (syntactic sugar)
+@
+\vfill
+\pause
+Note: always look at the help before using a function new to you!
+\end{frame}
+
+
+\begin{frame}[fragile]{Functions}
+<<mean, eval=F, echo=T>>=
+mean()
+@
+<<help mean, eval=F, tidy=F>>=
+?mean()
+@
+\begin{scriptsize}
+\begin{verbatim}
+Usage:
+     mean(x, ...)
+     ## Default S3 method:
+     mean(x, trim = 0, na.rm = FALSE, ...)
+
+Arguments:
+       x: An R object.  Currently there are methods for numeric/logical
+          vectors and date, date-time and time interval objects, and
+          for data frames all of whose columns have a method.  Complex
+          vectors are allowed for ‘trim = 0’, only.
+    trim: the fraction (0 to 0.5) of observations to be trimmed from
+          each end of ‘x’ before the mean is computed.  Values of trim
+          outside that range are taken as the nearest endpoint.
+   na.rm: a logical value indicating whether ‘NA’ values should be
+          stripped before the computation proceeds.
+[...]
+\end{verbatim}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Syntax for functions}
+Basic syntax:
+<<example function>>=
+sign(x = -5)
+sign(-5) ## dangerous: try to avoid!
+sign(y = -5)
+@
+\vfill
+\pause
+Note: equal signs and arrows are only equivalent in the so-called ``global environment'':
+<<equal vs arrows>>=
+y = 2
+y
+y <- 3
+y
+@
+\vfill
+\pause
+But not inside functions:
+<<>>=
+sign(y <- -5) ## dangerous: avoid!
+y
+sign(x = y <- -5) ## same as above
+@
+\vfill
+\pause
+So better to stick to arrows for creating objects and to equal signs for defining arguments!
+\end{frame}
+
+
+\begin{frame}[fragile]{Syntax for functions}
+Calling a function without its parentheses reveals its definition:
+<<function def>>=
+sign
+@
+
+\vfill
+\pause
+All functions need parentheses to work and exceptions correspond to short-cuts (called ``syntactic sugar''):
+<<syntactic sugar>>=
+1 + 1
+`+`(1, 1)
+a <- 1
+a
+`<-`(a, 1)
+a
+@
+\end{frame}
+
+
+\begin{frame}{Key principles of the \R \ language}
+\begin{itemize}
+\item Everything that exists in \r \ is an object
+\item Everything that happens in \r \ is a function call
+\end{itemize}
+
+\begin{flushright}
+John M. Chambers
+\end{flushright}
+\end{frame}
+
+
+\begin{frame}[fragile]{Finding functions}
+To find the name of the function you are look for, you may try:
+<<finding function, eval = FALSE>>=
+??"linear model"
+@
+
+or
+
+<<finding function 2, eval = FALSE>>=
+help.search(pattern = "linear model", package = "stats")  ## if you know where to look for
+@
+\end{frame}
+
+\section{\r \ packages}
+
+\begin{frame}[fragile]{The concept of an \R \ package}
+
+Packages extend \r \ functionalities:
+\begin{itemize}
+\item for most users; e.g. \verb+ggplot2+
+\item for specific users; e.g. \verb+IsoriX+
+\item for developers; eg. \verb+Rcpp+
+\end{itemize}
+
+\vfill
+\pause
+Key facts about packages:
+\begin{itemize}
+\item a package is just a folder (often compressed) containing \r \ functions, data \& documentation
+\item a library is the installed version of the package (also a folder)
+\item there are tons of packages out there:
+\begin{itemize}
+\item \Sexpr{nrow(available.packages(contriburl="http://cran.rstudio.com/src/contrib"))} packages are available on \url{cran.r-project.org}
+\item $\sim$ 1500 packages aimed at bioinformatics on \url{bioconductor.org}
+\item many more on \url{github.com}
+\item many more shared between users in other ways
+\end{itemize}
+\end{itemize}
+
+\vfill
+\pause
+Note: packages can be used to create research compendia!
+\end{frame}
+
+
+\begin{frame}[fragile]{Creating your own package is actually quite easy once you know \R}
+\begin{center}
+\includegraphics[height = 0.9\textheight]{../figures/Wickham_RPackages}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{Installing a package}
+
+Simple situation: the package is available as a binary file prepared for your system on CRAN
+<<install package, eval=FALSE>>=
+install.packages("dpylr")  ## install dplyr
+@
+
+\vfill
+\pause
+In general, the installation procedure depends on:
+\begin{itemize}
+\item where the package is being hosted (local, CRAN, bioconductor, GitHub, other)
+\item if the package contains sources in another language that have been compiled or not
+\end{itemize}
+
+\vfill
+\pause
+In order to be able to install packages that require compilation (and thus have access to more or newer version of packages), you need to install:
+
+\begin{itemize}
+\item Rtools if you use Windows (\url{https://cran.r-project.org/bin/windows/Rtools/})
+\item Xcode if you use macOS (\url{https://developer.apple.com/xcode/})
+\item nothing if you use Linux or other Unix-based system
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Installing the package for this course}
+The package is not on CRAN as I want to be able to update it instantaneously and have potentially large files.
+
+\vspace{1em}
+I host the package here: \url{https://github.com/courtiol/BeginR}
+\vfill
+You should install it using \texttt{drat} as follows:
+<<install BeginR, eval = FALSE>>=
+install.packages("drat")    ## install drat from CRAN; only run once per R lifetime
+library(drat)               ## load the package drat
+addRepo("courtiol")         ## use drat to declare my GitHub account
+install.packages("BeginR")  ## install the package
+@
+\vfill
+\pause
+Note: every morning of the course you may have to rerun the last 3 lines of code to get the lastest version of this course.
+\end{frame}
+
+
+\begin{frame}[fragile]{Loading a package}
+Loading a package makes new functions and data available to the user:
+
+\vspace{1em}
+Example:
+
+<<library BeginR>>=
+library(BeginR)
+@
+\vfill
+\pause
+You can check the (exported) content of a package:
+<<eval = FALSE>>=
+library(help = "BeginR")
+@
+\end{frame}
+
+\section{Housekeeping}
+
+
+\begin{frame}[fragile]{Updating \R \ packages}
+Some things to know:
+\begin{itemize}
+\item \r \ packages evovle quickly
+\item young \r \ packages can be very buggy
+\item packages are not reviewed\\ (CRAN tests that they can install and that the examples run without generating error or warning messages)
+\end{itemize}
+\vfill
+\pause
+Good practice:
+\begin{itemize}
+\item update your \r \ packages frequently (I do it daily)
+\end{itemize}
+<<update, eval = FALSE>>=
+update.packages(ask = FALSE)  ## or use RStudio menus
+@
+\begin{itemize}
+\item check what is being changed if you heavily rely on a recent package\\ (see file called \texttt{NEWS} easily shown if you use RStudio to update)
+\item contact the maintainer when you spot bugs\\ (but write minimal reproductive examples otherwise they will most likely not being able to help you)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Updating \R \ itself}
+Some things to know:
+\begin{itemize}
+\item \r \ has many bugs (like all other software)
+\item \r \ bugs are reported, discussed and solved in the open (unlike most other software): \url{https://bugs.r-project.org/bugzilla3/}
+\item each new version of \r \ is more efficient and less buggy
+\end{itemize}
+
+\vfill
+\pause
+What to do?
+\begin{itemize}
+\item check for \r \ new versions on CRAN
+\item check for what has changed if you fancy (\url{http://cran.r-project.org/doc/manuals/r-release/NEWS.html})
+\item install the new version of \r \ (unless it is not a minor update that you don't need)
+\item re-install all your packages
+\end{itemize}
+
+\vfill
+\pause
+Note 1: some packages can help to do this: \verb+InstallR+ on Windows and \verb+UpdateR+ on macOS.\\
+\vspace{1em}
+Note 2: also update RStudio for full compatibility with \r.
+\end{frame}
+
+
+\section{Learning \r \ on your own}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Official documentation:
+\begin{itemize}
+\item the help files: every single (exported) function has a help file associated with it!
+\item official manuals (boring and difficult but thorough: \url{https://cran.r-project.org/manuals.html})
+\end{itemize}
+\vfill
+\pause
+Books (roughly sorted by amount of conceptual content):
+\begin{center}
+\begin{figure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/Rcookbook}
+\caption*{$\sim 30$ \euro}
+\end{subfigure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/bookBecksi}
+\caption*{$\sim 30$ \euro}
+\end{subfigure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/Rbook2}
+\caption*{$\sim 35$ \euro}
+\end{subfigure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/Dalgaard_book}
+\caption*{$\sim 40$ \euro}
+\end{subfigure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/Rbook}
+\caption*{$\sim 60$ \euro}
+\end{subfigure}
+\begin{subfigure}[b]{2.4cm}
+\centering
+\includegraphics[height=3.5cm]{../figures/Chambers_book1}
+\caption*{$\sim 90$ \euro}
+\end{subfigure}
+\end{figure}
+\end{center}
+\vfill
+\pause
+Journals:
+\begin{itemize}
+\item Journal of Statistical Software (\url{https://www.jstatsoft.org/index})
+\item The \r \ Journal (\url{https://journal.r-project.org})
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Useful resources}
+RStudio cheatsheets (\url{https://www.rstudio.com/resources/cheatsheets/}):
+\begin{center}
+\includegraphics[width=0.5\linewidth]{../figures/base-r.pdf}
+\end{center}
+\vfill
+Note: there are many cheatsheets covering many aspects of \r \ and several packages developed by RStudio!
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Blogs:
+\begin{itemize}
+\item \url{http://www.r-bloggers.com}
+\item \url{https://rweekly.org}
+\item \url{http://blog.revolutionanalytics.com}
+\end{itemize}
+\vfill
+\pause
+Forum:
+\begin{itemize}
+\item \url{https://stackoverflow.com/questions/tagged/r}
+\item \url{https://stats.stackexchange.com/questions/tagged/r}
+\end{itemize}
+\vfill
+\pause
+Mailing lists:
+\begin{itemize}
+\item \url{https://www.r-project.org/mail.html}
+\end{itemize}
+\vfill
+\pause
+Twitter:
+\begin{itemize}
+\item \#rstats
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]{Useful resources}
+Meetup groups:
+\begin{itemize}
+\item \url{https://www.meetup.com/Berlin-R-Users-Group/}
+\item \url{https://www.meetup.com/rladies-berlin/}
+\end{itemize}
+\vfill
+\pause
+Courses \& Workshop:
+\begin{itemize}
+\item Physalia (\url{https://www.physalia-courses.org})
+\item DataCamp (online: \url{https://www.datacamp.com/courses/tech:r})
+\end{itemize}
+\vfill
+\pause
+Conferences:
+\begin{itemize}
+\item useR (\url{https://user2018.r-project.org})
+\item European R User meetings (\url{https://erum.io})
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The best person who can teach you \R\ is YOU!}
+\begin{center}
+\huge{\huge{After having learned some basics, just open the console and test your understanding by performing experiments!}}
+\vfill
+\huge{\huge{Do not copy and paste stuff from internet without trying to understand!!!}}
+\end{center}
+\end{frame}
+
+\end{document}
