@@ -57,6 +57,13 @@ opts_chunk$set("size" = "scriptsize",
 
 \maketitle
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Before we start}
+\begin{center}
+All slides are available at \url{https://github.com/courtiol/BeginR/tree/master/sources_vignettes}
+\end{center}
+\end{frame}
+
 \section{What is \r?}
 
 \subsection{\r \ in brief}
@@ -260,7 +267,6 @@ All of these activities are still ongoing (\r \ is rich and evolving)
 \begin{frame}{What will we do?}
 I will:
 \begin{itemize}
-\item give you all the slides (so write only what is not being displayed)
 \item explain you the main principles of the \r \ language and some useful functions
 \item provide you with short exercises to put concepts into practice
 \item provide you with suggestions on how to learn more about \r \ on your own
