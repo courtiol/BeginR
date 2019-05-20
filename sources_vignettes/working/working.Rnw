@@ -418,7 +418,6 @@ This text will show in the output <!-- but this one will not -->
 \selectmanualcolour{red!75!black}
 \begin{frame}[fragile]{Practice}
 \begin{itemize}
-\item notice that the structure of the document appears at the bottom of the \texttt{Source} pane
 \item try to experiment a bit with the syntax
 \item edit the markdown text of your \r \ markdown file, so to prepare the file to take notes about the course\\ (but don't trash the chunk of \r \ code yet)
 \end{itemize}
@@ -713,26 +712,26 @@ sign(x = -5)
 sign(-5) ## dangerous: try to avoid!
 sign(y = -5)
 @
-\vfill
-\pause
-Note: equal signs and arrows are only equivalent in the so-called ``global environment'':
-<<equal vs arrows>>=
-y = 2
-y
-y <- 3
-y
-@
-\vfill
-\pause
-But not inside functions:
-<<>>=
-sign(y <- -5) ## dangerous: avoid!
-y
-sign(x = y <- -5) ## same as above
-@
-\vfill
-\pause
-So better to stick to arrows for creating objects and to equal signs for defining arguments!
+% \vfill
+% \pause
+% Note: equal signs and arrows are only equivalent in the so-called ``global environment'':
+% <<equal vs arrows>>=
+% y = 2
+% y
+% y <- 3
+% y
+% @
+% \vfill
+% \pause
+% But not inside functions:
+% <<>>=
+% sign(y <- -5) ## dangerous: avoid!
+% y
+% sign(x = y <- -5) ## same as above
+% @
+% \vfill
+% \pause
+% So better to stick to arrows for creating objects and to equal signs for defining arguments!
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -820,23 +819,34 @@ Key facts about packages:
 Note: packages can be used to create research compendia!
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{Creating your own package is actually quite easy once you know \r}
-\begin{center}
-\includegraphics[height = 0.9\textheight]{../figures/Wickham_RPackages}
-\end{center}
-\end{frame}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}[fragile]{Creating your own package is actually quite easy once you know \r}
+% \begin{center}
+% \includegraphics[height = 0.9\textheight]{../figures/Wickham_RPackages}
+% \end{center}
+% \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Installing a package}
 
 Simple situation: the package is available as a binary file prepared for your system on CRAN
-<<install package, eval=FALSE>>=
-install.packages("dpylr")  ## install dplyr
-@
-
+\vfill
+You can use RStudio:
+\begin{center}
+\includegraphics[height = 4cm]{../figures/RStudio_packages_installation.png}
+\end{center}
 \vfill
 \pause
+or you can type in the \texttt{Console} pane:
+\vfill
+<<install package, eval=FALSE>>=
+install.packages("drat")  ## install drat
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Installing a package}
 In general, the installation procedure depends on:
 \begin{itemize}
 \item where the package is being hosted (local, CRAN, bioconductor, GitHub, other)
@@ -848,14 +858,15 @@ In general, the installation procedure depends on:
 In order to be able to install packages that require compilation (and thus have access to more or newer version of packages), you need to install:
 
 \begin{itemize}
-\item Rtools if you use Windows (\url{https://cran.r-project.org/bin/windows/Rtools/})
-\item Xcode if you use macOS (\url{https://developer.apple.com/xcode/})
+\item \texttt{Rtools} if you use Windows (\url{https://cran.r-project.org/bin/windows/Rtools})
+\item \texttt{clang} and \texttt{gfortran} (\url{https://cran.r-project.org/bin/macosx/tools})\\ or the large \texttt{Xcode} (\url{https://developer.apple.com/xcode}) if you use macOS
 \item nothing if you use Linux or other Unix-based system
 \end{itemize}
 
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Installing the package for this course}
 The package is not on CRAN as I want to be able to update it instantaneously and have potentially large files.
 
@@ -874,7 +885,17 @@ install.packages("BeginR")  ## install the package
 Note: every morning of the course you may have to rerun the last 3 lines of code to get the lastest version of this course.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectmanualcolour{red!75!black}
+\begin{frame}{Practice}
+\begin{enumerate}
+\item create a separate \r \ markdown file that you will knit every morning to update \texttt{BeginR}
+\item knit the \r \ markdown file to install the package for the first time
+\end{enumerate}
+\end{frame}
+\selectmanualcolour{blue!75!black}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Loading a package}
 Loading a package makes new functions and data available to the user:
 
@@ -886,15 +907,21 @@ library(BeginR)
 @
 \vfill
 \pause
-You can check the (exported) content of a package:
+Notes:
+\begin{itemize}
+\item you can also use RStudio to load a package but that would not stay in your \r \ makrdown file, so I do not recommend doing that
+\pause
+\item you can check the (exported) content of a package:
 <<eval = FALSE>>=
 library(help = "BeginR")
 @
+\end{itemize}
 \end{frame}
+
 
 \section{Housekeeping}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Updating \r \ packages}
 Some things to know:
 \begin{itemize}
@@ -917,11 +944,12 @@ update.packages(ask = FALSE)  ## or use RStudio menus
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Updating \r \ itself}
 Some things to know:
 \begin{itemize}
 \item \r \ has many bugs (like all other software)
-\item \r \ bugs are reported, discussed and solved in the open (unlike most other software): \url{https://bugs.r-project.org/bugzilla3/}
+\item \r \ bugs are reported, discussed and solved in the open (unlike most other software): \url{https://bugs.r-project.org/bugzilla3}
 \item each new version of \r \ is more efficient and less buggy
 \end{itemize}
 
@@ -937,13 +965,25 @@ What to do?
 
 \vfill
 \pause
-Note 1: some packages can help to do this: \verb+InstallR+ on Windows and \verb+UpdateR+ on macOS.\\
-\vspace{1em}
-Note 2: also update RStudio for full compatibility with \r.
+Notes:
+\begin{itemize}
+\item some packages can help to do this: \verb+InstallR+ on Windows and \verb+UpdateR+ on macOS
+\item  also update RStudio for full compatibility with \r \ (\texttt{Help $\rightarrow$ Check for Updates})
+\end{itemize}
 \end{frame}
 
 
 \section{Learning \r \ on your own}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Useful resources}
+RStudio cheatsheets (\url{https://www.rstudio.com/resources/cheatsheets/}):
+\begin{center}
+\includegraphics[width=0.5\linewidth]{../figures/base-r.pdf}
+\end{center}
+\vfill
+Note: there are many cheatsheets covering many aspects of \r \ and several packages developed by RStudio!
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t]{Useful resources}
@@ -957,34 +997,39 @@ Official documentation:
 Books (roughly sorted by amount of conceptual content):
 \begin{center}
 \begin{figure}
-\begin{subfigure}[b]{2.4cm}
+\begin{subfigure}[b]{1.8cm}
 \centering
-\includegraphics[height=3.5cm]{../figures/Rcookbook}
+\includegraphics[height=2.5cm]{../figures/Wickham_r4ds}
+\caption*{$\sim 30$ \euro \ (or 0\euro)}
+\end{subfigure}
+\begin{subfigure}[b]{1.8cm}
+\centering
+\includegraphics[height=2.5cm]{../figures/bookBecksi}
 \caption*{$\sim 30$ \euro}
 \end{subfigure}
-\begin{subfigure}[b]{2.4cm}
+\begin{subfigure}[b]{1.8cm}
 \centering
-\includegraphics[height=3.5cm]{../figures/bookBecksi}
-\caption*{$\sim 30$ \euro}
-\end{subfigure}
-\begin{subfigure}[b]{2.4cm}
-\centering
-\includegraphics[height=3.5cm]{../figures/Rbook2}
+\includegraphics[height=2.5cm]{../figures/Rbook2}
 \caption*{$\sim 35$ \euro}
 \end{subfigure}
-\begin{subfigure}[b]{2.4cm}
+\begin{subfigure}[b]{1.8cm}
 \centering
-\includegraphics[height=3.5cm]{../figures/Dalgaard_book}
+\includegraphics[height=2.5cm]{../figures/Dalgaard_book}
 \caption*{$\sim 40$ \euro}
 \end{subfigure}
-\begin{subfigure}[b]{2.4cm}
+\begin{subfigure}[b]{1.8cm}
 \centering
-\includegraphics[height=3.5cm]{../figures/Rbook}
+\includegraphics[height=2.5cm]{../figures/Rbook}
 \caption*{$\sim 60$ \euro}
 \end{subfigure}
-\begin{subfigure}[b]{2.4cm}
+\begin{subfigure}[b]{1.8cm}
 \centering
-\includegraphics[height=3.5cm]{../figures/Chambers_book1}
+\includegraphics[height=2.5cm]{../figures/Wickham_AdvancedR}
+\caption*{$\sim 60$ \euro \ (or 0\euro)}
+\end{subfigure}
+\begin{subfigure}[b]{1.8cm}
+\centering
+\includegraphics[height=2.5cm]{../figures/Chambers_book1}
 \caption*{$\sim 90$ \euro}
 \end{subfigure}
 \end{figure}
@@ -994,36 +1039,27 @@ Books (roughly sorted by amount of conceptual content):
 Journals:
 \begin{itemize}
 \item Journal of Statistical Software (\url{https://www.jstatsoft.org/index})
-\item The \r \ Journal (\url{https://journal.r-project.org})
+\item the \r \ Journal (\url{https://journal.r-project.org})
+\item many others (e.g. Journal of Open Source Software, Methods in Ecology \& Evolution)
 \end{itemize}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Useful resources}
-RStudio cheatsheets (\url{https://www.rstudio.com/resources/cheatsheets/}):
-\begin{center}
-\includegraphics[width=0.5\linewidth]{../figures/base-r.pdf}
-\end{center}
-\vfill
-Note: there are many cheatsheets covering many aspects of \r \ and several packages developed by RStudio!
 \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t]{Useful resources}
+Forum:
+\begin{itemize}
+\item \url{https://stackoverflow.com/questions/tagged/r}
+\item \url{https://stats.stackexchange.com/questions/tagged/r}
+\item \url{https://community.rstudio.com}
+\end{itemize}
+\vfill
+\pause
 Blogs:
 \begin{itemize}
 \item \url{http://www.r-bloggers.com}
 \item \url{https://rweekly.org}
 \item \url{http://blog.revolutionanalytics.com}
-\end{itemize}
-\vfill
-\pause
-Forum:
-\begin{itemize}
-\item \url{https://stackoverflow.com/questions/tagged/r}
-\item \url{https://stats.stackexchange.com/questions/tagged/r}
 \end{itemize}
 \vfill
 \pause
@@ -1058,7 +1094,7 @@ Courses \& Workshop:
 \pause
 Conferences:
 \begin{itemize}
-\item useR (\url{https://user2018.r-project.org})
+\item useR (\url{https://user2019.r-project.org})
 \item European R User meetings (\url{https://erum.io})
 \end{itemize}
 \end{frame}
@@ -1067,7 +1103,7 @@ Conferences:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The best person who can teach you \r\ is YOU!}
 \begin{center}
-\huge{\huge{After having learned some basics, just open the console and test your understanding by performing experiments!}}
+\huge{\huge{After having learned some basics, just open RStudio and test your understanding by performing experiments!}}
 \vfill
 \huge{\huge{Do not copy and paste stuff from internet without trying to understand!!!}}
 \end{center}
