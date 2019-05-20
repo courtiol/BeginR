@@ -3,7 +3,7 @@
 \usepackage[T1]{fontenc} % so that dollar sign does not turn into pound when italic!!
   \usepackage{amsmath,amssymb,lmodern} % nice T1 compatible fonts
 \usepackage[UKenglish]{babel}
-\usepackage{verbatim}%for comment environment
+\usepackage{verbatim}%for verbatim (to combine with [fragile]!!!)
 \usepackage{pdfpages} %for importing specific pages from pdf
 \usepackage{ragged2e}%pour justifier le text, après il suffit de tapper \justifying avant le paragraphe
 \usepackage{subcaption}%for captions below figures
@@ -15,10 +15,7 @@
 \usepackage{smartdiagram}% for diagram using TikZ
 \usesmartdiagramlibrary{additions}% for diagram using TikZ
 
-\def\R{{\Large \bf R}}
-\def\S{{\Large \bf S}}
 \def\r{{\bf R}}
-\def\s{{\bf S}}
 
 \title{Getting ready to work with \r}
 \author[Alexandre Courtiol]{Alexandre Courtiol}
@@ -33,7 +30,7 @@
   \includegraphics[height=2cm]{../figures/FU}
   \hspace{1cm}
 }
-\date[June 2018]{\small June 2019}%
+\date[June 2019]{\small June 2019}%
 
 \begin{document}
 \selectmanualcolour{blue!75!black}%set main colour
@@ -65,8 +62,9 @@ opts_chunk$set("size" = "scriptsize",
 
 \maketitle
 
-\section{Installation steps}
+\section{Installation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectmanualcolour{red!75!black}
 \begin{frame}{Practice}
   \begin{enumerate}
@@ -79,25 +77,29 @@ opts_chunk$set("size" = "scriptsize",
 \end{frame}
 \selectmanualcolour{blue!75!black}
 
+
 \section{The RStudio IDE}
 \subsection{introduction}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The RStudio Integrated Desktop Environment}
 \begin{center}
 \includegraphics[width=0.9\linewidth]{../figures/RStudio.png}
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Why using the RStudio IDE?}
-You can use R without RStudio, but RStudio is:
+You can use \r \ without RStudio, but RStudio is:
 \begin{itemize}
-\item provided with many more (useful) functionalities than the official R IDE
-\item integrated with several key R packages developed by RStudio (e.g. \texttt{rmarkdown})
+\item provided with more functionalities than the official \r \ IDE
+\item integrated with several key \r \ packages developed by RStudio (e.g. \texttt{rmarkdown})
 \item suitable for both desktop and remote computers (web server) %so it looks the same on a cluster!
 \item free and open source
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Overall structure}
 \begin{itemize}
 \item Top menu
@@ -106,9 +108,14 @@ You can use R without RStudio, but RStudio is:
 \end{itemize}
 \end{frame}
 
+
 \subsection{top menu}
 
-\begin{frame}[fragile]{10 most useful items from the top menu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The top menu}
+\includegraphics[width = \linewidth]{../figures/RStudio_topmenu.png}
+\vfill
+\large{10 most useful items:}
   \begin{itemize}
     \item \texttt{File $\rightarrow$ New File}
     \item \texttt{File $\rightarrow$ New Project}
@@ -123,6 +130,7 @@ You can use R without RStudio, but RStudio is:
   \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectmanualcolour{red!75!black}
 \begin{frame}[fragile]{Practice}
   \begin{enumerate}
@@ -134,42 +142,48 @@ You can use R without RStudio, but RStudio is:
 \vfill
 Notes:
 \begin{itemize}
-\item a project is defined by a simple (text) file whose main benefit is to open RStudio with the correct working directory set (that is, the one where the project file is)
-\item an \r \ markdown file is a (text) file where we can write \r \ code together with text
+\item a project is defined by a simple (text) file. Its main benefit is to open RStudio with the correct working directory set (that is, the one where the project file is)
+\item an \r \ markdown file is a (text) file where we can write text together with code (more later)
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectmanualcolour{blue!75!black}
 \begin{frame}[fragile]{My tips about the global options}
-1. I never save or restore the workspace (the default is a receipe for disasters)
+1. I never save or restore the workspace \underline{and so should you} (default settings are a receipe for disasters)
 \begin{center}
 \includegraphics[height=0.8\textheight]{../figures/RStudio_settings.png}
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{My tips about the global options}
-2. I don't like parenthesis auto-completion
+2. I don't like parentheses and quotes auto-completion, but you may
 \begin{center}
 \includegraphics[height=0.8\textheight]{../figures/RStudio_settings2.png}
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{My tips about the global options}
-3. I use a black theme except when using a video projector
+3. I use a black theme except when using a video projector (do as you please)
 \begin{center}
 \includegraphics[height=0.8\textheight]{../figures/RStudio_settings3.png}
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{My tips about the global options}
-4. I like to put the \texttt{source} and the \texttt{console} panes side by side to give them more vertical space on the screen
+4. I like to put the \texttt{source} and the \texttt{console} panes side-by-side to give them more vertical space on the screen
 \begin{center}
 \includegraphics[height=0.8\textheight]{../figures/RStudio_settings4.png}
 \end{center}
 \end{frame}
 
+
 \subsection{the panes}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The \texttt{Source} pane}
 This is where you type the code you want to keep
 \begin{center}
@@ -178,14 +192,16 @@ This is where you type the code you want to keep
 Notes: tabs give you access to different files (if several files are open)
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The \texttt{Console} pane}
-This is where you run the \r \ code (of the \texttt{Source} pane or directly writen here)
+This is where you can run \r \ code directly
 \begin{center}
 \includegraphics[height=0.8\textheight]{../figures/RStudio_pane2.png}
 \end{center}
-Notes: tabs give you access to a few other panes including the \texttt{Terminal} (others depend on context)
+Notes: tabs give you access to a other panes depending on the context. They are all used to run code!
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The other panes}
 This is where everything else is
 \begin{center}
@@ -194,6 +210,7 @@ This is where everything else is
 Notes: tabs give you access to various panes
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The other panes}
 You should have at least access to:
 \begin{itemize}
@@ -211,9 +228,11 @@ You should have at least access to:
 But other panes will appear depending on the context
 \end{frame}
 
+
 \section{\r \ markdown}
 \subsection{introduction}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{What is \r \ markdown?}
 It is a framework to write reproducible reports, which combines\dots
 \begin{itemize}
@@ -223,40 +242,10 @@ It is a framework to write reproducible reports, which combines\dots
 \end{itemize}
 \dots to form a document (e.g. html page, PDF, Microsoft Word, Libre Office, website \dots)
 \vfill
-Alternative frameworks are available (e.g. these slides are created using a combination of \LaTeX \ and \r, but \r\ markdown is by far the simplest)
+Alternative frameworks are available (e.g. these slides are created using a combination of \LaTeX \ and \r, but \r\ markdown remains simple)
 \end{frame}
 
-\begin{frame}{Why using \r \ markdown?}
-\begin{itemize}
-  \item clear: text, \r \ code, and output are not dispatched in different files
-  \item structured: the document can be divided in sections and the \r \ code into chunks
-  \item transparent: all the \r \ code must be in the \r \ markdown file(s)
-  \item reproducible: enforce that the \r \ code is running
-  \item adaptable: you can change one thing and everything else will adjust
-  \item dynamic: you can create so-called dynamic documents
-  \item easy to communicate: outputs look nice (details can be hidden)
-\end{itemize}
-\end{frame}
-
-\begin{frame}{General structure of a \r \ markdown file}
-\begin{columns}[t]
-\column{0.4\linewidth}
-3 parts:
-\begin{itemize}
-\item \alert<2>{the header (writen in \texttt{YAML})}
-\item \alert<3>{the text (writen in \texttt{markdown})}
-\item \alert<4>{the code chunks (writen in \r \ or alternatives)}
-\end{itemize}
-\column{0.6\linewidth}
-\begin{center}%
-  \includegraphics<1>[width=0.9\linewidth]{../figures/Rmarkdown.png}%
-  \includegraphics<2>[width=0.9\linewidth]{../figures/Rmarkdown_YAML.png}%
-  \includegraphics<3>[width=0.9\linewidth]{../figures/Rmarkdown_text.png}%
-  \includegraphics<4>[width=0.9\linewidth]{../figures/Rmarkdown_R.png}%
-\end{center}
-\end{columns}
-\end{frame}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectmanualcolour{red!75!black}
 \begin{frame}[fragile]{Practice}
 Render the \r \ markdown file using \texttt{knitr} and observe the outcome
@@ -264,8 +253,22 @@ Render the \r \ markdown file using \texttt{knitr} and observe the outcome
   \includegraphics[height=0.9\textheight]{../figures/Rmarkdown_knit.png}%
 \end{center}
 \end{frame}
-
 \selectmanualcolour{blue!75!black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Why using \r \ markdown?}
+\begin{itemize}
+  \item clear: text, \r \ code, and output are not dispatched in different files
+  \item structured: the document can be divided in sections and the \r \ code into chunks
+  \item transparent: all the \r \ code must be in the \r \ markdown file(s)
+  \item reproducible: enforce that the \r \ code must run (unlike notebooks and pure \r \ script)
+  \item adaptable: you can change one thing and everything else will adjust
+  \item dynamic: you can create so-called dynamic html documents (with buttons, menus\dots)
+  \item easy to communicate: outputs look quite nice out-of-the-box
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{How does it work?}
 \smartdiagramset{
     sequence item border color=black,
@@ -274,7 +277,7 @@ Render the \r \ markdown file using \texttt{knitr} and observe the outcome
     sequence item font size=\small\sffamily,
     additions={
         additional item shape=rectangle,
-        additional arrow line width=2pt,
+        additional arrow line width=1pt,
         additional arrow tip=to,
         additional arrow color=black,
         additional item font=\small\sffamily,
@@ -290,14 +293,38 @@ Render the \r \ markdown file using \texttt{knitr} and observe the outcome
 \vfill
 Notes:
 \begin{itemize}
-\item \texttt{knitr} is an \r \ package that turns the \r \ code and outputs into markdown syntax
-\item \texttt{pandox} is an external program that turns markdown documents into many possible outputs
+\item \texttt{knitr} is an \r \ package that turns the \r \ code and its outputs into markdown syntax
+\item \texttt{pandoc} is an external program that turns markdown documents into many possible outputs
 \item the calls to \texttt{knitr} and \texttt{pandox} are orchestrated by the \r \ package \texttt{rmarkdown}
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{General structure of a \r \ markdown file}
+\begin{columns}[t]
+\column{0.4\linewidth}
+3 parts:
+\only<2->{
+  \begin{itemize}
+  \item<2-> \alert<2>{the header (writen in \texttt{YAML})}
+  \item<3-> \alert<3>{the text (writen in \texttt{markdown})}
+  \item<4> \alert<4>{the code chunks (writen in \r \ or alternatives)}
+  \end{itemize}
+}
+\column{0.6\linewidth}
+\begin{center}%
+  \includegraphics<1>[width=0.9\linewidth]{../figures/Rmarkdown.png}%
+  \includegraphics<2>[width=0.9\linewidth]{../figures/Rmarkdown_YAML.png}%
+  \includegraphics<3>[width=0.9\linewidth]{../figures/Rmarkdown_text.png}%
+  \includegraphics<4>[width=0.9\linewidth]{../figures/Rmarkdown_R.png}%
+\end{center}
+\end{columns}
+\end{frame}
+
+
 \subsection{YAML header}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{The YAML header}
 The header sets the configuration for \texttt{pandoc}, so it is used to influence the format and style of the output file
 
@@ -336,11 +363,12 @@ output:
 Notes:
 \begin{itemize}
 \item indentation matters in YAML!!! (beware while copy \& pasting with RStudio autoindentation)
-\item not all settings work for all type of documents
+\item not all settings work for all types of documents
 \item YAML = YAML Ain't Markup Language
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectmanualcolour{red!75!black}
 \begin{frame}[fragile]{Practice}
 Modify the YAML options in the header and observe how the output changes accordingly
@@ -362,16 +390,147 @@ A few options can directly be set using RStudio:
 \end{frame}
 \selectmanualcolour{blue!75!black}
 
+
 \subsection{markdown text}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Markdown}
+Markdown is a very simple plain text formatting syntax that can be learned in minutes
+
+Check \texttt{Help/Markdown Quick Reference} for (almost) all there is to know!
+
+\begin{center}
+\includegraphics[height = 4cm]{../figures/Markdown_reference.png}
+\end{center}
+
+\vfill
+
+You can directly embed raw \texttt{html} code for more functionalities
+
+For example, this is useful for commenting text that you don't want to appear in the output:
+
+\begin{verbatim}
+This text will show in the output <!-- but this one will not -->
+\end{verbatim}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+\begin{itemize}
+\item notice that the structure of the document appears at the bottom of the \texttt{Source} pane
+\item try to experiment a bit with the syntax
+\item edit the markdown text of your \r \ markdown file, so to prepare the file to take notes about the course\\ (but don't trash the chunk of \r \ code yet)
+\end{itemize}
+\end{frame}
+\selectmanualcolour{blue!75!black}
+
+
 \subsection{code chuncks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Anatomy of a code chunk}
+\begin{verbatim}
+```{language_name chunk name, option1=argument1, option2=argument2, ...}
+some code ## a comment
+```
+\end{verbatim}
+\vfill
+\begin{columns}
+\column{0.4\linewidth}
+Examples:
+\vspace{1em}
+\begin{verbatim}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\end{verbatim}
+\vfill
+\begin{verbatim}
+```{r cars}
+summary(cars)
+```
+\end{verbatim}
+\vfill
+\begin{verbatim}
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+\end{verbatim}
+\pause
+\column{0.4\linewidth}
+\includegraphics[width=0.8\linewidth]{../figures/Knitr_chunk_names.png}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Examples of code chunk options}
+\begin{columns}[t]
+\column{0.5\linewidth}
+Some options good to know:
+\vfill
+\begin{tabular}{ccc}
+\hline \textbf{Option} & \textbf{what for?} & \textbf{default}\\
+echo &  display the code & TRUE\\
+error & stop on error & TRUE \\
+eval & run the chunk & TRUE\\
+\hline
+\end{tabular}
+\pause
+\column{0.5\linewidth}
+You can set some of them directly using RStudio:
+\vfill
+\includegraphics[width = \linewidth]{../figures/Knitr_chunk_options.png}
+\end{columns}
+\vfill
+\pause
+For more options, check:
+\begin{itemize}
+\item The \texttt{\r \ Markdown Cheat Sheet} (for a few more)
+\item \url{https://yihui.name/knitr/options} (for all of them)
+\end{itemize}
+\vfill
+\pause
+Note: if you want the option to be set in all chunks, put it in \verb`knitr::opts_chunk$set(...)` in the first chunk.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Running a code chunk without knitting}
+\begin{columns}[t]
+\column{0.5\linewidth}
+You can run a chunk using the mouse or the keyboard:
+\vfill
+\begin{center}
+\includegraphics[height=4cm]{../figures/Knitr_chunk_run.png}
+\end{center}
+\pause
+\column{0.5\linewidth}
+All \r \ chunks are run in the \texttt{Console} pane (unless when knitting), but you can decide if you
+want to copy the output within the \texttt{Source} pane too!
+\vfill
+\begin{center}
+\includegraphics[height=4cm]{../figures/Knitr_chunk_output.png}
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectmanualcolour{red!75!black}
+\begin{frame}{Practice}
+\begin{center}
+Experiment a little by knitting existing chunks using different options!
+\end{center}
+\end{frame}
+\selectmanualcolour{blue!75!black}
+
 
 \section{Basics of the \r \ language}
 
 \subsection{arithmetic}
 
-\begin{frame}[fragile]{Basic arithmetic}
-Try the following:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Arithmetic}
+\r \ can perform basic arithmetic:
 <<arithmetic>>=
 1 + 1
 1 - 1
@@ -386,10 +545,23 @@ Try the following:
 Conclusion: you may never need a hand calculator anymore!
 \end{frame}
 
-\begin{frame}{Good practice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectmanualcolour{red!75!black}
+\begin{frame}[fragile]{Practice}
+\begin{center}
+Delete all existing chunks and create a new chunk with some arithmetic
+\end{center}
+\vfill
+Note: to create a new chunk, you can use \texttt{Code $\rightarrow$ Insert chunk} (or just type)
+\end{frame}
+\selectmanualcolour{blue!75!black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Tips}
 \begin{enumerate}
-\item only use the ``Console'' pannel to mess around
+\item only use the \texttt{Console} pane to mess around
 \item write proper \r \ code inside a chunk in your Rmd document
+\item knit chunks one by one before knitting the whole Rmd document
 \item name objects with useful names
 \end{enumerate}
 \end{frame}
@@ -397,7 +569,7 @@ Conclusion: you may never need a hand calculator anymore!
 
 \subsection{objects}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Creating objects}
 Objects are being assigned using the ``arrow'' operator:
 <<one plus one>>=
@@ -427,7 +599,7 @@ Note 1: avoid spaces \& weird characters in object names to avoid troubles (but 
 Note 2: names are case sensitive.
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t, fragile]{Common mistakes}
 The huge majority of beginner's problems are typos:
 \vfill
@@ -451,37 +623,37 @@ one.plus.one <- 1 + 1
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{The concept of an \r \ object}
+% What is an object?
+% \begin{itemize}
+% \item everything in \r \ is an object
+% \item objects have names
+% \item objects allow abstraction
+% \item objects belongs to classes for which specific methods exist (and can be created)
+% \end{itemize}
+% \vfill
+% Note: we will come back on that later (for the programming session).
+% \end{frame}
 
-\begin{frame}{The concept of an \R \ object}
-What is an object?
-\begin{itemize}
-\item everything in \r \ is an object
-\item objects have names
-\item objects allow abstraction
-\item objects belongs to classes for which specific methods exist (and can be created)
-\end{itemize}
-\vfill
-Note: we will come back on that later (for the programming session).
-\end{frame}
-
-
-\begin{frame}[fragile]{Note for geeks who know other computer languages}
-\r \ objects are (by default) not mutable (there is copy on demand):
-<<not mutable>>=
-a <- 1
-b <- a
-b <- b + 1
-b
-a ## although 'b' derives from 'a' changing 'b' has no impact on 'a' (because 'a' and 'b' share different physical memory addresses)
-@
-\vfill
-Note: if you don't know other computer languages, it just behaves as you would expect while most other programming languages don't.
-\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}[fragile]{Note for geeks who know other computer languages}
+% \r \ objects are (by default) not mutable (there is copy on demand):
+% <<not mutable>>=
+% a <- 1
+% b <- a
+% b <- b + 1
+% b
+% a ## although 'b' derives from 'a' changing 'b' has no impact on 'a' (because 'a' and 'b' share different physical memory addresses)
+% @
+% \vfill
+% Note: if you don't know other computer languages, it just behaves as you would expect while most other programming languages don't.
+% \end{frame}
 
 
 \subsection{functions}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Functions}
 <<citation, eval=FALSE>>=
 citation()  ## function showing how to cite R
@@ -503,7 +675,7 @@ help(citation) ## getting help for this function
 Note: always look at the help before using a function new to you!
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Functions}
 <<mean, eval=F, echo=T>>=
 mean()
@@ -533,7 +705,7 @@ Arguments:
 \end{scriptsize}
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Syntax for functions}
 Basic syntax:
 <<example function>>=
@@ -563,7 +735,7 @@ sign(x = y <- -5) ## same as above
 So better to stick to arrows for creating objects and to equal signs for defining arguments!
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Syntax for functions}
 Calling a function without its parentheses reveals its definition:
 <<function def>>=
@@ -583,19 +755,19 @@ a
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{Key principles of the \r \ language}
+% \begin{itemize}
+% \item Everything that exists in \r \ is an object
+% \item Everything that happens in \r \ is a function call
+% \end{itemize}
+%
+% \begin{flushright}
+% John M. Chambers
+% \end{flushright}
+% \end{frame}
 
-\begin{frame}{Key principles of the \R \ language}
-\begin{itemize}
-\item Everything that exists in \r \ is an object
-\item Everything that happens in \r \ is a function call
-\end{itemize}
-
-\begin{flushright}
-John M. Chambers
-\end{flushright}
-\end{frame}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Finding functions}
 To find the name of the function you are look for, you may try:
 <<finding function, eval = FALSE>>=
@@ -607,17 +779,25 @@ or
 <<finding function 2, eval = FALSE>>=
 help.search(pattern = "linear model", package = "stats")  ## if you know where to look for
 @
+
+or
+
+\begin{center}
+\includegraphics[height = 4cm]{../figures/RStudio_search_fn.png}
+\end{center}
 \end{frame}
+
 
 \section{\r \ packages}
 
-\begin{frame}[fragile]{The concept of an \R \ package}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{The concept of an \r \ package}
 
 Packages extend \r \ functionalities:
 \begin{itemize}
 \item for most users; e.g. \verb+ggplot2+
 \item for specific users; e.g. \verb+IsoriX+
-\item for developers; eg. \verb+Rcpp+
+\item for developers; e.g. \verb+Rcpp+
 \end{itemize}
 
 \vfill
@@ -640,14 +820,14 @@ Key facts about packages:
 Note: packages can be used to create research compendia!
 \end{frame}
 
-
-\begin{frame}[fragile]{Creating your own package is actually quite easy once you know \R}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Creating your own package is actually quite easy once you know \r}
 \begin{center}
 \includegraphics[height = 0.9\textheight]{../figures/Wickham_RPackages}
 \end{center}
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Installing a package}
 
 Simple situation: the package is available as a binary file prepared for your system on CRAN
@@ -715,7 +895,7 @@ library(help = "BeginR")
 \section{Housekeeping}
 
 
-\begin{frame}[fragile]{Updating \R \ packages}
+\begin{frame}[fragile]{Updating \r \ packages}
 Some things to know:
 \begin{itemize}
 \item \r \ packages evovle quickly
@@ -737,7 +917,7 @@ update.packages(ask = FALSE)  ## or use RStudio menus
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Updating \R \ itself}
+\begin{frame}[fragile]{Updating \r \ itself}
 Some things to know:
 \begin{itemize}
 \item \r \ has many bugs (like all other software)
@@ -885,7 +1065,7 @@ Conferences:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{The best person who can teach you \R\ is YOU!}
+\begin{frame}{The best person who can teach you \r\ is YOU!}
 \begin{center}
 \huge{\huge{After having learned some basics, just open the console and test your understanding by performing experiments!}}
 \vfill
